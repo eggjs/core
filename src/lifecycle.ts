@@ -85,7 +85,7 @@ export class Lifecycle extends EventEmitter {
     this.#isClosed = false;
     this.#init = false;
 
-    this.timing.start('Application Start');
+    this.timing.start(`${this.options.app.type} Start`);
     // get app timeout from env or use default timeout 10 second
     const eggReadyTimeoutEnv = parseInt(process.env.EGG_READY_TIMEOUT_ENV || '10000');
     assert(
@@ -105,7 +105,7 @@ export class Lifecycle extends EventEmitter {
     this.ready(err => {
       this.triggerDidReady(err);
       debug('app ready');
-      this.timing.end('Application Start');
+      this.timing.end(`${this.options.app.type} Start`);
     });
   }
 
