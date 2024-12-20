@@ -247,7 +247,7 @@ EggCore record boot progress with `Timing`, include:
 
 - Process start time
 - Script start time(node don't implement an interface like `process.uptime` to record the script start running time, framework can implement a prestart file used with node `--require` options to set `process.scriptTime`)
-- Application start time
+- `application start` or `agent start` time
 - Load duration
 - `require` duration
 

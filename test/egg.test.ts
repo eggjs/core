@@ -18,13 +18,15 @@ describe.skip('test/egg.test.ts', () => {
     let app: EggCore;
     after(() => app && app.close());
 
-    it('should set options and _options', () => {
+    it('should set options and _options', async () => {
       app = new EggCore();
       assert.equal((app as any)._options, undefined);
       assert.deepEqual(app.options, {
         baseDir: process.cwd(),
         type: 'application',
       });
+      await app.loader.loadApplicationExtend();
+      await app.ready();
     });
 
     it('should use cwd when no options', () => {
@@ -214,7 +216,7 @@ describe.skip('test/egg.test.ts', () => {
         assert(id.includes(file));
         const timeline = app.timing.toString();
         console.log(timeline);
-        assert.match(timeline, /▇ \[\d+ms NOT_END] - #1 Application Start/);
+        assert.match(timeline, /▇ \[\d+ms NOT_END] - #1 application Start/);
         assert.match(timeline, /▇ \[\d+ms NOT_END] - #14 Before Start in app.js:3:7/);
         done();
       });
@@ -469,7 +471,7 @@ describe.skip('test/egg.test.ts', () => {
         const json = app.timing.toJSON();
         assert(json.length === 28);
 
-        assert(json[1].name === 'Application Start');
+        assert(json[1].name === 'application Start');
         assert(json[1].end! - json[1].start === json[1].duration);
         assert(json[1].pid === process.pid);
 
@@ -528,7 +530,7 @@ describe.skip('test/egg.test.ts', () => {
         const json = app.timing.toJSON();
         assert(json.length === 14);
 
-        assert(json[1].name === 'Application Start');
+        assert(json[1].name === 'agent Start');
         assert(json[1].end! - json[1].start === json[1].duration);
         assert(json[1].pid === process.pid);
 
@@ -752,7 +754,7 @@ describe.skip('test/egg.test.ts', () => {
           ]);
         console.log(app.timing.toString());
         assert.match(app.timing.toString(), /egg start timeline:/);
-        assert.match(app.timing.toString(), /#1 Application Start/);
+        assert.match(app.timing.toString(), /#1 application Start/);
       });
     });
 
