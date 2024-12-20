@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.4](https://github.com/eggjs/core/compare/v6.2.3...v6.2.4) (2024-12-20)
+
+
+### Bug Fixes
+
+* separte agent and application start time ([#278](https://github.com/eggjs/core/issues/278)) ([6852046](https://github.com/eggjs/core/commit/685204632a6a8df7a4252faa7dc03041df0274b8))
+
 ## [6.2.3](https://github.com/eggjs/core/compare/v6.2.2...v6.2.3) (2024-12-19)
 
 
