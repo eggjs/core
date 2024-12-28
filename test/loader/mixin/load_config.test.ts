@@ -152,24 +152,43 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     await app.loader.loadConfig();
     const configMeta = app.loader.configMeta;
     const configPath = getFilepath('configmeta/config/config.js');
-    assert.equal(configMeta.console, configPath);
-    assert.equal(configMeta.array, configPath);
-    assert.equal(configMeta.buffer, configPath);
-    assert.equal(configMeta.ok, configPath);
-    assert.equal(configMeta.f, configPath);
-    assert.equal(configMeta.empty, configPath);
-    assert.equal(configMeta.zero, configPath);
-    assert.equal(configMeta.number, configPath);
-    assert.equal(configMeta.no, configPath);
-    assert.equal(configMeta.date, configPath);
-    assert.equal(configMeta.ooooo, configPath);
-
-    assert.equal(configMeta.urllib.keepAlive, configPath);
-    assert.equal(configMeta.urllib.timeout, getFilepath('egg-esm/config/config.default.js'));
-    assert.equal(configMeta.urllib.foo, configPath);
-    assert.equal(configMeta.urllib.n, configPath);
-    assert.equal(configMeta.urllib.dd, configPath);
-    assert.equal(configMeta.urllib.httpclient, configPath);
+    if (process.platform === 'win32') {
+      assert.equal(configMeta.console.toLowerCase(), configPath);
+      assert.equal(configMeta.array.toLowerCase(), configPath);
+      assert.equal(configMeta.buffer.toLowerCase(), configPath);
+      assert.equal(configMeta.ok.toLowerCase(), configPath);
+      assert.equal(configMeta.f.toLowerCase(), configPath);
+      assert.equal(configMeta.empty.toLowerCase(), configPath);
+      assert.equal(configMeta.zero.toLowerCase(), configPath);
+      assert.equal(configMeta.number.toLowerCase(), configPath);
+      assert.equal(configMeta.no.toLowerCase(), configPath);
+      assert.equal(configMeta.date.toLowerCase(), configPath);
+      assert.equal(configMeta.ooooo.toLowerCase(), configPath);
+      assert.equal(configMeta.urllib.keepAlive.toLowerCase(), configPath);
+      assert.equal(configMeta.urllib.timeout.toLowerCase(), getFilepath('egg-esm/config/config.default.js'));
+      assert.equal(configMeta.urllib.foo.toLowerCase(), configPath);
+      assert.equal(configMeta.urllib.n.toLowerCase(), configPath);
+      assert.equal(configMeta.urllib.dd.toLowerCase(), configPath);
+      assert.equal(configMeta.urllib.httpclient.toLowerCase(), configPath);
+    } else {
+      assert.equal(configMeta.console, configPath);
+      assert.equal(configMeta.array, configPath);
+      assert.equal(configMeta.buffer, configPath);
+      assert.equal(configMeta.ok, configPath);
+      assert.equal(configMeta.f, configPath);
+      assert.equal(configMeta.empty, configPath);
+      assert.equal(configMeta.zero, configPath);
+      assert.equal(configMeta.number, configPath);
+      assert.equal(configMeta.no, configPath);
+      assert.equal(configMeta.date, configPath);
+      assert.equal(configMeta.ooooo, configPath);
+      assert.equal(configMeta.urllib.keepAlive, configPath);
+      assert.equal(configMeta.urllib.timeout, getFilepath('egg-esm/config/config.default.js'));
+      assert.equal(configMeta.urllib.foo, configPath);
+      assert.equal(configMeta.urllib.n, configPath);
+      assert.equal(configMeta.urllib.dd, configPath);
+      assert.equal(configMeta.urllib.httpclient, configPath);
+    }
     // undefined will be ignore
     assert.equal(configMeta.urllib.bar, undefined);
   });

@@ -73,7 +73,7 @@ describe('test/egg.test.ts', () => {
         new EggCore({
           baseDir: getFilepath('egg/index.js'),
         });
-      }, /not a directory/);
+      }, /not a directory|no such file or directory/);
     });
 
     it('should throw process.env.EGG_READY_TIMEOUT_ENV should be able to parseInt', () => {

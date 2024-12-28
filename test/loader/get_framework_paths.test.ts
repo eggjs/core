@@ -11,7 +11,11 @@ describe('test/loader/get_framework_paths.test.ts', () => {
 
   it('should get from parameter', () => {
     app = createApp('eggpath');
-    assert.deepEqual(app.loader.eggPaths, [ getFilepath('egg-esm') ]);
+    let eggPaths = app.loader.eggPaths;
+    if (process.platform === 'win32') {
+      eggPaths = eggPaths.map(filepath => filepath.toLowerCase());
+    }
+    assert.deepEqual(eggPaths, [ getFilepath('egg-esm') ]);
   });
 
   it('should get from framework using symbol', async () => {
