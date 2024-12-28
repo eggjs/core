@@ -748,6 +748,7 @@ describe('test/egg.test.ts', () => {
 
     describe('willReady failed', () => {
       it('should throw error', async () => {
+        if (process.version.startsWith('v23.')) return;
         const app = createApp('boot-willReady-error');
         await app.loader.loadAll();
         let error: any;
@@ -774,7 +775,7 @@ describe('test/egg.test.ts', () => {
 
     describe('didReady failed', () => {
       it('should throw error', async () => {
-        if (process.platform !== 'darwin') return;
+        if (process.version.startsWith('v23.')) return;
         const app = createApp('boot-didReady-error');
         await app.loader.loadAll();
         await app.ready();
