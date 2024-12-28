@@ -9,7 +9,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export function getFilepath(name: string) {
-  return path.join(__dirname, 'fixtures', name);
+  const filepath = path.join(__dirname, 'fixtures', name);
+  if (process.platform === 'win32') {
+    return filepath.toLowerCase();
+  }
+  return filepath;
 }
 
 export function createApp(name: string, options?: EggCoreInitOptions & { Application?: typeof EggCore }): Application {
