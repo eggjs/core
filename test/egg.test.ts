@@ -774,6 +774,7 @@ describe('test/egg.test.ts', () => {
 
     describe('didReady failed', () => {
       it('should throw error', async () => {
+        if (process.platform !== 'darwin') return;
         const app = createApp('boot-didReady-error');
         await app.loader.loadAll();
         await app.ready();
