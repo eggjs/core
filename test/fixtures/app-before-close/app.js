@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = app => {
   app.closeFn = false;
   app.closeGeneratorFn = false;
@@ -10,7 +8,7 @@ module.exports = app => {
     app.closeFn = true;
     app.closeOrderArray.push('closeFn');
   });
-  app.beforeClose(function* () {
+  app.beforeClose(async function () {
     app.closeGeneratorFn = true;
     app.closeOrderArray.push('closeGeneratorFn');
   });

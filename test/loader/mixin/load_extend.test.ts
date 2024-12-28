@@ -21,18 +21,18 @@ describe('test/loader/mixin/load_extend.test.ts', () => {
   afterEach(mm.restore);
 
   it('should load app.context app.request app.response', () => {
-    assert(app.context.appContext);
-    assert(app.context.pluginbContext);
-    assert(!app.context.pluginaContext);
-    assert(app.request.appRequest);
-    assert(app.request.pluginbRequest);
-    assert(!app.request.pluginaRequest);
-    assert(app.response.appResponse);
-    assert(app.response.pluginbResponse);
-    assert(!app.response.pluginaResponse);
-    assert((app as any).appApplication);
-    assert((app as any).pluginbApplication);
-    assert(!(app as any).pluginaApplication);
+    assert(app.context.appContext, 'app.context.appContext');
+    assert(app.context.pluginbContext, 'app.context.pluginbContext');
+    assert(!app.context.pluginaContext, '!app.context.pluginaContext');
+    assert(app.request.appRequest, 'app.request.appRequest');
+    assert(app.request.pluginbRequest, 'app.request.pluginbRequest');
+    assert(!app.request.pluginaRequest, '!app.request.pluginaRequest');
+    assert(app.response.appResponse, 'app.response.appResponse');
+    assert(app.response.pluginbResponse, 'app.response.pluginbResponse');
+    assert(!app.response.pluginaResponse, '!app.response.pluginaResponse');
+    assert((app as any).appApplication, 'appApplication');
+    assert((app as any).pluginbApplication, 'pluginbApplication');
+    assert(!(app as any).pluginaApplication, 'pluginaApplication');
 
     return request(app.callback())
       .get('/')

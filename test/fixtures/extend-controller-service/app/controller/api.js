@@ -1,13 +1,11 @@
-'use strict';
-
 module.exports = app => {
   return class ApiController extends app.Controller {
-    * successAction() {
-      const res = yield this.service.api.get();
+    async successAction() {
+      const res = await this.service.api.get();
       this.success({ foo: res });
     }
 
-    * failAction() {
+    async failAction() {
       this.fail('something wrong');
     }
   };

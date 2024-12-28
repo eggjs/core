@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/core",
-  "version": "6.2.4",
+  "version": "6.3.0-beta.1",
   "publishConfig": {
     "access": "public"
   },
@@ -12,13 +12,14 @@
   },
   "description": "A core plugin framework based on @eggjs/koa",
   "scripts": {
+    "clean": "rimraf dist",
     "lint": "eslint src test --ext ts",
-    "pretest": "npm run lint -- --fix && npm run prepublishOnly",
+    "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "npm run test-local",
     "test-local": "egg-bin test",
-    "preci": "npm run lint && npm run prepublishOnly && attw --pack",
+    "preci": "npm run clean && npm run lint && npm run prepublishOnly",
     "ci": "egg-bin cov",
-    "prepublishOnly": "tshy && tshy-after"
+    "prepublishOnly": "tshy && tshy-after && attw --pack"
   },
   "repository": {
     "type": "git",
@@ -37,7 +38,7 @@
   "dependencies": {
     "@eggjs/koa": "^2.20.2",
     "@eggjs/router": "^3.0.5",
-    "@eggjs/utils": "^4.0.2",
+    "@eggjs/utils": "^4.1.5",
     "egg-logger": "^3.5.0",
     "egg-path-matching": "^2.0.0",
     "extend2": "^4.0.0",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.1",
+    "@eggjs/bin": "^7.0.0",
     "@eggjs/tsconfig": "1",
     "@types/js-yaml": "4",
     "@types/mocha": "10",
@@ -59,12 +61,13 @@
     "@types/supertest": "6",
     "await-event": "2",
     "coffee": "5",
-    "egg-bin": "6",
     "eslint": "8",
     "eslint-config-egg": "14",
     "gals": "1",
     "js-yaml": "3",
     "mm": "3",
+    "pedding": "^2.0.0",
+    "rimraf": "6",
     "supertest": "7",
     "ts-node": "10",
     "tshy": "3",

@@ -1,7 +1,7 @@
-const { sleep } = require('../../utils');
+const { scheduler } = require('node:timers/promises');
 
 module.exports = class TimeoutHook {
   async didLoad() {
-    await sleep(10);
+    await scheduler.wait(10);
   }
 };

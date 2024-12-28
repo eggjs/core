@@ -1,5 +1,3 @@
-'use strict';
-
 const EggApplication = require('../egg').Application;
 const utils = require('../../utils');
 

@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = class BootHook {
   constructor(app) {
     this.app = app;

@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = app => {
   class CustomController extends app.Controller {
     success(result) {
@@ -18,7 +16,7 @@ module.exports = app => {
   }
 
   class CustomService extends app.Service {
-    * getData() {
+    async getData() {
       return 'bar';
     }
   }

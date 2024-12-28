@@ -10,7 +10,7 @@ import utils from './utils/index.js';
 import type { Fun } from './utils/index.js';
 import type { EggCore } from './egg.js';
 
-const debug = debuglog('@eggjs/core:lifecycle');
+const debug = debuglog('@eggjs/core/lifecycle');
 
 export interface ILifecycleBoot {
   // loader auto set 'fullPath' property on boot class
@@ -62,13 +62,15 @@ export interface LifecycleOptions {
   logger: EggConsoleLogger;
 }
 
+export type FunWithFullPath = Fun & { fullPath?: string };
+
 export class Lifecycle extends EventEmitter {
   #init: boolean;
   #readyObject: ReadyObject;
   #bootHooks: (BootImplClass | ILifecycleBoot)[];
   #boots: ILifecycleBoot[];
   #isClosed: boolean;
-  #closeFunctionSet: Set<Fun>;
+  #closeFunctionSet: Set<FunWithFullPath>;
   loadReady: Ready;
   bootReady: Ready;
   options: LifecycleOptions;
@@ -96,10 +98,10 @@ export class Lifecycle extends EventEmitter {
     this.#initReady();
     this
       .on('ready_stat', data => {
-        this.logger.info('[egg:core:ready_stat] end ready task %s, remain %j', data.id, data.remain);
+        this.logger.info('[@eggjs/core/lifecycle:ready_stat] end ready task %s, remain %j', data.id, data.remain);
       })
       .on('ready_timeout', id => {
-        this.logger.warn('[egg:core:ready_timeout] %s seconds later %s was still unable to finish.', this.readyTimeout / 1000, id);
+        this.logger.warn('[@eggjs/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.', this.readyTimeout / 1000, id);
       });
 
     this.ready(err => {
@@ -149,11 +151,12 @@ export class Lifecycle extends EventEmitter {
     this.#bootHooks.push(bootHootOrBootClass);
   }
 
-  addFunctionAsBootHook<T = EggCore>(hook: (app: T) => void) {
+  addFunctionAsBootHook<T = EggCore>(hook: (app: T) => void, fullPath?: string) {
     assert(this.#init === false, 'do not add hook when lifecycle has been initialized');
     // app.js is exported as a function
     // call this function in configDidLoad
-    this.#bootHooks.push(class Boot implements ILifecycleBoot {
+    class Boot implements ILifecycleBoot {
+      static fullPath?: string;
       app: T;
       constructor(app: T) {
         this.app = app;
@@ -161,25 +164,34 @@ export class Lifecycle extends EventEmitter {
       configDidLoad() {
         hook(this.app);
       }
-    });
+    }
+    Boot.fullPath = fullPath;
+    this.#bootHooks.push(Boot);
   }
 
   /**
    * init boots and trigger config did config
    */
   init() {
+    debug('%s init lifecycle', this.app.type);
     assert(this.#init === false, 'lifecycle have been init');
     this.#init = true;
     this.#boots = this.#bootHooks.map(BootHootOrBootClass => {
+      let instance = BootHootOrBootClass as ILifecycleBoot;
       if (isClass(BootHootOrBootClass)) {
-        return new BootHootOrBootClass(this.app);
+        instance = new BootHootOrBootClass(this.app);
+        if (!instance.fullPath && 'fullPath' in BootHootOrBootClass) {
+          instance.fullPath = BootHootOrBootClass.fullPath as string;
+        }
       }
-      return BootHootOrBootClass;
+      debug('[init] add boot instance: %o', instance.fullPath);
+      return instance;
     });
   }
 
   registerBeforeStart(scope: Fun, name: string) {
-    debug('add registerBeforeStart, name: %o', name);
+    debug('%s add registerBeforeStart, name: %o',
+      this.options.app.type, name);
     this.#registerReadyCallback({
       scope,
       ready: this.loadReady,
@@ -188,16 +200,24 @@ export class Lifecycle extends EventEmitter {
     });
   }
 
-  registerBeforeClose(fn: Fun) {
+  registerBeforeClose(fn: FunWithFullPath, fullPath?: string) {
     assert(typeof fn === 'function', 'argument should be function');
     assert(this.#isClosed === false, 'app has been closed');
+    if (fullPath) {
+      fn.fullPath = fullPath;
+    }
     this.#closeFunctionSet.add(fn);
+    debug('%s register beforeClose at %o, count: %d',
+      this.app.type, fullPath, this.#closeFunctionSet.size);
   }
 
   async close() {
     // close in reverse order: first created, last closed
     const closeFns = Array.from(this.#closeFunctionSet);
+    debug('%s start trigger %d beforeClose functions',
+      this.app.type, closeFns.length);
     for (const fn of closeFns.reverse()) {
+      debug('%s trigger beforeClose at %o', this.app.type, fn.fullPath);
       await utils.callFn(fn);
       this.#closeFunctionSet.delete(fn);
     }
@@ -206,12 +226,14 @@ export class Lifecycle extends EventEmitter {
     this.removeAllListeners();
     this.app.removeAllListeners();
     this.#isClosed = true;
+    debug('%s closed', this.app.type);
   }
 
   triggerConfigWillLoad() {
     debug('trigger configWillLoad start');
     for (const boot of this.#boots) {
       if (typeof boot.configWillLoad === 'function') {
+        debug('trigger configWillLoad at %o', boot.fullPath);
         boot.configWillLoad();
       }
     }
@@ -223,12 +245,13 @@ export class Lifecycle extends EventEmitter {
     debug('trigger configDidLoad start');
     for (const boot of this.#boots) {
       if (typeof boot.configDidLoad === 'function') {
+        debug('trigger configDidLoad at %o', boot.fullPath);
         boot.configDidLoad();
       }
       // function boot hook register after configDidLoad trigger
       if (typeof boot.beforeClose === 'function') {
         const beforeClose = boot.beforeClose.bind(boot);
-        this.registerBeforeClose(beforeClose);
+        this.registerBeforeClose(beforeClose, boot.fullPath);
       }
     }
     debug('trigger configDidLoad end');
@@ -274,10 +297,12 @@ export class Lifecycle extends EventEmitter {
     return (async () => {
       for (const boot of this.#boots) {
         if (typeof boot.didReady === 'function') {
+          debug('trigger didReady at %o', boot.fullPath);
           try {
             await boot.didReady(err);
-          } catch (e) {
-            this.emit('error', e);
+          } catch (err) {
+            debug('trigger didReady error at %o, error: %s', boot.fullPath, err);
+            this.emit('error', err);
           }
         }
       }
@@ -292,9 +317,11 @@ export class Lifecycle extends EventEmitter {
         if (typeof boot.serverDidReady !== 'function') {
           continue;
         }
+        debug('trigger serverDidReady at %o', boot.fullPath);
         try {
           await boot.serverDidReady();
         } catch (err) {
+          debug('trigger serverDidReady error at %o, error: %s', boot.fullPath, err);
           this.emit('error', err);
         }
       }
