@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.5](https://github.com/eggjs/core/compare/v6.2.4...v6.2.5) (2024-12-28)
+
+
+### Bug Fixes
+
+* load extend ([#279](https://github.com/eggjs/core/issues/279)) ([0f0a13c](https://github.com/eggjs/core/commit/0f0a13c3cc220b0773830f281be1870a748ae5a9))
+
 ## [6.2.4](https://github.com/eggjs/core/compare/v6.2.3...v6.2.4) (2024-12-20)
 
 
