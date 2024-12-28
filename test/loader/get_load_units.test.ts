@@ -16,13 +16,13 @@ describe('test/loader/get_load_units.test.ts', () => {
     assert.equal(units.length, 12);
     assert.equal(units[10].type, 'framework');
     if (process.platform === 'win32') {
-      assert.equal(units[10].path, getFilepath('egg-esm').toLowerCase());
+      assert.equal(units[10].path.toLowerCase(), getFilepath('egg-esm'));
     } else {
       assert.equal(units[10].path, getFilepath('egg-esm'));
     }
     assert.equal(units[11].type, 'app');
     if (process.platform === 'win32') {
-      assert.equal(units[11].path, getFilepath('plugin').toLowerCase());
+      assert.equal(units[11].path.toLowerCase(), getFilepath('plugin'));
     } else {
       assert.equal(units[11].path, getFilepath('plugin'));
     }
