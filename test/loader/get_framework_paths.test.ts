@@ -9,14 +9,15 @@ describe('test/loader/get_framework_paths.test.ts', () => {
   afterEach(mm.restore);
   afterEach(() => app && app.close());
 
-  it('should get from paramter', () => {
+  it('should get from parameter', () => {
     app = createApp('eggpath');
     assert.deepEqual(app.loader.eggPaths, [ getFilepath('egg-esm') ]);
   });
 
   it('should get from framework using symbol', async () => {
+    const Application = await importModule(getFilepath('framework-symbol/index.js'), { importDefaultOnly: true });
     app = createApp('eggpath', {
-      Application: await importModule(getFilepath('framework-symbol/index.js'), { importDefaultOnly: true }),
+      Application,
     });
     assert.deepEqual(app.loader.eggPaths, [
       getFilepath('egg'),

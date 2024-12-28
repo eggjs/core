@@ -320,7 +320,7 @@ export class EggCore extends KoaApplication {
    * Register a function that will be called when app close.
    *
    * Notice:
-   * This method is now NOT recommanded directly used,
+   * This method is now NOT recommended directly used,
    * Developers SHOULDN'T use app.beforeClose directly now,
    * but in the form of class to implement beforeClose instead.
    *
@@ -328,9 +328,9 @@ export class EggCore extends KoaApplication {
    *
    * @param {Function} fn - the function that can be generator function or async function.
    */
-  beforeClose(fn: Fun) {
+  beforeClose(fn: Fun, name?: string) {
     this.deprecate('`beforeClose` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles');
-    this.lifecycle.registerBeforeClose(fn);
+    this.lifecycle.registerBeforeClose(fn, name);
   }
 
   /**

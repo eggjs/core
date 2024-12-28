@@ -1,11 +1,7 @@
-'use strict';
+const { scheduler } = require('node:timers/promises');
 
 module.exports = function(app) {
-  app.beforeStart(function*() {
-    yield sleep(11000);
+  app.beforeStart(async () => {
+    await scheduler.wait(11000);
   });
 };
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}

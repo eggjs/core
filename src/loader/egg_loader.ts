@@ -781,7 +781,7 @@ export class EggLoader {
       const pluginPkgFile = utils.resolvePath(`${name}/package.json`, { paths: [ ...this.lookupDirs ] });
       return path.dirname(pluginPkgFile);
     } catch (err) {
-      debug('[resolvePluginPath] error: %o', err);
+      debug('[resolvePluginPath] error: %o, plugin info: %o', err, plugin);
       throw new Error(`Can not find plugin ${name} in "${[ ...this.lookupDirs ].join(', ')}"`, {
         cause: err,
       });
@@ -1166,8 +1166,10 @@ export class EggLoader {
   async #loadBootHook(fileName: string) {
     this.timing.start(`Load ${fileName}.js`);
     for (const unit of this.getLoadUnits()) {
-      const bootFilePath = this.resolveModule(path.join(unit.path, fileName));
+      const bootFile = path.join(unit.path, fileName);
+      const bootFilePath = this.resolveModule(bootFile);
       if (!bootFilePath) {
+        // debug('[loadBootHook] %o not found', bootFile);
         continue;
       }
       const bootHook = await this.requireFile(bootFilePath);
@@ -1175,10 +1177,12 @@ export class EggLoader {
         bootHook.prototype.fullPath = bootFilePath;
         // if is boot class, add to lifecycle
         this.lifecycle.addBootHook(bootHook);
+        debug('[loadBootHook] add BootHookClass from %o', bootFilePath);
       } else if (typeof bootHook === 'function') {
         // if is boot function, wrap to class
         // for compatibility
-        this.lifecycle.addFunctionAsBootHook(bootHook);
+        this.lifecycle.addFunctionAsBootHook(bootHook, bootFilePath);
+        debug('[loadBootHook] add bootHookFunction from %o', bootFilePath);
       } else {
         this.options.logger.warn('[@eggjs/core:egg_loader] %s must exports a boot class', bootFilePath);
       }
@@ -1595,13 +1599,13 @@ export class EggLoader {
     let fullPath;
     try {
       fullPath = utils.resolvePath(filepath);
-    } catch (e) {
+    } catch (err: any) {
+      // debug('[resolveModule] Module %o resolve error: %s', filepath, err.stack);
       return undefined;
     }
-
-    if (process.env.EGG_TYPESCRIPT !== 'true' && fullPath.endsWith('.ts')) {
-      return undefined;
-    }
+    // if (process.env.EGG_TYPESCRIPT !== 'true' && fullPath.endsWith('.ts')) {
+    //   return undefined;
+    // }
     return fullPath;
   }
 }
