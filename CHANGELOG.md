@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.6](https://github.com/eggjs/core/compare/v6.2.5...v6.2.6) (2024-12-29)
+
+
+### Bug Fixes
+
+* ignore js file when the same ts file exists ([#280](https://github.com/eggjs/core/issues/280)) ([a6acc88](https://github.com/eggjs/core/commit/a6acc88451ccaa397ba9da8cb49ac83aba03f162))
+
 ## [6.2.5](https://github.com/eggjs/core/compare/v6.2.4...v6.2.5) (2024-12-28)
 
 
