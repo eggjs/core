@@ -15,10 +15,12 @@
     "clean": "rimraf dist",
     "lint": "eslint src test --ext ts",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
-    "test": "npm run test-local",
+    "test": "egg-bin test",
+    "posttest": "npm run clean",
     "test-local": "egg-bin test",
     "preci": "npm run clean && npm run lint && npm run prepublishOnly",
     "ci": "egg-bin cov",
+    "postci": "npm run clean",
     "prepublishOnly": "tshy && tshy-after && attw --pack"
   },
   "repository": {
