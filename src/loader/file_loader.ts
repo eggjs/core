@@ -6,7 +6,7 @@ import globby from 'globby';
 import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
 import utils, { Fun } from '../utils/index.js';
 
-const debug = debuglog('@eggjs/core:file_loader');
+const debug = debuglog('@eggjs/core/file_loader');
 
 export const FULLPATH = Symbol('EGG_LOADER_ITEM_FULLPATH');
 export const EXPORTS = Symbol('EGG_LOADER_ITEM_EXPORTS');
@@ -185,6 +185,13 @@ export class FileLoader {
       for (const filepath of filepaths) {
         const fullpath = path.join(directory, filepath);
         if (!fs.statSync(fullpath).isFile()) continue;
+        if (filepath.endsWith('.js')) {
+          const filepathTs = filepath.replace(/\.js$/, '.ts');
+          if (filepaths.includes(filepathTs)) {
+            debug('[parse] ignore %s, because %s exists', fullpath, filepathTs);
+            continue;
+          }
+        }
         // get properties
         // app/service/foo/bar.js => [ 'foo', 'bar' ]
         const properties = getProperties(filepath, this.options.caseStyle);
