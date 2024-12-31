@@ -496,7 +496,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader.loadPlugin();
     const plugin = loader.plugins.a;
     assert.equal(plugin.name, 'a');
-    assert.equal(plugin.path, getFilepath('realpath/a'));
+    assert.equal(plugin.path, getFilepath('realpath/node_modules/a'));
   });
 
   it('should get the defining plugin path in every plugin', async () => {
