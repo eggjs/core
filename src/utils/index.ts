@@ -5,7 +5,7 @@ import { stat } from 'node:fs/promises';
 import BuiltinModule from 'node:module';
 import { importResolve, importModule } from '@eggjs/utils';
 
-const debug = debuglog('@eggjs/core:utils');
+const debug = debuglog('@eggjs/core/utils');
 
 export type Fun = (...args: any[]) => any;
 
@@ -55,10 +55,10 @@ function getCalleeFromStack(withLine?: boolean, stackIndex?: number) {
 export default {
   deprecated(message: string) {
     if (debug.enabled) {
-      console.trace('[@eggjs/core:deprecated] %s', message);
+      console.trace('[@eggjs/core/deprecated] %s', message);
     } else {
-      console.warn('[@eggjs/core:deprecated] %s', message);
-      console.warn('[@eggjs/core:deprecated] set NODE_DEBUG=@eggjs/core:utils can show call stack');
+      console.log('[@eggjs/core/deprecated] %s', message);
+      console.log('[@eggjs/core/deprecated] set NODE_DEBUG=@eggjs/core/utils can show call stack');
     }
   },
 

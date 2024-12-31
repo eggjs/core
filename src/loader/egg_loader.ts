@@ -135,7 +135,7 @@ export class EggLoader {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         require('tsconfig-paths').register({ cwd: this.options.baseDir });
       } else {
-        this.logger.info('[@eggjs/core:egg_loader] skip register "tsconfig-paths" because tsconfig.json not exists at %s',
+        this.logger.info('[@eggjs/core/egg_loader] skip register "tsconfig-paths" because tsconfig.json not exists at %s',
           tsConfigFile);
       }
     }
@@ -639,14 +639,14 @@ export class EggLoader {
 
     const logger = this.options.logger;
     if (!config) {
-      logger.warn(`[@eggjs/core:egg_loader] pkg.eggPlugin is missing in ${pluginPackage}`);
+      logger.warn(`[@eggjs/core/egg_loader] pkg.eggPlugin is missing in ${pluginPackage}`);
       return;
     }
 
     if (config.name && config.strict !== false && config.name !== plugin.name) {
       // pluginName is configured in config/plugin.js
       // pluginConfigName is pkg.eggPlugin.name
-      logger.warn(`[@eggjs/core:egg_loader] pluginName(${plugin.name}) is different from pluginConfigName(${config.name})`);
+      logger.warn(`[@eggjs/core/egg_loader] pluginName(${plugin.name}) is different from pluginConfigName(${config.name})`);
     }
 
     // dep compatible
@@ -1184,7 +1184,7 @@ export class EggLoader {
         this.lifecycle.addFunctionAsBootHook(bootHook, bootFilePath);
         debug('[loadBootHook] add bootHookFunction from %o', bootFilePath);
       } else {
-        this.options.logger.warn('[@eggjs/core:egg_loader] %s must exports a boot class', bootFilePath);
+        this.options.logger.warn('[@eggjs/core/egg_loader] %s must exports a boot class', bootFilePath);
       }
     }
     // init boots
@@ -1295,13 +1295,13 @@ export class EggLoader {
         }
         app.use(mw);
         debug('[loadMiddleware] Use middleware: %s with options: %j', name, options);
-        this.options.logger.info('[@eggjs/core:egg_loader] Use middleware: %s', name);
+        this.options.logger.info('[@eggjs/core/egg_loader] Use middleware: %s', name);
       } else {
-        this.options.logger.info('[@eggjs/core:egg_loader] Disable middleware: %s', name);
+        this.options.logger.info('[@eggjs/core/egg_loader] Disable middleware: %s', name);
       }
     }
 
-    this.options.logger.info('[@eggjs/core:egg_loader] Loaded middleware from %j', middlewarePaths);
+    this.options.logger.info('[@eggjs/core/egg_loader] Loaded middleware from %j', middlewarePaths);
     this.timing.end('Load Middleware');
 
     // add router middleware, make sure router is the last middleware
@@ -1359,7 +1359,7 @@ export class EggLoader {
     };
     await this.loadToApp(controllerBase, 'controller', opt as FileLoaderOptions);
     debug('[loadController] app.controller => %o', this.app.controller);
-    this.options.logger.info('[@eggjs/core:egg_loader] Controller loaded: %s', controllerBase);
+    this.options.logger.info('[@eggjs/core/egg_loader] Controller loaded: %s', controllerBase);
     this.timing.end('Load Controller');
   }
   /** end Controller loader */
