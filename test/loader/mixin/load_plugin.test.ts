@@ -200,7 +200,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     let message = '';
     app = createApp('plugin');
     mm(app.console, 'warn', function(m: string) {
-      if (!m.startsWith('[@eggjs/core:egg_loader] eggPlugin is missing') && !message) {
+      if (!m.startsWith('[@eggjs/core/egg_loader] eggPlugin is missing') && !message) {
         message = m;
       }
     });
@@ -208,7 +208,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader.loadPlugin();
     await loader.loadConfig();
 
-    assert.equal(message, '[@eggjs/core:egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)');
+    assert.equal(message, '[@eggjs/core/egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)');
   });
 
   it('should not warn when the config.strict is false', async () => {

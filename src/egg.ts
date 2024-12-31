@@ -20,7 +20,7 @@ import { Lifecycle } from './lifecycle.js';
 import { EggLoader } from './loader/egg_loader.js';
 import utils from './utils/index.js';
 
-const debug = debuglog('@eggjs/core:egg');
+const debug = debuglog('@eggjs/core/egg');
 
 export const EGG_LOADER = Symbol.for('egg#loader');
 
