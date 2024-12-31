@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.7](https://github.com/eggjs/core/compare/v6.2.6...v6.2.7) (2024-12-31)
+
+
+### Bug Fixes
+
+* deprecated should print to stdout ([#281](https://github.com/eggjs/core/issues/281)) ([2aeb0e2](https://github.com/eggjs/core/commit/2aeb0e25acff9615d08ffc29e62b65c982b56674))
+
 ## [6.2.6](https://github.com/eggjs/core/compare/v6.2.5...v6.2.6) (2024-12-29)
 
 
