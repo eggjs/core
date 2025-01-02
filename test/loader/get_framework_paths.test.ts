@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import mm from 'mm';
+import { mm } from 'mm';
 import { importModule } from '@eggjs/utils';
 import { Application, createApp, getFilepath } from '../helper.js';
 import { EggLoader, EggCore } from '../../src/index.js';

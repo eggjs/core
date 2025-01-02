@@ -7,7 +7,7 @@ import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } fr
 import type { Logger } from 'egg-logger';
 import { getParamNames, readJSONSync, readJSON } from 'utility';
 import { extend } from 'extend2';
-import { Request, Response, Context, Application } from '@eggjs/koa';
+import { Request, Response, Application, Context as KoaContext } from '@eggjs/koa';
 import { pathMatching, type PathMatchingOptions } from 'egg-path-matching';
 import { now, diff } from 'performance-ms';
 import { FULLPATH, FileLoader, FileLoaderOptions } from './file_loader.js';
@@ -15,15 +15,17 @@ import { ContextLoader, ContextLoaderOptions } from './context_loader.js';
 import utils, { Fun } from '../utils/index.js';
 import sequencify from '../utils/sequencify.js';
 import { Timing } from '../utils/timing.js';
-import type { ContextDelegation, EggCore, MiddlewareFunc } from '../egg.js';
-import { BaseContextClass } from '../base_context_class.js';
+import type {
+  Context, EggCore, MiddlewareFunc,
+} from '../egg.js';
+import type { BaseContextClass } from '../base_context_class.js';
 
 const debug = debuglog('@eggjs/core/loader/egg_loader');
 
 const originalPrototypes: Record<string, any> = {
   request: Request.prototype,
   response: Response.prototype,
-  context: Context.prototype,
+  context: KoaContext.prototype,
   application: Application.prototype,
 };
 
@@ -1691,7 +1693,7 @@ function wrapControllerClass(Controller: typeof BaseContextClass, fullPath: stri
 }
 
 function controllerMethodToMiddleware(Controller: typeof BaseContextClass, key: string) {
-  return function classControllerMiddleware(this: ContextDelegation, ...args: any[]) {
+  return function classControllerMiddleware(this: Context, ...args: any[]) {
     const controller: any = new Controller(this);
     if (!this.app.config.controller?.supportParams) {
       args = [ this ];
@@ -1727,7 +1729,7 @@ function wrapObject(obj: Record<string, any>, fullPath: string, prefix?: string)
 }
 
 function objectFunctionToMiddleware(func: Fun) {
-  async function objectControllerMiddleware(this: ContextDelegation, ...args: any[]) {
+  async function objectControllerMiddleware(this: Context, ...args: any[]) {
     if (!this.app.config.controller?.supportParams) {
       args = [ this ];
     }

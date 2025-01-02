@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
-import mm from 'mm';
+import { mm } from 'mm';
 import { getPlugins } from '@eggjs/utils';
 import { Application, createApp, getFilepath } from '../helper.js';
 import { EggLoader } from '../../src/index.js';

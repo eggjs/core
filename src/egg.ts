@@ -6,7 +6,6 @@ import {
   Request as KoaRequest, Response as KoaResponse,
 } from '@eggjs/koa';
 import type {
-  ContextDelegation as KoaContextDelegation,
   MiddlewareFunc as KoaMiddlewareFunc,
   Next,
 } from '@eggjs/koa';
@@ -42,20 +41,18 @@ export {
 
 // export @eggjs/koa types
 export type {
-  Next, KoaMiddlewareFunc, KoaContextDelegation,
+  Next, KoaMiddlewareFunc,
 };
 
 // export @eggjs/core classes
 export class Request extends KoaRequest {
   declare app: EggCore;
   declare response: Response;
-  declare ctx: ContextDelegation;
 }
 
-export class Response extends KoaResponse {
+export class Response extends KoaResponse<Context> {
   declare app: EggCore;
   declare request: Request;
-  declare ctx: ContextDelegation;
 }
 
 export class Context extends KoaContext {
@@ -66,8 +63,7 @@ export class Context extends KoaContext {
 }
 
 // export @eggjs/core types
-export type ContextDelegation = KoaContextDelegation & Context;
-export type MiddlewareFunc<T extends ContextDelegation = ContextDelegation> = KoaMiddlewareFunc<T>;
+export type MiddlewareFunc<T extends Context = Context> = KoaMiddlewareFunc<T>;
 
 export class EggCore extends KoaApplication {
   options: EggCoreOptions;

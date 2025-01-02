@@ -1,4 +1,4 @@
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 import { getFilepath, createApp, Application } from '../helper.js';
 
 describe('test/loader/context_loader.test.ts', () => {

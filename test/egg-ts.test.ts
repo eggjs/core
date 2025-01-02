@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
-import mm from 'mm';
-import request from 'supertest';
+import { mm } from 'mm';
+import { request } from '@eggjs/supertest';
 import coffee from 'coffee';
 import { utils } from '../src/index.js';
 import { Application, createApp, getFilepath } from './helper.js';
