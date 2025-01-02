@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.11](https://github.com/eggjs/core/compare/v6.2.10...v6.2.11) (2025-01-02)
+
+
+### Bug Fixes
+
+* remove response template context ([#285](https://github.com/eggjs/core/issues/285)) ([84dc3b3](https://github.com/eggjs/core/commit/84dc3b34d6ad885f0ad530aad20a0d564615dbb3))
+
 ## [6.2.10](https://github.com/eggjs/core/compare/v6.2.9...v6.2.10) (2025-01-02)
 
 
