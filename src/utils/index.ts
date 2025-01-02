@@ -84,6 +84,11 @@ export default {
       const obj = await importModule(filepath, { importDefaultOnly: true });
       return obj;
     } catch (e: any) {
+      if (!e.message && typeof e !== 'string') {
+        // ts error: test/fixtures/apps/app-ts/app/extend/context.ts(5,17): error TS2339: Property 'url' does not exist on type 'Context'
+        console.trace(e);
+        throw e;
+      }
       const err = new Error(`[@eggjs/core] load file: ${filepath}, error: ${e.message}`);
       err.cause = e;
       debug('[loadFile] handle %s error: %s', filepath, e);
