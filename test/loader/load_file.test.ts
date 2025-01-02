@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import mm from 'mm';
+import { mm } from 'mm';
 import { createApp, Application, getFilepath } from '../helper.js';
 
 describe('test/loader/load_file.test.ts', () => {

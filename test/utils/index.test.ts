@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { strict as assert } from 'node:assert';
-import mm from 'mm';
+import { mm } from 'mm';
 import utils from '../../src/utils/index.js';
 import { getFilepath } from '../helper.js';
 

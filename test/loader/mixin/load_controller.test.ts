@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 import is from 'is-type-of';
 import { Application, createApp, getFilepath } from '../../helper.js';
 

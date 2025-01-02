@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { strict as assert } from 'node:assert';
-import mm from 'mm';
+import { mm } from 'mm';
 import { EggCore } from '../../../src/index.js';
 import { Application, createApp, getFilepath } from '../../helper.js';
 

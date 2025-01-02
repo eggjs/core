@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 import { getAsyncLocalStorage, kGALS } from 'gals';
 import { getFilepath } from './helper.js';
 import { Application } from './fixtures/egg-esm/index.js';

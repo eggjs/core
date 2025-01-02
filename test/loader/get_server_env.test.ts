@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import mm from 'mm';
+import { mm } from 'mm';
 import { Application, createApp } from '../helper.js';
 
 describe('test/loader/get_server_env.test.ts', () => {

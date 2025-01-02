@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { strict as assert } from 'node:assert';
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 import { Application, createApp, getFilepath } from '../../helper.js';
 
 describe('test/loader/mixin/load_middleware.test.ts', () => {

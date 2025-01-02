@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { strict as assert } from 'node:assert';
-import mm from 'mm';
+import { mm } from 'mm';
 import { Application, createApp, getFilepath } from '../../helper.js';
 import { EggCore, EggLoader } from '../../../src/index.js';
 
