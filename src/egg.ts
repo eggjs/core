@@ -50,7 +50,7 @@ export class Request extends KoaRequest {
   declare response: Response;
 }
 
-export class Response extends KoaResponse<Context> {
+export class Response extends KoaResponse {
   declare app: EggCore;
   declare request: Request;
 }
@@ -63,7 +63,7 @@ export class Context extends KoaContext {
 }
 
 // export @eggjs/core types
-export type MiddlewareFunc<T extends Context = Context> = KoaMiddlewareFunc<T>;
+export type MiddlewareFunc<T = Context> = KoaMiddlewareFunc<T>;
 
 export class EggCore extends KoaApplication {
   options: EggCoreOptions;
