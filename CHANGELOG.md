@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.9](https://github.com/eggjs/core/compare/v6.2.8...v6.2.9) (2025-01-02)
+
+
+### Bug Fixes
+
+* remove ContextDelegation ([#283](https://github.com/eggjs/core/issues/283)) ([c56cf7b](https://github.com/eggjs/core/commit/c56cf7b9beff7f6fdcd2e3660800f3effd90fc9e))
+
 ## [6.2.8](https://github.com/eggjs/core/compare/v6.2.7...v6.2.8) (2025-01-02)
 
 
