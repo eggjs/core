@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.8](https://github.com/eggjs/core/compare/v6.2.7...v6.2.8) (2025-01-02)
+
+
+### Bug Fixes
+
+* show ts error on loadFile ([#282](https://github.com/eggjs/core/issues/282)) ([1d3ab39](https://github.com/eggjs/core/commit/1d3ab39c544a65d818f546b4af7626d03de39b91))
+
 ## [6.2.7](https://github.com/eggjs/core/compare/v6.2.6...v6.2.7) (2024-12-31)
 
 
