@@ -1,18 +1,18 @@
 import assert from 'node:assert';
 import { isClass, isPrimitive } from 'is-type-of';
 import { FileLoader, EXPORTS, type FileLoaderOptions } from './file_loader.js';
-import type { ContextDelegation } from '../egg.js';
+import type { Context } from '../egg.js';
 
 const CLASS_LOADER = Symbol('classLoader');
 
 export interface ClassLoaderOptions {
-  ctx: ContextDelegation;
+  ctx: Context;
   properties: any;
 }
 
 export class ClassLoader {
   readonly _cache = new Map();
-  _ctx: ContextDelegation;
+  _ctx: Context;
 
   constructor(options: ClassLoaderOptions) {
     assert(options.ctx, 'options.ctx is required');
@@ -98,7 +98,7 @@ export class ContextLoader extends FileLoader {
   }
 }
 
-function getInstance(values: any, ctx: ContextDelegation) {
+function getInstance(values: any, ctx: Context) {
   // it's a directory when it has no exports
   // then use ClassLoader
   const Class = values[EXPORTS] ? values : null;
