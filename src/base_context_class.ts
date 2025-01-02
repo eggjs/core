@@ -5,16 +5,16 @@ import type { EggCore, Context } from './egg.js';
  * it's instantiated in context level,
  * {@link Helper}, {@link Service} is extending it.
  */
-export class BaseContextClass<T extends Context = Context> {
-  ctx: T;
+export class BaseContextClass {
+  ctx: Context;
   app: EggCore;
   config: Record<string, any>;
-  service: BaseContextClass<T>;
+  service: BaseContextClass;
 
   /**
    * @since 1.0.0
    */
-  constructor(ctx: T) {
+  constructor(ctx: Context) {
     /**
      * @member {Context} BaseContextClass#ctx
      * @since 1.0.0
@@ -34,6 +34,6 @@ export class BaseContextClass<T extends Context = Context> {
      * @member {Service} BaseContextClass#service
      * @since 1.0.0
      */
-    this.service = ctx.service as BaseContextClass<T>;
+    this.service = ctx.service;
   }
 }
