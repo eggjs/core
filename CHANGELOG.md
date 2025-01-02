@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.10](https://github.com/eggjs/core/compare/v6.2.9...v6.2.10) (2025-01-02)
+
+
+### Bug Fixes
+
+* don't set template Context on BaseContextClass ([#284](https://github.com/eggjs/core/issues/284)) ([45b0504](https://github.com/eggjs/core/commit/45b0504cddd17ae24fffde33b72dce6d07e285f5))
+
 ## [6.2.9](https://github.com/eggjs/core/compare/v6.2.8...v6.2.9) (2025-01-02)
 
 
