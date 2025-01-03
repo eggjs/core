@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { isClass } from 'is-type-of';
 import yaml from 'js-yaml';
-import { FileLoader } from '../../src/loader/file_loader.js';
+import { FileLoader, CaseStyle } from '../../src/loader/file_loader.js';
 import { getFilepath } from '../helper.js';
 
 const dirBase = getFilepath('load_dirs');
@@ -275,7 +275,7 @@ describe('test/loader/file_loader.test.ts', () => {
       await new FileLoader({
         directory: path.join(dirBase, 'camelize'),
         target,
-        caseStyle: 'upper',
+        caseStyle: CaseStyle.upper,
       }).load();
 
       assert(target.FooBar1);
@@ -289,7 +289,7 @@ describe('test/loader/file_loader.test.ts', () => {
       await new FileLoader({
         directory: path.join(dirBase, 'camelize'),
         target,
-        caseStyle: 'camel',
+        caseStyle: CaseStyle.camel,
       }).load();
 
       assert(target.fooBar1);
@@ -303,7 +303,7 @@ describe('test/loader/file_loader.test.ts', () => {
       await new FileLoader({
         directory: path.join(dirBase, 'camelize'),
         target,
-        caseStyle: 'lower',
+        caseStyle: CaseStyle.lower,
       }).load();
 
       assert(target.fooBar1);
@@ -349,7 +349,7 @@ describe('test/loader/file_loader.test.ts', () => {
       await new FileLoader({
         directory: path.join(dirBase, 'camelize'),
         target,
-        caseStyle: 'upper',
+        caseStyle: CaseStyle.upper,
         lowercaseFirst: true,
       }).load();
 

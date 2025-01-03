@@ -68,7 +68,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
           custom: {
           },
         },
-      };
+      } as any;
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
@@ -88,7 +88,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
             inject: 'unknown',
           },
         },
-      };
+      } as any;
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
@@ -127,7 +127,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
             inject: 'ctx',
           },
         },
-      };
+      } as any;
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
