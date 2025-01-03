@@ -10,7 +10,7 @@ import { extend } from 'extend2';
 import { Request, Response, Application, Context as KoaContext } from '@eggjs/koa';
 import { pathMatching, type PathMatchingOptions } from 'egg-path-matching';
 import { now, diff } from 'performance-ms';
-import { FULLPATH, FileLoader, FileLoaderOptions } from './file_loader.js';
+import { CaseStyle, FULLPATH, FileLoader, FileLoaderOptions } from './file_loader.js';
 import { ContextLoader, ContextLoaderOptions } from './context_loader.js';
 import utils, { Fun } from '../utils/index.js';
 import sequencify from '../utils/sequencify.js';
@@ -19,6 +19,7 @@ import type {
   Context, EggCore, MiddlewareFunc,
 } from '../egg.js';
 import type { BaseContextClass } from '../base_context_class.js';
+import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.js';
 
 const debug = debuglog('@eggjs/core/loader/egg_loader');
 
@@ -29,44 +30,6 @@ const originalPrototypes: Record<string, any> = {
   application: Application.prototype,
 };
 
-export interface EggAppInfo {
-  /** package.json */
-  pkg: Record<string, any>;
-  /** the application name from package.json */
-  name: string;
-  /** current directory of application */
-  baseDir: string;
-  /** equals to serverEnv */
-  env: string;
-  /** equals to serverScope */
-  scope: string;
-  /** home directory of the OS */
-  HOME: string;
-  /** baseDir when local and unittest, HOME when other environment */
-  root: string;
-}
-
-export interface EggPluginInfo {
-  /** the plugin name, it can be used in `dep` */
-  name: string;
-  /** the package name of plugin */
-  package?: string;
-  version?: string;
-  /** whether enabled */
-  enable: boolean;
-  implicitEnable?: boolean;
-  /** the directory of the plugin package */
-  path?: string;
-  /** the dependent plugins, you can use the plugin name */
-  dependencies: string[];
-  /** the optional dependent plugins. */
-  optionalDependencies: string[];
-  dependents?: string[];
-  /** specify the serverEnv that only enable the plugin in it */
-  env: string[];
-  /** the file plugin config in. */
-  from: string;
-}
 
 export interface EggLoaderOptions {
   /** server env */
@@ -845,7 +808,7 @@ export class EggLoader {
 
   /** start Config loader */
   configMeta: Record<string, any>;
-  config: Record<string, any>;
+  config: EggAppConfig;
 
   /**
    * Load config/config.js
@@ -859,7 +822,10 @@ export class EggLoader {
     this.timing.start('Load Config');
     this.configMeta = {};
 
-    const target: Record<string, any> = {};
+    const target: EggAppConfig = {
+      middleware: [],
+      coreMiddleware: [],
+    };
 
     // Load Application config first
     const appConfig = await this.#preloadAppConfig();
@@ -1208,7 +1174,7 @@ export class EggLoader {
     const servicePaths = this.getLoadUnits().map(unit => path.join(unit.path, 'app/service'));
     options = {
       call: true,
-      caseStyle: 'lower',
+      caseStyle: CaseStyle.lower,
       fieldClass: 'serviceClasses',
       directory: servicePaths,
       ...options,
@@ -1248,7 +1214,7 @@ export class EggLoader {
     opt = {
       call: false,
       override: true,
-      caseStyle: 'lower',
+      caseStyle: CaseStyle.lower,
       directory: middlewarePaths,
       ...opt,
     };
@@ -1323,7 +1289,7 @@ export class EggLoader {
     this.timing.start('Load Controller');
     const controllerBase = path.join(this.options.baseDir, 'app/controller');
     opt = {
-      caseStyle: 'lower',
+      caseStyle: CaseStyle.lower,
       directory: controllerBase,
       initializer: (obj, opt) => {
         // return class if it exports a function
@@ -1403,7 +1369,7 @@ export class EggLoader {
         case 'ctx': {
           assert(!(property in this.app.context), `customLoader should not override ctx.${property}`);
           const options = {
-            caseStyle: 'lower',
+            caseStyle: CaseStyle.lower,
             fieldClass: `${property}Classes`,
             ...loaderConfig,
             directory,
@@ -1414,7 +1380,7 @@ export class EggLoader {
         case 'app': {
           assert(!(property in this.app), `customLoader should not override app.${property}`);
           const options = {
-            caseStyle: 'lower',
+            caseStyle: CaseStyle.lower,
             initializer: (Clazz: unknown) => {
               return isClass(Clazz) ? new Clazz(this.app) : Clazz;
             },
@@ -1533,10 +1499,11 @@ export class EggLoader {
    * @param {Object} options - see {@link FileLoader}
    * @since 1.0.0
    */
-  async loadToApp(directory: string | string[], property: string | symbol, options?: FileLoaderOptions) {
+  async loadToApp(directory: string | string[], property: string | symbol,
+    options?: Omit<FileLoaderOptions, 'inject' | 'target'>) {
     const target = {};
     Reflect.set(this.app, property, target);
-    options = {
+    const loadOptions: FileLoaderOptions = {
       ...options,
       directory: options?.directory ?? directory,
       target,
@@ -1545,7 +1512,7 @@ export class EggLoader {
 
     const timingKey = `Load "${String(property)}" to Application`;
     this.timing.start(timingKey);
-    await new FileLoader(options).load();
+    await new FileLoader(loadOptions).load();
     this.timing.end(timingKey);
   }
 
@@ -1556,8 +1523,9 @@ export class EggLoader {
    * @param {Object} options - see {@link ContextLoader}
    * @since 1.0.0
    */
-  async loadToContext(directory: string | string[], property: string | symbol, options?: ContextLoaderOptions) {
-    options = {
+  async loadToContext(directory: string | string[], property: string | symbol,
+    options?: Omit<ContextLoaderOptions, 'inject' | 'property'>) {
+    const loadOptions: ContextLoaderOptions = {
       ...options,
       directory: options?.directory || directory,
       property,
@@ -1566,7 +1534,7 @@ export class EggLoader {
 
     const timingKey = `Load "${String(property)}" to Context`;
     this.timing.start(timingKey);
-    await new ContextLoader(options).load();
+    await new ContextLoader(loadOptions).load();
     this.timing.end(timingKey);
   }
 

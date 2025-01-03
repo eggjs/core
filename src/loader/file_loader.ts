@@ -11,7 +11,12 @@ const debug = debuglog('@eggjs/core/file_loader');
 export const FULLPATH = Symbol('EGG_LOADER_ITEM_FULLPATH');
 export const EXPORTS = Symbol('EGG_LOADER_ITEM_EXPORTS');
 
-export type CaseStyle = 'camel' | 'lower' | 'upper';
+export enum CaseStyle {
+  camel = 'camel',
+  lower = 'lower',
+  upper = 'upper',
+}
+
 export type CaseStyleFunction = (filepath: string) => string[];
 export type FileLoaderInitializer = (exports: unknown, options: { path: string; pathName: string }) => unknown;
 export type FileLoaderFilter = (exports: unknown) => boolean;
@@ -79,7 +84,7 @@ export class FileLoader {
     assert(options.directory, 'options.directory is required');
     assert(options.target, 'options.target is required');
     this.options = {
-      caseStyle: 'camel',
+      caseStyle: CaseStyle.camel,
       call: true,
       override: false,
       ...options,
@@ -88,7 +93,7 @@ export class FileLoader {
     // compatible old options _lowercaseFirst_
     if (this.options.lowercaseFirst === true) {
       utils.deprecated('lowercaseFirst is deprecated, use caseStyle instead');
-      this.options.caseStyle = 'lower';
+      this.options.caseStyle = CaseStyle.lower;
     }
   }
 

@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
 import * as EggCore from '../src/index.js';
+import type { EggAppConfig } from '../src/index.js';
 
 describe('test/index.test.ts', () => {
   it('should expose properties', () => {
@@ -10,6 +11,7 @@ describe('test/index.test.ts', () => {
     console.log(Object.keys(EggCore));
     assert.deepEqual(Object.keys(EggCore), [
       'BaseContextClass',
+      'CaseStyle',
       'ClassLoader',
       'Context',
       'ContextLoader',
@@ -30,5 +32,14 @@ describe('test/index.test.ts', () => {
       'Timing',
       'utils',
     ]);
+  });
+
+  it('should expose types', () => {
+    const config = {
+      coreMiddleware: [],
+      middleware: [],
+    } as EggAppConfig;
+    assert(config.middleware);
+    assert(config.coreMiddleware);
   });
 });
