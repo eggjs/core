@@ -379,7 +379,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
     });
 
     it('should support parameter', async () => {
-      assert.equal(app.config.controller.supportParams, true);
+      assert.equal(app.config.controller!.supportParams, true);
       const ctx = { app };
       const args = [ 1, 2, 3 ];
       let r = await app.controller.generatorFunction.call(ctx, ...args);

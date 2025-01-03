@@ -18,6 +18,7 @@ import type { Fun } from './utils/index.js';
 import { Lifecycle } from './lifecycle.js';
 import { EggLoader } from './loader/egg_loader.js';
 import utils from './utils/index.js';
+import { EggAppConfig } from './types.js';
 
 const debug = debuglog('@eggjs/core/egg');
 
@@ -247,8 +248,8 @@ export class EggCore extends KoaApplication {
    * @member {Config}
    * @since 1.0.0
    */
-  get config() {
-    return this.loader ? this.loader.config : {};
+  get config(): EggAppConfig {
+    return this.loader ? this.loader.config : {} as EggAppConfig;
   }
 
   /**

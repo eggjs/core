@@ -102,6 +102,8 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
     const app = createApp('custom-loader');
     try {
       app.loader.config = {
+        coreMiddleware: [],
+        appMiddleware: [],
         customLoader: {
           config: {
             directory: 'app/config',

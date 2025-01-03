@@ -10,3 +10,4 @@ export * from './loader/file_loader.js';
 export * from './loader/context_loader.js';
 export * from './utils/sequencify.js';
 export * from './utils/timing.js';
+export type * from './types.js';
