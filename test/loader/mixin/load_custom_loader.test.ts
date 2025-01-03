@@ -103,7 +103,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
     try {
       app.loader.config = {
         coreMiddleware: [],
-        appMiddleware: [],
+        middleware: [],
         customLoader: {
           config: {
             directory: 'app/config',

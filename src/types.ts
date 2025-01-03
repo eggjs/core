@@ -48,7 +48,7 @@ export interface CustomLoaderConfigItem {
 
 export interface EggAppConfig extends Record<string, any> {
   coreMiddleware: string[];
-  appMiddleware: string[];
+  middleware: string[];
   customLoader?: Record<string, CustomLoaderConfigItem>;
   controller?: {
     supportParams?: boolean;

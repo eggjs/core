@@ -823,7 +823,7 @@ export class EggLoader {
     this.configMeta = {};
 
     const target: EggAppConfig = {
-      appMiddleware: [],
+      middleware: [],
       coreMiddleware: [],
     };
 
@@ -855,8 +855,8 @@ export class EggLoader {
     extend(true, target, envConfig);
 
     // You can manipulate the order of app.config.coreMiddleware and app.config.appMiddleware in app.js
-    target.coreMiddlewares = target.coreMiddleware;
-    target.appMiddlewares = target.middleware;
+    target.coreMiddleware = target.coreMiddlewares = target.coreMiddleware || [];
+    target.appMiddleware = target.appMiddlewares = target.middleware || [];
 
     this.config = target;
     debug('[loadConfig] all config: %o', this.config);

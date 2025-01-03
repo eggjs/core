@@ -37,9 +37,9 @@ describe('test/index.test.ts', () => {
   it('should expose types', () => {
     const config = {
       coreMiddleware: [],
-      appMiddleware: [],
+      middleware: [],
     } as EggAppConfig;
-    assert(config.appMiddleware);
+    assert(config.middleware);
     assert(config.coreMiddleware);
   });
 });
