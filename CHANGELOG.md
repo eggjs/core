@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.12](https://github.com/eggjs/core/compare/v6.2.11...v6.2.12) (2025-01-03)
+
+
+### Bug Fixes
+
+* export EggAppConfig type let plugin can override it ([#286](https://github.com/eggjs/core/issues/286)) ([62b1f97](https://github.com/eggjs/core/commit/62b1f972826f5a51901ff36e6bbd8f4a9d7a570f))
+
 ## [6.2.11](https://github.com/eggjs/core/compare/v6.2.10...v6.2.11) (2025-01-02)
 
 
