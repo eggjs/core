@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.13](https://github.com/eggjs/core/compare/v6.2.12...v6.2.13) (2025-01-04)
+
+
+### Bug Fixes
+
+* support load plugin from typescript dir ([#287](https://github.com/eggjs/core/issues/287)) ([7adabd5](https://github.com/eggjs/core/commit/7adabd5042e9f464ec2352f3292d7a86318db8b4))
+
 ## [6.2.12](https://github.com/eggjs/core/compare/v6.2.11...v6.2.12) (2025-01-03)
 
 
