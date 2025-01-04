@@ -222,6 +222,13 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     assert(!message);
   });
 
+  it('should load plugin when eggPlugin.exports.typescript = "./src" exists', async () => {
+    app = createApp('plugin-ts-src');
+    const loader = app.loader;
+    await loader.loadPlugin();
+    assert.match(loader.allPlugins.agg.path!, /src$/);
+  });
+
   it('should loadConfig plugins with custom plugins config', async () => {
     const baseDir = getFilepath('plugin');
     const plugins = {

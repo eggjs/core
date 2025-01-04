@@ -5,9 +5,13 @@ import { debuglog, inspect } from 'node:util';
 import { homedir } from 'node-homedir';
 import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } from 'is-type-of';
 import type { Logger } from 'egg-logger';
-import { getParamNames, readJSONSync, readJSON } from 'utility';
+import {
+  getParamNames, readJSONSync, readJSON, exists,
+} from 'utility';
 import { extend } from 'extend2';
 import { Request, Response, Application, Context as KoaContext } from '@eggjs/koa';
+import { register as tsconfigPathsRegister } from 'tsconfig-paths';
+import { isESM, isSupportTypeScript } from '@eggjs/utils';
 import { pathMatching, type PathMatchingOptions } from 'egg-path-matching';
 import { now, diff } from 'performance-ms';
 import { CaseStyle, FULLPATH, FileLoader, FileLoaderOptions } from './file_loader.js';
@@ -65,7 +69,6 @@ export class EggLoader {
   readonly appInfo: EggAppInfo;
   dirs?: EggDirInfo[];
 
-
   /**
    * @class
    * @param {Object} options - options
@@ -95,12 +98,11 @@ export class EggLoader {
     if (process.env.EGG_TYPESCRIPT === 'true' || (this.pkg.egg && this.pkg.egg.typescript)) {
       // skip require tsconfig-paths if tsconfig.json not exists
       const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
-      // FIXME: support esm
-      if (fs.existsSync(tsConfigFile) && typeof require === 'function') {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        require('tsconfig-paths').register({ cwd: this.options.baseDir });
+      if (fs.existsSync(tsConfigFile)) {
+        tsconfigPathsRegister({ cwd: this.options.baseDir } as any);
       } else {
-        this.logger.info('[@eggjs/core/egg_loader] skip register "tsconfig-paths" because tsconfig.json not exists at %s',
+        this.logger.info(
+          '[@eggjs/core/egg_loader] skip register "tsconfig-paths" because tsconfig.json not exists at %s',
           tsConfigFile);
       }
     }
@@ -599,7 +601,7 @@ export class EggLoader {
         plugin.version = pkg.version;
       }
       // support commonjs and esm dist files
-      plugin.path = this.#formatPluginPathFromPackageJSON(plugin.path!, pkg);
+      plugin.path = await this.#formatPluginPathFromPackageJSON(plugin.path!, pkg);
     }
 
     const logger = this.options.logger;
@@ -753,26 +755,36 @@ export class EggLoader {
     }
   }
 
-  #formatPluginPathFromPackageJSON(pluginPath: string, pluginPkg: {
+  async #formatPluginPathFromPackageJSON(pluginPath: string, pluginPkg: {
     eggPlugin?: {
       exports?: {
         import?: string;
         require?: string;
+        typescript?: string;
       };
     };
-  }) {
-    if (pluginPkg.eggPlugin?.exports) {
-      if (typeof require === 'function') {
-        if (pluginPkg.eggPlugin.exports.require) {
-          pluginPath = path.join(pluginPath, pluginPkg.eggPlugin.exports.require);
+  }): Promise<string> {
+    let realPluginPath = pluginPath;
+    const exports = pluginPkg.eggPlugin?.exports;
+    if (exports) {
+      if (isESM) {
+        if (exports.import) {
+          realPluginPath = path.join(pluginPath, exports.import);
         }
       } else {
-        if (pluginPkg.eggPlugin.exports.import) {
-          pluginPath = path.join(pluginPath, pluginPkg.eggPlugin.exports.import);
+        if (exports.require) {
+          realPluginPath = path.join(pluginPath, exports.require);
+        }
+      }
+      if (exports.typescript && isSupportTypeScript()) {
+        if (!(await exists(realPluginPath))) {
+          // if require/import path not exists, use typescript path for development stage
+          realPluginPath = path.join(pluginPath, exports.typescript);
+          debug('[formatPluginPathFromPackageJSON] use typescript path %o', realPluginPath);
         }
       }
     }
-    return pluginPath;
+    return realPluginPath;
   }
 
   #extendPlugins(targets: Record<string, EggPluginInfo>, plugins: Record<string, EggPluginInfo>) {
