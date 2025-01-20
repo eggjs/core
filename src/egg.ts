@@ -9,7 +9,7 @@ import type {
   MiddlewareFunc as KoaMiddlewareFunc,
   Next,
 } from '@eggjs/koa';
-import { EggConsoleLogger } from 'egg-logger';
+import { EggConsoleLogger, Logger } from 'egg-logger';
 import { RegisterOptions, ResourcesController, EggRouter as Router } from '@eggjs/router';
 import type { ReadyFunctionArg } from 'get-ready';
 import { BaseContextClass } from './base_context_class.js';
@@ -19,6 +19,9 @@ import { Lifecycle } from './lifecycle.js';
 import { EggLoader } from './loader/egg_loader.js';
 import utils from './utils/index.js';
 import { EggAppConfig } from './types.js';
+import {
+  Singleton, type SingletonCreateMethod, type SingletonOptions,
+} from './singleton.js';
 
 const debug = debuglog('@eggjs/core/egg');
 
@@ -183,6 +186,34 @@ export class EggCore extends KoaApplication {
       env: options.env ?? '',
       EggCoreClass: EggCore,
     });
+  }
+
+  get logger(): Logger {
+    return this.console;
+  }
+
+  get coreLogger(): Logger {
+    return this.console;
+  }
+
+  /**
+   * create a singleton instance
+   * @param {String} name - unique name for singleton
+   * @param {Function|AsyncFunction} create - method will be invoked when singleton instance create
+   */
+  addSingleton(name: string, create: SingletonCreateMethod) {
+    const options: SingletonOptions = {
+      name,
+      create,
+      app: this,
+    };
+    const singleton = new Singleton(options);
+    const initPromise = singleton.init();
+    if (initPromise) {
+      this.beforeStart(async () => {
+        await initPromise;
+      });
+    }
   }
 
   /**
