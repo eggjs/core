@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.0](https://github.com/eggjs/core/compare/v6.2.13...v6.3.0) (2025-01-20)
+
+
+### Features
+
+* mv Singleton from egg ([#288](https://github.com/eggjs/core/issues/288)) ([b5ebf68](https://github.com/eggjs/core/commit/b5ebf6825199cfcdbd3f502023b35eda260b4262))
+
 ## [6.2.13](https://github.com/eggjs/core/compare/v6.2.12...v6.2.13) (2025-01-04)
 
 
