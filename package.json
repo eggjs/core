@@ -7,9 +7,6 @@
   "engines": {
     "node": ">= 18.19.0"
   },
-  "tnpm": {
-    "mode": "npm"
-  },
   "description": "A core plugin framework based on @eggjs/koa",
   "scripts": {
     "clean": "rimraf dist",
