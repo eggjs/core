@@ -34,6 +34,14 @@ describe('test/egg.test.ts', () => {
       assert.equal(app.options.baseDir, process.cwd());
     });
 
+    it('should export logger and coreLogger', () => {
+      app = new EggCore();
+      assert.equal(typeof app.logger.info, 'function');
+      assert.equal(typeof app.coreLogger.error, 'function');
+      app.logger.info('hello egg logger info level');
+      app.coreLogger.warn('hello egg coreLogger warn level');
+    });
+
     it('should set default application when no type', () => {
       app = new EggCore();
       assert.equal(app.type, 'application');
