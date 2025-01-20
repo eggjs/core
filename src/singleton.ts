@@ -19,10 +19,10 @@ export class Singleton<T = any> {
   readonly options: Record<string, any>;
 
   constructor(options: SingletonOptions) {
-    assert(options.name, '[egg:singleton] Singleton#constructor options.name is required');
-    assert(options.app, '[egg:singleton] Singleton#constructor options.app is required');
-    assert(options.create, '[egg:singleton] Singleton#constructor options.create is required');
-    assert(!(options.name in options.app), `[egg:singleton] ${options.name} is already exists in app`);
+    assert(options.name, '[@eggjs/core/singleton] Singleton#constructor options.name is required');
+    assert(options.app, '[@eggjs/core/singleton] Singleton#constructor options.app is required');
+    assert(options.create, '[@eggjs/core/singleton] Singleton#constructor options.create is required');
+    assert(!(options.name in options.app), `[@eggjs/core/singleton] ${options.name} is already exists in app`);
     this.app = options.app;
     this.name = options.name;
     this.create = options.create;
@@ -36,7 +36,7 @@ export class Singleton<T = any> {
   initSync() {
     const options = this.options;
     assert(!(options.client && options.clients),
-      `[egg:singleton] ${this.name} can not set options.client and options.clients both`);
+      `[@eggjs/core/singleton] ${this.name} can not set options.client and options.clients both`);
 
     // alias app[name] as client, but still support createInstance method
     if (options.client) {
@@ -63,7 +63,7 @@ export class Singleton<T = any> {
   async initAsync() {
     const options = this.options;
     assert(!(options.client && options.clients),
-      `[egg:singleton] ${this.name} can not set options.client and options.clients both`);
+      `[@eggjs/core/singleton] ${this.name} can not set options.client and options.clients both`);
 
     // alias app[name] as client, but still support createInstance method
     if (options.client) {
@@ -108,7 +108,7 @@ export class Singleton<T = any> {
   createInstance(config: Record<string, any>, clientName: string) {
     // async creator only support createInstanceAsync
     assert(!isAsyncFunction(this.create),
-      `egg:singleton ${this.name} only support create asynchronous, please use createInstanceAsync`);
+      `[@eggjs/core/singleton] ${this.name} only support synchronous creation, please use createInstanceAsync`);
     // options.default will be merge in to options.clients[id]
     config = {
       ...this.options.default,
@@ -127,8 +127,8 @@ export class Singleton<T = any> {
   }
 
   #extendDynamicMethods(client: any) {
-    assert(!client.createInstance, 'singleton instance should not have createInstance method');
-    assert(!client.createInstanceAsync, 'singleton instance should not have createInstanceAsync method');
+    assert(!client.createInstance, '[@eggjs/core/singleton] singleton instance should not have createInstance method');
+    assert(!client.createInstanceAsync, '[@eggjs/core/singleton] singleton instance should not have createInstanceAsync method');
 
     try {
       let extendable = client;
@@ -141,7 +141,7 @@ export class Singleton<T = any> {
       extendable.createInstanceAsync = this.createInstanceAsync.bind(this);
     } catch (err) {
       this.app.coreLogger.warn(
-        '[egg:singleton] %s dynamic create is disabled because of client is un-extendable',
+        '[@eggjs/core/singleton] %s dynamic create is disabled because of client is un-extendable',
         this.name);
       this.app.coreLogger.warn(err);
     }
