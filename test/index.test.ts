@@ -29,6 +29,7 @@ describe('test/index.test.ts', () => {
       'Request',
       'Response',
       'Router',
+      'Singleton',
       'Timing',
       'utils',
     ]);
