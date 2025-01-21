@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { EventEmitter } from 'node:events';
-import { debuglog } from 'node:util';
+import { debuglog, format } from 'node:util';
 import { isClass } from 'is-type-of';
 import { Ready as ReadyObject } from 'get-ready';
 import type { ReadyFunctionArg } from 'get-ready';
@@ -387,6 +387,10 @@ export class Lifecycle extends EventEmitter {
         done();
         this.timing.end(timingKey);
       }, (err: Error) => {
+        // avoid non-stringify error: TypeError: Cannot convert object to primitive value
+        if (!(err instanceof Error)) {
+          err = new Error(format('%s', err));
+        }
         done(err);
         this.timing.end(timingKey);
       });
