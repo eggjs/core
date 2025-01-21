@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.1](https://github.com/eggjs/core/compare/v6.3.0...v6.3.1) (2025-01-21)
+
+
+### Bug Fixes
+
+* avoid non-stringify error ([#289](https://github.com/eggjs/core/issues/289)) ([fa25d57](https://github.com/eggjs/core/commit/fa25d572b0f96cfa72a4484c17946fe661e1b058))
+
 ## [6.3.0](https://github.com/eggjs/core/compare/v6.2.13...v6.3.0) (2025-01-20)
 
 
