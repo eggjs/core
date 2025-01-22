@@ -1,3 +1,12 @@
+# Changelog
+
+## [5.5.0](https://github.com/eggjs/core/compare/v5.4.1...v5.5.0) (2025-01-22)
+
+
+### Features
+
+* support custom pathToRegexpModule on app.options ([#290](https://github.com/eggjs/core/issues/290)) ([72ba3a8](https://github.com/eggjs/core/commit/72ba3a8cf13ae6174f004fd0283e2281551c163c))
+
 5.4.1 / 2023-12-20
 ==================
 
