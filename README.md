@@ -1,7 +1,7 @@
 # egg-core
 
 [![NPM version][npm-image]][npm-url]
-[![Node.js CI](https://github.com/eggjs/egg-core/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/egg-core/actions/workflows/nodejs.yml)
+[![Node.js CI](https://github.com/eggjs/egg-core/actions/workflows/nodejs-5.x.yml/badge.svg)](https://github.com/eggjs/egg-core/actions/workflows/nodejs-5.x.yml)
 [![Test coverage][codecov-image]][codecov-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
