@@ -1,8 +1,11 @@
 const assert = require('assert');
 const request = require('supertest');
+const mm = require('mm');
 const utils = require('../utils');
 
 describe('test/utils/router-with-pathToRegexpModule.test.js', () => {
+  afterEach(mm.restore);
+
   let app;
   before(() => {
     app = utils.createApp('router-app-with-pathToRegexpModule', {
@@ -329,8 +332,9 @@ describe('test/utils/router-with-pathToRegexpModule.test.js', () => {
     });
   });
 
-  describe('router middleware', () => {
+  describe('set by env: EGG_OPTIONS_PATH_TO_REGEXP_MODULE', () => {
     before(() => {
+      mm(process.env, 'EGG_OPTIONS_PATH_TO_REGEXP_MODULE', 'path-to-regexp-v8');
       app = utils.createApp('router-in-app');
       app.loader.loadAll();
       return app.ready();
