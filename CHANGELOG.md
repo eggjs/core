@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.5.1](https://github.com/eggjs/core/compare/v5.5.0...v5.5.1) (2025-01-22)
+
+
+### Bug Fixes
+
+* support EGG_OPTIONS_PATH_TO_REGEXP_MODULE env ([#292](https://github.com/eggjs/core/issues/292)) ([f253ea2](https://github.com/eggjs/core/commit/f253ea2969c7c16a819b83844e025b059376b494))
+
 ## [5.5.0](https://github.com/eggjs/core/compare/v5.4.1...v5.5.0) (2025-01-22)
 
 
