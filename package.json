@@ -15,7 +15,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "npm run lint -- --fix && npm run test-local",
-    "test-local": "egg-bin test -p",
+    "test-local": "egg-bin test -p --full-trace",
     "test-single": "egg-bin test",
     "cov": "egg-bin cov -p",
     "ci": "npm run lint && npm run cov",
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eggjs/egg-core.git"
+    "url": "git+https://github.com/eggjs/core.git"
   },
   "keywords": [
     "egg",
@@ -34,7 +34,7 @@
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
-  "homepage": "https://github.com/eggjs/egg-core#readme",
+  "homepage": "https://github.com/eggjs/core#readme",
   "engines": {
     "node": ">= 14.19.0"
   },
@@ -53,17 +53,18 @@
     "supertest": "^4.0.2",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4",
-    "urllib": "^3.10.0"
+    "urllib": "^3.10.0",
+    "path-to-regexp-v8": "npm:path-to-regexp@8"
   },
   "dependencies": {
-    "@eggjs/router": "^2.0.0",
+    "@eggjs/router": "^2.2.0",
     "@types/depd": "^1.1.32",
     "@types/koa": "^2.13.5",
     "co": "^4.6.0",
     "debug": "^4.1.1",
     "depd": "^2.0.0",
     "egg-logger": "^3.1.0",
-    "egg-path-matching": "^1.0.1",
+    "egg-path-matching": "^1.2.0",
     "extend2": "^1.0.0",
     "gals": "^1.0.1",
     "get-ready": "^2.0.1",
