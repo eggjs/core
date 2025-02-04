@@ -54,3 +54,17 @@ export interface EggAppConfig extends Record<string, any> {
     supportParams?: boolean;
   };
 }
+
+/**
+ * Powerful Partial, Support adding ? modifier to a mapped property in deep level
+ * @example
+ * import { PowerPartial, EggAppConfig } from 'egg';
+ *
+ * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
+ * type EggConfig = PowerPartial<EggAppConfig>
+ */
+export type PowerPartial<T> = {
+  [U in keyof T]?: T[U] extends object
+    ? PowerPartial<T[U]>
+    : T[U]
+};
