@@ -78,7 +78,7 @@ export default {
     try {
       // if not js module, just return content buffer
       const extname = path.extname(filepath);
-      if (extname && !extensionNames.includes(extname)) {
+      if (extname && !extensionNames.includes(extname) && extname !== '.ts') {
         return fs.readFileSync(filepath);
       }
       const obj = await importModule(filepath, { importDefaultOnly: true });
