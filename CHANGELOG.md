@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.2](https://github.com/eggjs/core/compare/v6.3.1...v6.3.2) (2025-02-16)
+
+
+### Bug Fixes
+
+* loadFile ignore ts extend on readFileSync ([#294](https://github.com/eggjs/core/issues/294)) ([1cf0a53](https://github.com/eggjs/core/commit/1cf0a537a0c8a0b26a9eb1b55ce23aaae1c6ff15))
+
 ## [6.3.1](https://github.com/eggjs/core/compare/v6.3.0...v6.3.1) (2025-01-21)
 
 
