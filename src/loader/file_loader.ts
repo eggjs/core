@@ -4,6 +4,7 @@ import { debuglog } from 'node:util';
 import path from 'node:path';
 import globby from 'globby';
 import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
+import { isSupportTypeScript } from '@eggjs/utils';
 import utils, { Fun } from '../utils/index.js';
 
 const debug = debuglog('@eggjs/core/file_loader');
@@ -162,7 +163,7 @@ export class FileLoader {
   protected async parse(): Promise<FileLoaderParseItem[]> {
     let files = this.options.match;
     if (!files) {
-      files = (process.env.EGG_TYPESCRIPT === 'true' && utils.extensions['.ts'])
+      files = isSupportTypeScript()
         ? [ '**/*.(js|ts)', '!**/*.d.ts' ]
         : [ '**/*.js' ];
     } else {
