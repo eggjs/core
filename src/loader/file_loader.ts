@@ -162,7 +162,7 @@ export class FileLoader {
   protected async parse(): Promise<FileLoaderParseItem[]> {
     let files = this.options.match;
     if (!files) {
-      files = (process.env.EGG_TYPESCRIPT === 'true' && utils.extensions['.ts'])
+      files = utils.isSupportTypeScript()
         ? [ '**/*.(js|ts)', '!**/*.d.ts' ]
         : [ '**/*.js' ];
     } else {

@@ -64,6 +64,35 @@ export class Context extends KoaContext {
   declare request: Request;
   declare response: Response;
   declare service: BaseContextClass;
+
+  // #region router
+
+  /**
+   * Returns map of URL parameters for given `path` and `paramNames`.
+   * @example
+   * ##### ctx.params.id {string}
+   *
+   * `GET /api/users/1` => `'1'`
+   *
+   * ##### ctx.params.per_page {string}
+   *
+   * The number of every page, `GET /api/users?per_page=20` => `20`
+   */
+  params?: Record<string, string>;
+  /**
+   * Returns array of router regexp url path captures.
+   */
+  captures?: string[];
+  /**
+   * Returns the name of the matched router.
+   */
+  routerName?: string;
+  /**
+   * Returns the path of the matched router.
+   */
+  routerPath?: string | RegExp;
+
+  // #endregion
 }
 
 // export @eggjs/core types
