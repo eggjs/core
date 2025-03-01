@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.0](https://github.com/eggjs/core/compare/v6.3.2...v6.4.0) (2025-03-01)
+
+
+### Features
+
+* support vitest ([#295](https://github.com/eggjs/core/issues/295)) ([500c4ac](https://github.com/eggjs/core/commit/500c4ac6d2af50eb9c8c21aeeaaeeca0cae24361))
+
 ## [6.3.2](https://github.com/eggjs/core/compare/v6.3.1...v6.3.2) (2025-02-16)
 
 
