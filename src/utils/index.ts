@@ -3,7 +3,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { stat } from 'node:fs/promises';
 import BuiltinModule from 'node:module';
-import { importResolve, importModule, isSupportTypeScript } from '@eggjs/utils';
+import { importResolve, importModule } from '@eggjs/utils';
 
 const debug = debuglog('@eggjs/core/utils');
 
@@ -64,8 +64,6 @@ export default {
 
   extensions,
   extensionNames,
-
-  isSupportTypeScript,
 
   async existsPath(filepath: string) {
     try {
