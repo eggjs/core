@@ -108,7 +108,7 @@ export class Singleton<T = any> {
   createInstance(config: Record<string, any>, clientName: string) {
     // async creator only support createInstanceAsync
     assert(!isAsyncFunction(this.create),
-      `[@eggjs/core/singleton] ${this.name} only support synchronous creation, please use createInstanceAsync`);
+      `[@eggjs/core/singleton] ${this.name} only support asynchronous creation, please use createInstanceAsync`);
     // options.default will be merge in to options.clients[id]
     config = {
       ...this.options.default,

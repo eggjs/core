@@ -239,9 +239,9 @@ export class EggCore extends KoaApplication {
     const singleton = new Singleton(options);
     const initPromise = singleton.init();
     if (initPromise) {
-      this.beforeStart(async () => {
+      this.lifecycle.registerBeforeStart(async () => {
         await initPromise;
-      });
+      }, `${name}-singleton-init`);
     }
   }
 
