@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.1](https://github.com/eggjs/core/compare/v6.4.0...v6.4.1) (2025-03-22)
+
+
+### Bug Fixes
+
+* use lifecycle instead of beforeStart ([#297](https://github.com/eggjs/core/issues/297)) ([26c95a7](https://github.com/eggjs/core/commit/26c95a7b8eeeaae7cf460f074b48e83b07dc93ff))
+
 ## [6.4.0](https://github.com/eggjs/core/compare/v6.3.2...v6.4.0) (2025-03-01)
 
 
