@@ -26,12 +26,12 @@ function sequence(tasks: Record<string, SequencifyTask>, names: string[], result
       nest.push(name);
       recursive.push(...nest.slice(0));
       nest.pop();
-    } else if (node.dependencies.length || node.optionalDependencies.length) {
+    } else if (node.dependencies.length > 0 || node.optionalDependencies.length > 0) {
       nest.push(name);
-      if (node.dependencies.length) {
+      if (node.dependencies.length > 0) {
         sequence(tasks, node.dependencies, result, missing, recursive, nest, optional, name);
       }
-      if (node.optionalDependencies.length) {
+      if (node.optionalDependencies.length > 0) {
         sequence(tasks, node.optionalDependencies, result, missing, recursive, nest, true, name);
       }
       nest.pop();
@@ -58,7 +58,7 @@ export default function sequencify(tasks: Record<string, SequencifyTask>, names:
 
   sequence(tasks, names, result, missing, recursive, [], false, 'app');
 
-  if (missing.length || recursive.length) {
+  if (missing.length > 0 || recursive.length > 0) {
     result.sequence = []; // results are incomplete at best, completely wrong at worst, remove them to avoid confusion
   }
 

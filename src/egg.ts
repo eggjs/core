@@ -9,8 +9,10 @@ import type {
   MiddlewareFunc as KoaMiddlewareFunc,
   Next,
 } from '@eggjs/koa';
-import { EggConsoleLogger, Logger } from 'egg-logger';
-import { RegisterOptions, ResourcesController, EggRouter as Router } from '@eggjs/router';
+import type { Logger } from 'egg-logger';
+import { EggConsoleLogger } from 'egg-logger';
+import type { RegisterOptions, ResourcesController} from '@eggjs/router';
+import { EggRouter as Router } from '@eggjs/router';
 import type { ReadyFunctionArg } from 'get-ready';
 import { BaseContextClass } from './base_context_class.js';
 import { Timing } from './utils/timing.js';
@@ -18,7 +20,7 @@ import type { Fun } from './utils/index.js';
 import { Lifecycle } from './lifecycle.js';
 import { EggLoader } from './loader/egg_loader.js';
 import utils from './utils/index.js';
-import { EggAppConfig } from './types.js';
+import type { EggAppConfig } from './types.js';
 import {
   Singleton, type SingletonCreateMethod, type SingletonOptions,
 } from './singleton.js';

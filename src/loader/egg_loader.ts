@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert';
 import { debuglog, inspect } from 'node:util';
+
 import { homedir } from 'node-homedir';
 import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } from 'is-type-of';
 import type { Logger } from 'egg-logger';
@@ -14,9 +15,10 @@ import { register as tsconfigPathsRegister } from 'tsconfig-paths';
 import { isESM, isSupportTypeScript } from '@eggjs/utils';
 import { pathMatching, type PathMatchingOptions } from 'egg-path-matching';
 import { now, diff } from 'performance-ms';
-import { CaseStyle, FULLPATH, FileLoader, FileLoaderOptions } from './file_loader.js';
-import { ContextLoader, ContextLoaderOptions } from './context_loader.js';
-import utils, { Fun } from '../utils/index.js';
+
+import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.js';
+import { type ContextLoaderOptions, ContextLoader } from './context_loader.js';
+import utils, { type Fun } from '../utils/index.js';
 import sequencify from '../utils/sequencify.js';
 import { Timing } from '../utils/timing.js';
 import type {
@@ -27,7 +29,7 @@ import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.js';
 
 const debug = debuglog('@eggjs/core/loader/egg_loader');
 
-const originalPrototypes: Record<string, any> = {
+const originalPrototypes: Record<string, unknown> = {
   request: Request.prototype,
   response: Response.prototype,
   context: KoaContext.prototype,
@@ -62,6 +64,7 @@ export class EggLoader {
   #requiredCount = 0;
   readonly options: EggLoaderOptions;
   readonly timing: Timing;
+  // oxlint-disable-next-line typescript/no-explicit-any
   readonly pkg: Record<string, any>;
   readonly eggPaths: string[];
   readonly serverEnv: string;
@@ -99,7 +102,8 @@ export class EggLoader {
       // skip require tsconfig-paths if tsconfig.json not exists
       const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
       if (fs.existsSync(tsConfigFile)) {
-        tsconfigPathsRegister({ cwd: this.options.baseDir } as any);
+        // @ts-expect-error only cwd is required
+        tsconfigPathsRegister({ cwd: this.options.baseDir });
       } else {
         this.logger.info(
           '[@eggjs/core/egg_loader] skip register "tsconfig-paths" because tsconfig.json not exists at %s',
@@ -143,9 +147,7 @@ export class EggLoader {
      * @member {String} EggLoader#serverScope
      * @see AppInfo#serverScope
      */
-    this.serverScope = options.serverScope !== undefined
-      ? options.serverScope
-      : this.getServerScope();
+    this.serverScope = options.serverScope ?? this.getServerScope();
 
     /**
      * @member {AppInfo} EggLoader#appInfo
@@ -168,7 +170,7 @@ export class EggLoader {
 
   /**
    * Get {@link AppInfo#env}
-   * @return {String} env
+   * @returns {String} env
    * @see AppInfo#env
    * @private
    * @since 1.0.0
@@ -185,7 +187,10 @@ export class EggLoader {
       serverEnv = process.env.EGG_SERVER_ENV;
     }
 
-    if (!serverEnv) {
+    if (serverEnv) {
+      serverEnv = serverEnv.trim();
+    } else {
+      // oxlint-disable-next-line eslint/no-lonely-if
       if (process.env.NODE_ENV === 'test') {
         serverEnv = 'unittest';
       } else if (process.env.NODE_ENV === 'production') {
@@ -193,8 +198,6 @@ export class EggLoader {
       } else {
         serverEnv = 'local';
       }
-    } else {
-      serverEnv = serverEnv.trim();
     }
 
     return serverEnv;
@@ -202,16 +205,16 @@ export class EggLoader {
 
   /**
    * Get {@link AppInfo#scope}
-   * @return {String} serverScope
+   * @returns {String} serverScope
    * @private
    */
   protected getServerScope(): string {
-    return process.env.EGG_SERVER_SCOPE || '';
+    return process.env.EGG_SERVER_SCOPE ?? '';
   }
 
   /**
    * Get {@link AppInfo#name}
-   * @return {String} appname
+   * @returns {String} appname
    * @private
    * @since 1.0.0
    */
@@ -226,7 +229,7 @@ export class EggLoader {
 
   /**
    * Get home directory
-   * @return {String} home directory
+   * @returns {String} home directory
    * @since 3.4.0
    */
   getHomedir(): string {
@@ -236,7 +239,7 @@ export class EggLoader {
 
   /**
    * Get app info
-   * @return {AppInfo} appInfo
+   * @returns {AppInfo} appInfo
    * @since 1.0.0
    */
   protected getAppInfo(): EggAppInfo {
@@ -312,7 +315,7 @@ export class EggLoader {
 
   /**
    * Get {@link EggLoader#eggPaths}
-   * @return {Array} framework directories
+   * @returns {Array} framework directories
    * @see {@link EggLoader#eggPaths}
    * @private
    * @since 1.0.0
@@ -593,7 +596,7 @@ export class EggLoader {
   async #mergePluginConfig(plugin: EggPluginInfo) {
     let pkg;
     let config;
-    const pluginPackage = path.join(plugin.path!, 'package.json');
+    const pluginPackage = path.join(plugin.path as string, 'package.json');
     if (await utils.existsPath(pluginPackage)) {
       pkg = await readJSON(pluginPackage);
       config = pkg.eggPlugin;
@@ -601,7 +604,7 @@ export class EggLoader {
         plugin.version = pkg.version;
       }
       // support commonjs and esm dist files
-      plugin.path = await this.#formatPluginPathFromPackageJSON(plugin.path!, pkg);
+      plugin.path = await this.#formatPluginPathFromPackageJSON(plugin.path as string, pkg);
     }
 
     const logger = this.options.logger;
@@ -631,7 +634,7 @@ export class EggLoader {
   protected getOrderPlugins(allPlugins: Record<string, EggPluginInfo>, enabledPluginNames: string[],
     appPlugins: Record<string, EggPluginInfo>) {
     // no plugins enabled
-    if (!enabledPluginNames.length) {
+    if (enabledPluginNames.length === 0) {
       return [];
     }
 
@@ -639,7 +642,7 @@ export class EggLoader {
     debug('Got plugins %j after sequencify', result);
 
     // catch error when result.sequence is empty
-    if (!result.sequence.length) {
+    if (result.sequence.length === 0) {
       const err = new Error(
         `sequencify plugins has problem, missing: [${result.missingTasks}], recursive: [${result.recursiveDependencies}]`);
       // find plugins which is required by the missing plugin
@@ -660,7 +663,7 @@ export class EggLoader {
     // log the plugins that be enabled implicitly
     const implicitEnabledPlugins: string[] = [];
     const requireMap: Record<string, string[]> = {};
-    result.sequence.forEach(name => {
+    for (const name of result.sequence) {
       for (const depName of allPlugins[name].dependencies) {
         if (!requireMap[depName]) {
           requireMap[depName] = [];
@@ -673,7 +676,7 @@ export class EggLoader {
         allPlugins[name].enable = true;
         allPlugins[name].implicitEnable = true;
       }
-    });
+    }
 
     for (const [ name, dependents ] of Object.entries(requireMap)) {
       // note:`dependents` will not includes `optionalDependencies`
@@ -684,7 +687,7 @@ export class EggLoader {
     //   - configclient required by [rpcClient]
     //   - monitor required by [rpcClient]
     //   - diamond required by [rpcClient]
-    if (implicitEnabledPlugins.length) {
+    if (implicitEnabledPlugins.length > 0) {
       let message = implicitEnabledPlugins
         .map(name => `  - ${name} required by [${requireMap[name]}]`)
         .join('\n');
@@ -693,7 +696,7 @@ export class EggLoader {
       // should warn when the plugin is disabled by app
       const disabledPlugins = implicitEnabledPlugins.filter(
         name => appPlugins[name] && appPlugins[name].enable === false);
-      if (disabledPlugins.length) {
+      if (disabledPlugins.length > 0) {
         message = disabledPlugins
           .map(name => `  - ${name} required by [${requireMap[name]}]`)
           .join('\n');
@@ -771,17 +774,13 @@ export class EggLoader {
         if (exports.import) {
           realPluginPath = path.join(pluginPath, exports.import);
         }
-      } else {
-        if (exports.require) {
-          realPluginPath = path.join(pluginPath, exports.require);
-        }
+      } else if (exports.require) {
+        realPluginPath = path.join(pluginPath, exports.require);
       }
-      if (exports.typescript && isSupportTypeScript()) {
-        if (!(await exists(realPluginPath))) {
-          // if require/import path not exists, use typescript path for development stage
-          realPluginPath = path.join(pluginPath, exports.typescript);
-          debug('[formatPluginPathFromPackageJSON] use typescript path %o', realPluginPath);
-        }
+      if (exports.typescript && isSupportTypeScript() && !(await exists(realPluginPath))) {
+        // if require/import path not exists, use typescript path for development stage
+        realPluginPath = path.join(pluginPath, exports.typescript);
+        debug('[formatPluginPathFromPackageJSON] use typescript path %o', realPluginPath);
       }
     }
     return realPluginPath;
@@ -795,7 +794,8 @@ export class EggLoader {
       const plugin = plugins[name];
       let targetPlugin = targets[name];
       if (!targetPlugin) {
-        targetPlugin = targets[name] = {} as EggPluginInfo;
+        targetPlugin = {} as EggPluginInfo;
+        targets[name] = targetPlugin;
       }
       if (targetPlugin.package && targetPlugin.package === plugin.package) {
         this.logger.warn('[@eggjs/core] plugin %s has been defined that is %j, but you define again in %s',
@@ -809,7 +809,7 @@ export class EggLoader {
         if (value === undefined) {
           continue;
         }
-        if (Reflect.get(targetPlugin, prop) && Array.isArray(value) && !value.length) {
+        if (Reflect.get(targetPlugin, prop) && Array.isArray(value) && value.length === 0) {
           continue;
         }
         Reflect.set(targetPlugin, prop, value);
@@ -819,6 +819,7 @@ export class EggLoader {
   /** end Plugin loader */
 
   /** start Config loader */
+  // oxlint-disable-next-line typescript/no-explicit-any
   configMeta: Record<string, any>;
   config: EggAppConfig;
 
@@ -867,8 +868,13 @@ export class EggLoader {
     extend(true, target, envConfig);
 
     // You can manipulate the order of app.config.coreMiddleware and app.config.appMiddleware in app.js
-    target.coreMiddleware = target.coreMiddlewares = target.coreMiddleware || [];
-    target.appMiddleware = target.appMiddlewares = target.middleware || [];
+    target.coreMiddleware = target.coreMiddleware || [];
+    // alias for coreMiddleware
+    target.coreMiddlewares = target.coreMiddleware;
+
+    target.appMiddleware = target.middleware || [];
+    // alias for appMiddleware
+    target.appMiddlewares = target.appMiddleware;
 
     this.config = target;
     debug('[loadConfig] all config: %o', this.config);
@@ -880,6 +886,7 @@ export class EggLoader {
       'config.default',
       `config.${this.serverEnv}`,
     ];
+    // oxlint-disable-next-line typescript/no-explicit-any
     const target: Record<string, any> = {};
     for (const filename of names) {
       const config = await this.#loadConfig(this.options.baseDir, filename, undefined, 'app');
@@ -900,7 +907,11 @@ export class EggLoader {
     if (filename === 'config.default' && !filepath) {
       filepath = this.resolveModule(path.join(dirpath, 'config/config'));
     }
-    const config: Record<string, any> = await this.loadFile(filepath!, this.appInfo, extraInject);
+    if (!filepath) {
+      return;
+    }
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const config: Record<string, any> = await this.loadFile(filepath, this.appInfo, extraInject);
     if (!config) return;
     if (isPlugin || isApp) {
       assert(!config.coreMiddleware, 'Can not define coreMiddleware in app or plugin');
@@ -909,7 +920,7 @@ export class EggLoader {
       assert(!config.middleware, 'Can not define middleware in ' + filepath);
     }
     // store config meta, check where is the property of config come from.
-    this.#setConfigMeta(config, filepath!);
+    this.#setConfigMeta(config, filepath);
     return config;
   }
 
@@ -917,20 +928,21 @@ export class EggLoader {
     const envConfigStr = process.env.EGG_APP_CONFIG;
     if (!envConfigStr) return;
     try {
-      const envConfig: Record<string, any> = JSON.parse(envConfigStr);
+      const envConfig: Record<string, unknown> = JSON.parse(envConfigStr);
       this.#setConfigMeta(envConfig, '<process.env.EGG_APP_CONFIG>');
       return envConfig;
-    } catch (err) {
+    } catch {
       this.options.logger.warn('[egg-loader] process.env.EGG_APP_CONFIG is not invalid JSON: %s', envConfigStr);
     }
   }
 
-  #setConfigMeta(config: Record<string, any>, filepath: string) {
+  #setConfigMeta(config: Record<string, unknown>, filepath: string) {
     config = extend(true, {}, config);
     this.#setConfig(config, filepath);
     extend(true, this.configMeta, config);
   }
 
+  // oxlint-disable-next-line typescript/no-explicit-any
   #setConfig(obj: Record<string, any>, filepath: string) {
     for (const key of Object.keys(obj)) {
       const val = obj[key];
@@ -1010,7 +1022,7 @@ export class EggLoader {
    * can be override in top level framework to support load `app/extends/{name}.js`
    *
    * @param {String} name - filename which may be `app/extend/{name}.js`
-   * @return {Array} filepaths extend file paths
+   * @returns {Array} filepaths extend file paths
    * @private
    */
   protected getExtendFilePaths(name: string): string[] {
@@ -1042,7 +1054,7 @@ export class EggLoader {
 
     const mergeRecord = new Map();
     for (const rawFilepath of filepaths) {
-      const filepath = this.resolveModule(rawFilepath)!;
+      const filepath = this.resolveModule(rawFilepath);
       if (!filepath) {
         // debug('loadExtend %o not found', rawFilepath);
         continue;
@@ -1059,7 +1071,7 @@ export class EggLoader {
         ext = ext.prototype;
       }
       const properties = Object.getOwnPropertyNames(ext)
-        .concat(Object.getOwnPropertySymbols(ext) as any[])
+        .concat(Object.getOwnPropertySymbols(ext) as unknown as string[])
         .filter(name => name !== 'constructor'); // ignore class constructor for extend
 
       for (const property of properties) {
@@ -1069,7 +1081,7 @@ export class EggLoader {
         }
 
         // Copy descriptor
-        let descriptor = Object.getOwnPropertyDescriptor(ext, property);
+        let descriptor = Object.getOwnPropertyDescriptor(ext, property) as PropertyDescriptor;
         let originalDescriptor = Object.getOwnPropertyDescriptor(proto, property);
         if (!originalDescriptor) {
           // try to get descriptor from originalPrototypes
@@ -1090,7 +1102,7 @@ export class EggLoader {
             descriptor.get = originalDescriptor.get;
           }
         }
-        Object.defineProperty(proto, property, descriptor!);
+        Object.defineProperty(proto, property, descriptor);
         mergeRecord.set(property, filepath);
       }
       debug('merge %j to %s from %s', properties, name, filepath);
@@ -1313,13 +1325,11 @@ export class EggLoader {
         if (isGeneratorFunction(obj)) {
           throw new TypeError(`Support for generators was removed, fullpath: ${opt.path}`);
         }
-        if (!isClass(obj) && !isAsyncFunction(obj)) {
-          if (typeof obj === 'function') {
-            obj = obj(this.app);
-            debug('[loadController] after init(app) => %o, meta: %j', obj, opt);
-            if (isGeneratorFunction(obj)) {
-              throw new TypeError(`Support for generators was removed, fullpath: ${opt.path}`);
-            }
+        if (!isClass(obj) && !isAsyncFunction(obj) && typeof obj === 'function') {
+          obj = obj(this.app);
+          debug('[loadController] after init(app) => %o, meta: %j', obj, opt);
+          if (isGeneratorFunction(obj)) {
+            throw new TypeError(`Support for generators was removed, fullpath: ${opt.path}`);
           }
         }
         if (isClass(obj)) {
@@ -1416,14 +1426,14 @@ export class EggLoader {
    *
    * @param {String} filepath - fullpath
    * @param {Array} inject - pass rest arguments into the function when invoke
-   * @return {Object} exports
+   * @returns {Object} exports
    * @example
    * ```js
    * app.loader.loadFile(path.join(app.options.baseDir, 'config/router.js'));
-   * ```
+   * ```  
    * @since 1.0.0
    */
-  async loadFile(filepath: string, ...inject: any[]) {
+  async loadFile(filepath: string, ...inject: unknown[]) {
     const fullpath = filepath && this.resolveModule(filepath);
     if (!fullpath) {
       return null;
@@ -1445,7 +1455,7 @@ export class EggLoader {
 
   /**
    * @param {String} filepath - fullpath
-   * @return {Object} exports
+   * @returns {Object} exports
    * @private
    */
   async requireFile(filepath: string) {
@@ -1468,7 +1478,7 @@ export class EggLoader {
    * 2. framework
    * 3. app
    *
-   * @return {Array} loadUnits
+   * @returns {Array} loadUnits
    * @since 1.0.0
    */
   getLoadUnits(): EggDirInfo[] {
@@ -1480,7 +1490,7 @@ export class EggLoader {
     if (this.orderPlugins) {
       for (const plugin of this.orderPlugins) {
         this.dirs.push({
-          path: plugin.path!,
+          path: plugin.path as string,
           type: 'plugin',
         });
       }
@@ -1581,7 +1591,7 @@ export class EggLoader {
     let fullPath;
     try {
       fullPath = utils.resolvePath(filepath);
-    } catch (err: any) {
+    } catch {
       // debug('[resolveModule] Module %o resolve error: %s', filepath, err.stack);
       return undefined;
     }
@@ -1593,7 +1603,7 @@ export class EggLoader {
 }
 
 function depCompatible(plugin: EggPluginInfo & { dep?: string[] }) {
-  if (plugin.dep && !(Array.isArray(plugin.dependencies) && plugin.dependencies.length)) {
+  if (plugin.dep && !(Array.isArray(plugin.dependencies) && plugin.dependencies.length > 0)) {
     plugin.dependencies = plugin.dep;
     delete plugin.dep;
   }
@@ -1644,6 +1654,7 @@ function debugMiddlewareWrapper(mw: MiddlewareFunc): MiddlewareFunc {
 // wrap the controller class, yield a object with middlewares
 function wrapControllerClass(Controller: typeof BaseContextClass, fullPath: string) {
   let proto = Controller.prototype;
+  // oxlint-disable-next-line typescript/no-explicit-any
   const ret: Record<string, any> = {};
   // tracing the prototype chain
   while (proto !== Object.prototype) {
@@ -1657,7 +1668,7 @@ function wrapControllerClass(Controller: typeof BaseContextClass, fullPath: stri
       // skip getter, setter & non-function properties
       const d = Object.getOwnPropertyDescriptor(proto, key);
       // prevent to override sub method
-      if (typeof d?.value === 'function' && !ret.hasOwnProperty(key)) {
+      if (typeof d?.value === 'function' && !Object.hasOwn(ret, key)) {
         const controllerMethodName = `${Controller.name}.${key}`;
         if (isGeneratorFunction(d.value)) {
           throw new TypeError(
@@ -1673,18 +1684,21 @@ function wrapControllerClass(Controller: typeof BaseContextClass, fullPath: stri
 }
 
 function controllerMethodToMiddleware(Controller: typeof BaseContextClass, key: string) {
-  return function classControllerMiddleware(this: Context, ...args: any[]) {
-    const controller: any = new Controller(this);
+  return function classControllerMiddleware(this: Context, ...args: unknown[]) {
+    const controller = new Controller(this);
     if (!this.app.config.controller?.supportParams) {
       args = [ this ];
     }
+    // @ts-expect-error key exists
     return controller[key](...args);
   };
 }
 
 // wrap the method of the object, method can receive ctx as it's first argument
+// oxlint-disable-next-line typescript/no-explicit-any
 function wrapObject(obj: Record<string, any>, fullPath: string, prefix?: string) {
   const keys = Object.keys(obj);
+  // oxlint-disable-next-line typescript/no-explicit-any
   const ret: Record<string, any> = {};
   prefix = prefix ?? '';
   for (const key of keys) {
@@ -1709,7 +1723,7 @@ function wrapObject(obj: Record<string, any>, fullPath: string, prefix?: string)
 }
 
 function objectFunctionToMiddleware(func: Fun) {
-  async function objectControllerMiddleware(this: Context, ...args: any[]) {
+  async function objectControllerMiddleware(this: Context, ...args: unknown[]) {
     if (!this.app.config.controller?.supportParams) {
       args = [ this ];
     }

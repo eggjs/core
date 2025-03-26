@@ -5,7 +5,8 @@ import path from 'node:path';
 import globby from 'globby';
 import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
 import { isSupportTypeScript } from '@eggjs/utils';
-import utils, { Fun } from '../utils/index.js';
+import type { Fun } from '../utils/index.js';
+import utils from '../utils/index.js';
 
 const debug = debuglog('@eggjs/core/file_loader');
 
@@ -279,7 +280,7 @@ async function getExports(fullpath: string, options: FileLoaderOptions, pathName
 }
 
 function defaultCamelize(filepath: string, caseStyle: CaseStyle) {
-  const properties = filepath.substring(0, filepath.lastIndexOf('.')).split('/');
+  const properties = filepath.slice(0, filepath.lastIndexOf('.')).split('/');
   return properties.map(property => {
     if (!/^[a-z][a-z0-9_-]*$/i.test(property)) {
       throw new Error(`${property} is not match 'a-z0-9_-' in ${filepath}`);
@@ -291,7 +292,7 @@ function defaultCamelize(filepath: string, caseStyle: CaseStyle) {
     // FooBar.js  > FooBar
     // FooBar.js  > FooBar
     // FooBar.js  > fooBar (if lowercaseFirst is true)
-    property = property.replace(/[_-][a-z]/ig, s => s.substring(1).toUpperCase());
+    property = property.replaceAll(/[_-][a-z]/ig, s => s.slice(1).toUpperCase());
     let first = property[0];
     switch (caseStyle) {
       case 'lower':
@@ -303,6 +304,6 @@ function defaultCamelize(filepath: string, caseStyle: CaseStyle) {
       case 'camel':
       default:
     }
-    return first + property.substring(1);
+    return first + property.slice(1);
   });
 }

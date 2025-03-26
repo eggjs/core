@@ -368,7 +368,7 @@ export class Lifecycle extends EventEmitter {
   }) {
     const { scope, ready, timingKeyPrefix, scopeFullName } = args;
     if (typeof scope !== 'function') {
-      throw new Error('boot only support function');
+      throw new TypeError('boot only support function');
     }
 
     // get filename from stack if scopeFullName is undefined
