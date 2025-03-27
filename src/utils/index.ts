@@ -16,7 +16,7 @@ const Module = typeof module !== 'undefined' && module.constructor.length > 1
   /* istanbul ignore next */
   : BuiltinModule;
 
-// eslint-disable-next-line typescript/no-explicit-any
+
 const extensions = (Module as any)._extensions;
 const extensionNames = Object.keys(extensions).concat([ '.cjs', '.mjs' ]);
 debug('Module extensions: %j', extensionNames);
@@ -30,7 +30,7 @@ function getCalleeFromStack(withLine?: boolean, stackIndex?: number) {
   Error.stackTraceLimit = 5;
 
   // capture the stack
-  // eslint-disable-next-line typescript/no-explicit-any
+  
   const obj: any = {};
   Error.captureStackTrace(obj);
   let callSite = obj.stack[stackIndex];
@@ -86,8 +86,8 @@ export default {
       }
       const obj = await importModule(filepath, { importDefaultOnly: true });
       return obj;
-    } catch (e: any) {
-      if (!e.message && typeof e !== 'string') {
+    } catch (e) {
+      if (!(e instanceof Error)) {
         // ts error: test/fixtures/apps/app-ts/app/extend/context.ts(5,17): error TS2339: Property 'url' does not exist on type 'Context'
         console.trace(e);
         throw e;

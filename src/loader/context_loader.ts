@@ -71,14 +71,14 @@ export class ContextLoader extends FileLoader {
       ...options,
       target,
     });
-    this.#inject = this.options.inject!;
+    this.#inject = this.options.inject as Record<string, any>;
 
     const app = this.#inject;
     const property = options.property;
     // define ctx.service
     Object.defineProperty(app.context, property, {
       get() {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        // oxlint-disable-next-line unicorn/no-this-assignment, typescript/no-this-alias
         const ctx = this;
         // distinguish property cache,
         // cache's lifecycle is the same with this context instance
@@ -90,7 +90,7 @@ export class ContextLoader extends FileLoader {
         let instance = classLoader.get(property);
         if (!instance) {
           instance = getInstance(target, ctx);
-          classLoader.set(property, instance!);
+          classLoader.set(property, instance as ClassLoader);
         }
         return instance;
       },

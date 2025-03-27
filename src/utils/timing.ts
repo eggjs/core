@@ -15,12 +15,11 @@ export interface TimingItem {
 
 export class Timing {
   #enable: boolean;
-  #startTime: number | null;
+  #startTime: number;
   #map: Map<string, TimingItem>;
   #list: TimingItem[];
   constructor() {
     this.#enable = true;
-    this.#startTime = null;
     this.#map = new Map();
     this.#list = [];
     this.init();
@@ -46,7 +45,7 @@ export class Timing {
     }
 
     start = start || Date.now();
-    if (this.#startTime === null) {
+    if (!this.#startTime) {
       this.#startTime = start;
     }
     const item: TimingItem = {
@@ -63,9 +62,8 @@ export class Timing {
 
   end(name?: string) {
     if (!name || !this.#enable) return;
-    assert(this.#map.has(name), `should run timing.start('${name}') first`);
-
-    const item = this.#map.get(name)!;
+    const item = this.#map.get(name);
+    assert(item, `should run timing.start('${name}') first`);
     item.end = Date.now();
     item.duration = item.end - item.start;
     debug('end %j', item);
@@ -91,8 +89,8 @@ export class Timing {
 
   itemToString(timelineEnd: number, item: TimingItem, times: number) {
     const isEnd = typeof item.duration === 'number';
-    const duration = isEnd ? item.duration! : timelineEnd - item.start;
-    const offset = item.start - this.#startTime!;
+    const duration = isEnd ? item.duration as number : timelineEnd - item.start;
+    const offset = item.start - this.#startTime;
     const status = `${duration}ms${isEnd ? '' : ' NOT_END'}`;
     const timespan = Math.floor(Number((offset * times).toFixed(6)));
     let timeline = Math.floor(Number((duration * times).toFixed(6)));
@@ -103,7 +101,7 @@ export class Timing {
 
   toString(prefix = 'egg start timeline:', width = 50) {
     const timelineEnd = Date.now();
-    const timelineDuration = timelineEnd - this.#startTime!;
+    const timelineDuration = timelineEnd - this.#startTime;
     let times = 1;
     if (timelineDuration > width) {
       times = width / timelineDuration;

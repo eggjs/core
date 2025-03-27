@@ -12,10 +12,12 @@ export interface SequencifyTask {
   optionalDependencies: string[];
 }
 
-function sequence(tasks: Record<string, SequencifyTask>, names: string[], result: SequencifyResult,
+// oxlint-disable-next-line max-params
+function sequence(tasks: Record<string, SequencifyTask>,
+  names: string[], result: SequencifyResult,
   missing: string[], recursive: string[],
   nest: string[], optional: boolean, parent: string) {
-  names.forEach(function(name) {
+  for (const name of names) {
     if (result.requires[name]) return;
 
     const node = tasks[name];
@@ -43,12 +45,12 @@ function sequence(tasks: Record<string, SequencifyTask>, names: string[], result
     if (!result.sequence.includes(name)) {
       result.sequence.push(name);
     }
-  });
+  }
 }
 
 // tasks: object with keys as task names
 // names: array of task names
-export default function sequencify(tasks: Record<string, SequencifyTask>, names: string[]) {
+export function sequencify(tasks: Record<string, SequencifyTask>, names: string[]) {
   const result: SequencifyResult = {
     sequence: [],
     requires: {},

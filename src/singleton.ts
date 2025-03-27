@@ -48,10 +48,10 @@ export class Singleton<T = any> {
 
     // multi client, use app[name].getSingletonInstance(id)
     if (options.clients) {
-      Object.keys(options.clients).forEach(id => {
+      for (const id of Object.keys(options.clients)) {
         const client = this.createInstance(options.clients[id], id);
         this.clients.set(id, client);
-      });
+      }
       this.#setClientToApp(this);
       return;
     }
@@ -95,14 +95,14 @@ export class Singleton<T = any> {
    * @deprecated please use `getSingletonInstance(id)` instead
    */
   get(id: string) {
-    return this.clients.get(id)!;
+    return this.clients.get(id) as T;
   }
 
   /**
    * Get singleton instance by id
    */
   getSingletonInstance(id: string) {
-    return this.clients.get(id)!;
+    return this.clients.get(id) as T;
   }
 
   createInstance(config: Record<string, any>, clientName: string) {

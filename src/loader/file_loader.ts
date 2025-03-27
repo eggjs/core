@@ -2,11 +2,12 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import { debuglog } from 'node:util';
 import path from 'node:path';
+
 import globby from 'globby';
 import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
 import { isSupportTypeScript } from '@eggjs/utils';
-import type { Fun } from '../utils/index.js';
-import utils from '../utils/index.js';
+
+import utils, { type Fun } from '../utils/index.js';
 
 const debug = debuglog('@eggjs/core/file_loader');
 
@@ -27,6 +28,7 @@ export interface FileLoaderOptions {
   /** directories to be loaded */
   directory: string | string[];
   /** attach the target object from loaded files */
+  
   target: Record<string, any>;
   /** match the files when load, support glob, default to all js files */
   match?: string | string[];
@@ -39,6 +41,7 @@ export interface FileLoaderOptions {
   /** determine whether override the property when get the same name */
   override?: boolean;
   /** an object that be the argument when invoke the function */
+  
   inject?: Record<string, any>;
   /** a function that filter the exports which can be loaded */
   filter?: FileLoaderFilter;
@@ -102,7 +105,7 @@ export class FileLoader {
   /**
    * attach items to target object. Mapping the directory to properties.
    * `app/controller/group/repository.js` => `target.group.repository`
-   * @return {Object} target
+   * @returns {Object} target
    * @since 1.0.0
    */
   async load(): Promise<object> {
@@ -112,12 +115,13 @@ export class FileLoader {
       debug('loading item: %o', item);
       // item { properties: [ 'a', 'b', 'c'], exports }
       // => target.a.b.c = exports
+      // oxlint-disable-next-line unicorn/no-array-reduce
       item.properties.reduce((target, property, index) => {
         let obj;
         const properties = item.properties.slice(0, index + 1).join('.');
         if (index === item.properties.length - 1) {
-          if (property in target) {
-            if (!this.options.override) throw new Error(`can't overwrite property '${properties}' from ${target[property][FULLPATH]} by ${item.fullpath}`);
+          if (property in target && !this.options.override) {
+            throw new Error(`can't overwrite property '${properties}' from ${target[property][FULLPATH]} by ${item.fullpath}`);
           }
           obj = item.exports;
           if (obj && !isPrimitive(obj)) {
@@ -158,17 +162,17 @@ export class FileLoader {
    * `Properties` is an array that contains the directory of a filepath.
    *
    * `Exports` depends on type, if exports is a function, it will be called. if initializer is specified, it will be called with exports for customizing.
-   * @return {Array} items
+   * @returns {Array} items
    * @since 1.0.0
    */
   protected async parse(): Promise<FileLoaderParseItem[]> {
     let files = this.options.match;
-    if (!files) {
+    if (files) {
+      files = Array.isArray(files) ? files : [ files ];
+    } else {
       files = isSupportTypeScript()
         ? [ '**/*.(js|ts)', '!**/*.d.ts' ]
         : [ '**/*.js' ];
-    } else {
-      files = Array.isArray(files) ? files : [ files ];
     }
 
     let ignore = this.options.ignore;
@@ -208,7 +212,7 @@ export class FileLoader {
         const exports = await getExports(fullpath, this.options, pathName);
 
         // ignore exports when it's null or false returned by filter function
-        if (exports == null || (filter && filter(exports) === false)) {
+        if (exports === null || exports === undefined || (filter && filter(exports) === false)) {
           continue;
         }
 
@@ -270,7 +274,7 @@ async function getExports(fullpath: string, options: FileLoaderOptions, pathName
   // }
   if (options.call && typeof exports === 'function') {
     exports = exports(options.inject);
-    if (exports != null) {
+    if (exports !== null && exports !== undefined) {
       return exports;
     }
   }
@@ -294,15 +298,10 @@ function defaultCamelize(filepath: string, caseStyle: CaseStyle) {
     // FooBar.js  > fooBar (if lowercaseFirst is true)
     property = property.replaceAll(/[_-][a-z]/ig, s => s.slice(1).toUpperCase());
     let first = property[0];
-    switch (caseStyle) {
-      case 'lower':
-        first = first.toLowerCase();
-        break;
-      case 'upper':
-        first = first.toUpperCase();
-        break;
-      case 'camel':
-      default:
+    if (caseStyle === CaseStyle.lower) {
+      first = first.toLowerCase();
+    } else if (caseStyle === CaseStyle.upper) {
+      first = first.toUpperCase();
     }
     return first + property.slice(1);
   });

@@ -46,6 +46,7 @@ export interface CustomLoaderConfigItem {
   loadunit?: boolean;
 }
 
+
 export interface EggAppConfig extends Record<string, any> {
   coreMiddleware: string[];
   middleware: string[];

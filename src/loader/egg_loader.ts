@@ -19,7 +19,7 @@ import { now, diff } from 'performance-ms';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.js';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.js';
 import utils, { type Fun } from '../utils/index.js';
-import sequencify from '../utils/sequencify.js';
+import { sequencify } from '../utils/sequencify.js';
 import { Timing } from '../utils/timing.js';
 import type {
   Context, EggCore, MiddlewareFunc,
@@ -64,7 +64,6 @@ export class EggLoader {
   #requiredCount = 0;
   readonly options: EggLoaderOptions;
   readonly timing: Timing;
-  // oxlint-disable-next-line typescript/no-explicit-any
   readonly pkg: Record<string, any>;
   readonly eggPaths: string[];
   readonly serverEnv: string;
@@ -819,7 +818,6 @@ export class EggLoader {
   /** end Plugin loader */
 
   /** start Config loader */
-  // oxlint-disable-next-line typescript/no-explicit-any
   configMeta: Record<string, any>;
   config: EggAppConfig;
 
@@ -886,7 +884,6 @@ export class EggLoader {
       'config.default',
       `config.${this.serverEnv}`,
     ];
-    // oxlint-disable-next-line typescript/no-explicit-any
     const target: Record<string, any> = {};
     for (const filename of names) {
       const config = await this.#loadConfig(this.options.baseDir, filename, undefined, 'app');
@@ -910,7 +907,6 @@ export class EggLoader {
     if (!filepath) {
       return;
     }
-    // oxlint-disable-next-line typescript/no-explicit-any
     const config: Record<string, any> = await this.loadFile(filepath, this.appInfo, extraInject);
     if (!config) return;
     if (isPlugin || isApp) {
@@ -942,7 +938,6 @@ export class EggLoader {
     extend(true, this.configMeta, config);
   }
 
-  // oxlint-disable-next-line typescript/no-explicit-any
   #setConfig(obj: Record<string, any>, filepath: string) {
     for (const key of Object.keys(obj)) {
       const val = obj[key];
@@ -1654,7 +1649,6 @@ function debugMiddlewareWrapper(mw: MiddlewareFunc): MiddlewareFunc {
 // wrap the controller class, yield a object with middlewares
 function wrapControllerClass(Controller: typeof BaseContextClass, fullPath: string) {
   let proto = Controller.prototype;
-  // oxlint-disable-next-line typescript/no-explicit-any
   const ret: Record<string, any> = {};
   // tracing the prototype chain
   while (proto !== Object.prototype) {
@@ -1695,10 +1689,8 @@ function controllerMethodToMiddleware(Controller: typeof BaseContextClass, key: 
 }
 
 // wrap the method of the object, method can receive ctx as it's first argument
-// oxlint-disable-next-line typescript/no-explicit-any
 function wrapObject(obj: Record<string, any>, fullPath: string, prefix?: string) {
   const keys = Object.keys(obj);
-  // oxlint-disable-next-line typescript/no-explicit-any
   const ret: Record<string, any> = {};
   prefix = prefix ?? '';
   for (const key of keys) {

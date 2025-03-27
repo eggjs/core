@@ -55,7 +55,7 @@ export interface ILifecycleBoot {
   beforeClose?(): Promise<void>;
 }
 
-export type BootImplClass<T = ILifecycleBoot> = new(...args: unknown[]) => T;
+export type BootImplClass<T = ILifecycleBoot> = new(...args: any[]) => T;
 
 export interface LifecycleOptions {
   baseDir: string;
