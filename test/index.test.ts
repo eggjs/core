@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+// oxlint-disable-next-line no-namespace
 import * as EggCore from '../src/index.js';
 import type { EggAppConfig } from '../src/index.js';
 
@@ -31,6 +32,7 @@ describe('test/index.test.ts', () => {
       'Router',
       'Singleton',
       'Timing',
+      'sequencify',
       'utils',
     ]);
   });

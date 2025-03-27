@@ -574,12 +574,11 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     assert.equal(loader.allPlugins.zzz.path, getFilepath('load-plugin-config-override/plugins/zzz'));
   });
 
-  it.only('should support optionalDependencies', async () => {
+  it('should support optionalDependencies', async () => {
     app = createApp('plugin-optional-dependencies');
     const loader = app.loader;
     await loader.loadPlugin();
-    console.log(loader.orderPlugins.map(p => p.name));
-    assert.deepEqual(loader.orderPlugins.slice(2).map(p => p.name), [ 'package', 'e', 'b', 'a', 'f' ]);
+    assert.deepEqual(loader.orderPlugins.map(p => p.name), [ 'session', 'zzz', 'package', 'e', 'b', 'a', 'f' ]);
   });
 
   it('should warn when redefine plugin', async () => {

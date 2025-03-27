@@ -18,11 +18,14 @@ function sequence(tasks: Record<string, SequencifyTask>,
   missing: string[], recursive: string[],
   nest: string[], optional: boolean, parent: string) {
   for (const name of names) {
-    if (result.requires[name]) return;
-
+    if (result.requires[name]) {
+      continue;
+    }
     const node = tasks[name];
     if (!node) {
-      if (optional === true) return;
+      if (optional === true) {
+        continue;
+      }
       missing.push(name);
     } else if (nest.includes(name)) {
       nest.push(name);
