@@ -51,8 +51,7 @@
     "prefer-object-spread": "error",
     "no-undefined": "allow",
     "no-plusplus": "allow",
-    // maybe warn
-    "no-console": "warn",
+    "no-console": "allow",
     "no-extraneous-class": "allow",
     "no-empty-function": "error",
     "max-depth": ["error", 6],
@@ -81,7 +80,7 @@
     // promise
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
-    "promise/prefer-await-to-callbacks": "error",
+    "promise/prefer-await-to-callbacks": "allow",
     "promise/prefer-await-to-then": "error",
     "promise/prefer-catch": "error",
     "promise/no-return-in-finally": "error",
@@ -112,6 +111,7 @@
     "unicorn/no-typeof-undefined": "error",
     "unicorn/prefer-negative-index": "error",
     "unicorn/no-anonymous-default-export": "allow",
+    "unicorn/prefer-event-target": "allow",
 
     // oxc
     "oxc/no-map-spread": "error",

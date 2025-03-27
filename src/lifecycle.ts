@@ -1,11 +1,12 @@
 import assert from 'node:assert';
 import { EventEmitter } from 'node:events';
 import { debuglog, format } from 'node:util';
+
 import { isClass } from 'is-type-of';
-import { Ready as ReadyObject } from 'get-ready';
-import type { ReadyFunctionArg } from 'get-ready';
+import { Ready as ReadyObject, type ReadyFunctionArg } from 'get-ready';
 import { Ready } from 'ready-callback';
 import { EggConsoleLogger } from 'egg-logger';
+
 import utils from './utils/index.js';
 import type { Fun } from './utils/index.js';
 import type { EggCore } from './egg.js';
@@ -54,7 +55,7 @@ export interface ILifecycleBoot {
   beforeClose?(): Promise<void>;
 }
 
-export type BootImplClass<T = ILifecycleBoot> = new(...args: any[]) => T;
+export type BootImplClass<T = ILifecycleBoot> = new(...args: unknown[]) => T;
 
 export interface LifecycleOptions {
   baseDir: string;
@@ -89,7 +90,7 @@ export class Lifecycle extends EventEmitter {
 
     this.timing.start(`${this.options.app.type} Start`);
     // get app timeout from env or use default timeout 10 second
-    const eggReadyTimeoutEnv = parseInt(process.env.EGG_READY_TIMEOUT_ENV || '10000');
+    const eggReadyTimeoutEnv = Number.parseInt(process.env.EGG_READY_TIMEOUT_ENV || '10000');
     assert(
       Number.isInteger(eggReadyTimeoutEnv),
       `process.env.EGG_READY_TIMEOUT_ENV ${process.env.EGG_READY_TIMEOUT_ENV} should be able to parseInt.`);
@@ -139,7 +140,7 @@ export class Lifecycle extends EventEmitter {
     const timingKey = `${timingKeyPrefix} in ` + utils.getResolvedFilename(name, this.app.baseDir);
     this.timing.start(timingKey);
     debug('register legacyReadyCallback');
-    return function legacyReadyCallback(...args: any[]) {
+    return function legacyReadyCallback(...args: unknown[]) {
       timing.end(timingKey);
       debug('end legacyReadyCallback');
       cb(...args);
@@ -355,8 +356,8 @@ export class Lifecycle extends EventEmitter {
 
   #delegateReadyEvent(ready: Ready) {
     ready.once('error', (err?: Error) => ready.ready(err));
-    ready.on('ready_timeout', (id: any) => this.emit('ready_timeout', id));
-    ready.on('ready_stat', (data: any) => this.emit('ready_stat', data));
+    ready.on('ready_timeout', (id: unknown) => this.emit('ready_timeout', id));
+    ready.on('ready_stat', (data: unknown) => this.emit('ready_stat', data));
     ready.on('error', (err?: Error) => this.emit('error', err));
   }
 
@@ -381,19 +382,21 @@ export class Lifecycle extends EventEmitter {
     const done = ready.readyCallback(name);
 
     // ensure scope executes after load completed
-    process.nextTick(() => {
-      utils.callFn(scope).then(() => {
+    process.nextTick(async () => {
+      try {
+        await utils.callFn(scope);
         debug('[registerReadyCallback] end name: %o', name);
         done();
         this.timing.end(timingKey);
-      }, (err: Error) => {
+      } catch (e) {
+        let err = e as Error;
         // avoid non-stringify error: TypeError: Cannot convert object to primitive value
         if (!(err instanceof Error)) {
           err = new Error(format('%s', err));
         }
         done(err);
         this.timing.end(timingKey);
-      });
+      }
     });
   }
 }

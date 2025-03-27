@@ -3,11 +3,12 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { stat } from 'node:fs/promises';
 import BuiltinModule from 'node:module';
+
 import { importResolve, importModule } from '@eggjs/utils';
 
 const debug = debuglog('@eggjs/core/utils');
 
-export type Fun = (...args: any[]) => any;
+export type Fun = (...args: unknown[]) => unknown;
 
 // Guard against poorly mocked module constructors.
 const Module = typeof module !== 'undefined' && module.constructor.length > 1
@@ -15,6 +16,7 @@ const Module = typeof module !== 'undefined' && module.constructor.length > 1
   /* istanbul ignore next */
   : BuiltinModule;
 
+// eslint-disable-next-line typescript/no-explicit-any
 const extensions = (Module as any)._extensions;
 const extensionNames = Object.keys(extensions).concat([ '.cjs', '.mjs' ]);
 debug('Module extensions: %j', extensionNames);
@@ -28,6 +30,7 @@ function getCalleeFromStack(withLine?: boolean, stackIndex?: number) {
   Error.stackTraceLimit = 5;
 
   // capture the stack
+  // eslint-disable-next-line typescript/no-explicit-any
   const obj: any = {};
   Error.captureStackTrace(obj);
   let callSite = obj.stack[stackIndex];
@@ -102,7 +105,7 @@ export default {
 
   methods: [ 'head', 'options', 'get', 'put', 'patch', 'post', 'delete' ],
 
-  async callFn(fn: Fun, args?: any[], ctx?: any) {
+  async callFn(fn: Fun, args?: unknown[], ctx?: unknown) {
     args = args || [];
     if (typeof fn !== 'function') return;
     return ctx ? fn.call(ctx, ...args) : fn(...args);
@@ -120,6 +123,6 @@ export default {
  * Capture call site stack from v8.
  * https://github.com/v8/v8/wiki/Stack-Trace-API
  */
-function prepareObjectStackTrace(_obj: any, stack: any) {
+function prepareObjectStackTrace(_obj: unknown, stack: unknown) {
   return stack;
 }

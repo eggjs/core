@@ -1,25 +1,22 @@
 /* eslint-disable prefer-spread */
 import assert from 'node:assert';
 import { debuglog } from 'node:util';
+
 import {
   Application as KoaApplication, Context as KoaContext,
   Request as KoaRequest, Response as KoaResponse,
+  type MiddlewareFunc as KoaMiddlewareFunc,
+  type Next,
 } from '@eggjs/koa';
-import type {
-  MiddlewareFunc as KoaMiddlewareFunc,
-  Next,
-} from '@eggjs/koa';
-import type { Logger } from 'egg-logger';
-import { EggConsoleLogger } from 'egg-logger';
-import type { RegisterOptions, ResourcesController} from '@eggjs/router';
-import { EggRouter as Router } from '@eggjs/router';
+import { EggConsoleLogger, type Logger } from 'egg-logger';
+import { EggRouter as Router, type RegisterOptions, type ResourcesController } from '@eggjs/router';
 import type { ReadyFunctionArg } from 'get-ready';
+
 import { BaseContextClass } from './base_context_class.js';
 import { Timing } from './utils/timing.js';
-import type { Fun } from './utils/index.js';
 import { Lifecycle } from './lifecycle.js';
 import { EggLoader } from './loader/egg_loader.js';
-import utils from './utils/index.js';
+import utils, { type Fun } from './utils/index.js';
 import type { EggAppConfig } from './types.js';
 import {
   Singleton, type SingletonCreateMethod, type SingletonOptions,
@@ -32,6 +29,7 @@ export const EGG_LOADER = Symbol.for('egg#loader');
 export interface EggCoreOptions {
   baseDir: string;
   type: 'application' | 'agent';
+  // eslint-disable-next-line typescript/no-explicit-any
   plugins?: any;
   serverScope?: string;
   env?: string;
@@ -98,7 +96,7 @@ export class Context extends KoaContext {
 }
 
 // export @eggjs/core types
-export type MiddlewareFunc<T = Context> = KoaMiddlewareFunc<T>;
+export type MiddlewareFunc<T extends KoaContext = Context> = KoaMiddlewareFunc<T>;
 
 export class EggCore extends KoaApplication {
   options: EggCoreOptions;
@@ -114,11 +112,13 @@ export class EggCore extends KoaApplication {
   #router?: Router;
 
   /** auto inject on loadService() */
+  // eslint-disable-next-line typescript/no-explicit-any
   readonly serviceClasses: Record<string, any> = {};
   /** auto inject on loadController() */
+  // eslint-disable-next-line typescript/no-explicit-any
   readonly controller: Record<string, any> = {};
   /** auto inject on loadMiddleware() */
-  readonly middlewares: Record<string, (opt: any, app: EggCore) => MiddlewareFunc> = {};
+  readonly middlewares: Record<string, (opt: unknown, app: EggCore) => MiddlewareFunc> = {};
 
   /**
    * @class
@@ -251,7 +251,7 @@ export class EggCore extends KoaApplication {
    * override koa's app.use, support generator function
    * @since 1.0.0
    */
-  use(fn: MiddlewareFunc) {
+  use<T extends KoaContext = Context>(fn: MiddlewareFunc<T>) {
     assert(typeof fn === 'function', 'app.use() requires a function');
     debug('[use] add middleware: %o', fn._name || fn.name || '-');
     this.middleware.push(fn as unknown as KoaMiddlewareFunc);
@@ -418,8 +418,8 @@ export class EggCore extends KoaApplication {
     if (this.#router) {
       return this.#router;
     }
-    const router = this.#router = new Router({ sensitive: true }, this);
-    return router;
+    this.#router = new Router({ sensitive: true }, this);
+    return this.#router;
   }
 
   /**
@@ -428,7 +428,7 @@ export class EggCore extends KoaApplication {
    * @param {Object} params - more parameters
    * @return {String} url
    */
-  url(name: string, params?: any): string {
+  url(name: string, params?: Parameters<Router['url']>[1]): string {
     return this.router.url(name, params);
   }
 
@@ -437,6 +437,7 @@ export class EggCore extends KoaApplication {
   // 'all', 'resources', 'register', 'redirect'
   head(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
   head(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  // eslint-disable-next-line typescript/no-explicit-any
   head(...args: any): EggCore {
     this.router.head.apply(this.router, args);
     return this;
@@ -449,36 +450,42 @@ export class EggCore extends KoaApplication {
   // }
   get(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
   get(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  // eslint-disable-next-line typescript/no-explicit-any
   get(...args: any): EggCore {
     this.router.get.apply(this.router, args);
     return this;
   }
   put(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
   put(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  // eslint-disable-next-line typescript/no-explicit-any
   put(...args: any): EggCore {
     this.router.put.apply(this.router, args);
     return this;
   }
   patch(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
   patch(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  // eslint-disable-next-line typescript/no-explicit-any
   patch(...args: any): EggCore {
     this.router.patch.apply(this.router, args);
     return this;
   }
   post(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
   post(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  // eslint-disable-next-line typescript/no-explicit-any
   post(...args: any): EggCore {
     this.router.post.apply(this.router, args);
     return this;
   }
   delete(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
   delete(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  // eslint-disable-next-line typescript/no-explicit-any
   delete(...args: any): EggCore {
     this.router.delete.apply(this.router, args);
     return this;
   }
   del(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
   del(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  // eslint-disable-next-line typescript/no-explicit-any
   del(...args: any): EggCore {
     this.router.del.apply(this.router, args);
     return this;
@@ -486,6 +493,7 @@ export class EggCore extends KoaApplication {
 
   all(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
   all(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  // eslint-disable-next-line typescript/no-explicit-any
   all(...args: any): EggCore {
     this.router.all.apply(this.router, args);
     return this;
@@ -495,12 +503,13 @@ export class EggCore extends KoaApplication {
   resources(prefix: string, middleware: MiddlewareFunc, controller: string | ResourcesController): EggCore;
   resources(name: string, prefix: string, controller: string | ResourcesController): EggCore;
   resources(name: string, prefix: string, middleware: MiddlewareFunc, controller: string | ResourcesController): EggCore;
+  // eslint-disable-next-line typescript/no-explicit-any
   resources(...args: any): EggCore {
     this.router.resources.apply(this.router, args);
     return this;
   }
 
-  redirect(source: string, destination: string, status: number = 301) {
+  redirect(source: string, destination: string, status = 301) {
     this.router.redirect(source, destination, status);
     return this;
   }
