@@ -83,7 +83,7 @@ describe('test/utils/index.test.ts', () => {
       if (process.platform === 'win32') {
         result = result.replaceAll(String.raw`\r\n`, '\n');
       }
-      assert.equal(result, '---\nmap:\n a: 1\n b: 2');
+      assert.equal(result, '---\nmap:\n  a: 1\n  b: 2\n');
     });
   });
 
@@ -159,7 +159,7 @@ describe('test/utils/index.test.ts', () => {
       if (process.platform === 'win32') {
         result = result.replaceAll(String.raw`\r\n`, '\n');
       }
-      assert.equal(result, '---\nmap:\n a: 1\n b: 2');
+      assert.equal(result, '---\nmap:\n  a: 1\n  b: 2\n');
     });
   });
 });

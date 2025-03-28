@@ -41,7 +41,7 @@ describe('test/loader/load_file.test.ts', () => {
     if (process.platform === 'win32') {
       result = result.replaceAll(String.raw`\r\n`, '\n');
     }
-    assert.equal(result, '---\nmap:\n a: 1\n b: 2');
+    assert.equal(result, '---\nmap:\n  a: 1\n  b: 2\n');
   });
 
   it('should load cjs module file which returns function returning a promise', async () => {
