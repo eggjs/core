@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.5.0](https://github.com/eggjs/core/compare/v6.4.1...v6.5.0) (2025-03-28)
+
+
+### Features
+
+* use oxlint ([#298](https://github.com/eggjs/core/issues/298)) ([0ae16e4](https://github.com/eggjs/core/commit/0ae16e4ce3190b5a2352981f4ff358fbc4918c8d))
+
 ## [6.4.1](https://github.com/eggjs/core/compare/v6.4.0...v6.4.1) (2025-03-22)
 
 
