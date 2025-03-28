@@ -7,7 +7,7 @@ class OnlyCLassQuery extends Proxy {
     super(ctx);
   }
 
-  * query() {
+  *query() {
     return {
       foo: 'clz',
     };

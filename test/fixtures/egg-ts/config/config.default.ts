@@ -1,6 +1,6 @@
 module.exports = () => {
   return {
-    middleware: [ 'mid' ],
+    middleware: ['mid'],
     test: 'from config.default',
   };
-}
+};

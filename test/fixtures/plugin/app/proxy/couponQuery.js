@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function(app) {
+module.exports = function (app) {
   class CouponQuery extends app.Proxy {
     constructor(ctx) {
       super(ctx);
     }
 
-    * query() {
+    *query() {
       return {
         coupon: 100,
       };

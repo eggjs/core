@@ -1,8 +1,10 @@
-import path from 'node:path';
 import fs from 'node:fs';
-import { strict as assert } from 'node:assert';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+
 import { mm } from 'mm';
-import { Application, createApp, getFilepath } from '../../helper.js';
+
+import { createApp, getFilepath, type Application } from '../../helper.js';
 import { EggCore, EggLoader } from '../../../src/index.js';
 
 describe('test/loader/mixin/load_plugin.test.ts', () => {
@@ -10,7 +12,9 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
 
   afterEach(async () => {
     mm.restore();
-    app && await app.close();
+    if (app) {
+      await app.close();
+    }
     app = undefined;
   });
 
@@ -62,29 +66,27 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     assert.deepEqual(loader.plugins.e, {
       enable: true,
       name: 'e',
-      dependencies: [ 'f' ],
+      dependencies: ['f'],
       optionalDependencies: [],
       env: [],
       path: path.join(baseDir, 'plugins/e'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
-    assert(loader.orderPlugins instanceof Array);
+    assert(Array.isArray(loader.orderPlugins));
   });
 
   it('should loadPlugin with order', async () => {
     app = createApp('plugin');
     const loader = app.loader;
     const loaderOrders: string[] = [];
-    [
-      'loadEggPlugins',
-      'loadAppPlugins',
-      'loadCustomPlugins',
-    ].forEach(method => {
-      mm(loader, method, async () => {
-        loaderOrders.push(method);
-        return {};
-      });
-    });
+    ['loadEggPlugins', 'loadAppPlugins', 'loadCustomPlugins'].forEach(
+      method => {
+        mm(loader, method, async () => {
+          loaderOrders.push(method);
+          return {};
+        });
+      }
+    );
 
     await loader.loadPlugin();
     assert.deepEqual(loaderOrders, [
@@ -104,7 +106,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     assert.deepEqual(loader.plugins.rds, {
       enable: true,
       name: 'rds',
-      dependencies: [ 'session' ],
+      dependencies: ['session'],
       optionalDependencies: [],
       env: [],
       package: 'rds',
@@ -119,7 +121,9 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
         return EggLoader;
       }
       get [Symbol.for('egg#eggPath')]() {
-        return getFilepath('plugin-pnpm/node_modules/.pnpm/framework@1.0.0/node_modules/framework');
+        return getFilepath(
+          'plugin-pnpm/node_modules/.pnpm/framework@1.0.0/node_modules/framework'
+        );
       }
     }
     app = createApp('plugin-pnpm', {
@@ -141,7 +145,9 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
         return EggLoader;
       }
       get [Symbol.for('egg#eggPath')]() {
-        return getFilepath('plugin-pnpm-scope/node_modules/.pnpm/@eggjs+yadan@1.0.0/node_modules/@eggjs/yadan');
+        return getFilepath(
+          'plugin-pnpm-scope/node_modules/.pnpm/@eggjs+yadan@1.0.0/node_modules/@eggjs/yadan'
+        );
       }
     }
     app = createApp('plugin-pnpm-scope', {
@@ -187,7 +193,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     assert.deepEqual(loader.plugins.g, {
       enable: true,
       name: 'g',
-      dependencies: [ 'f' ],
+      dependencies: ['f'],
       optionalDependencies: [],
       env: [],
       path: path.join(baseDir, 'plugins/g'),
@@ -199,8 +205,11 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
   it('should warn when the name of plugin is not same', async () => {
     let message = '';
     app = createApp('plugin');
-    mm(app.console, 'warn', function(m: string) {
-      if (!m.startsWith('[@eggjs/core/egg_loader] eggPlugin is missing') && !message) {
+    mm(app.console, 'warn', (m: string) => {
+      if (
+        !m.startsWith('[@eggjs/core/egg_loader] eggPlugin is missing') &&
+        !message
+      ) {
         message = m;
       }
     });
@@ -208,13 +217,16 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader.loadPlugin();
     await loader.loadConfig();
 
-    assert.equal(message, '[@eggjs/core/egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)');
+    assert.equal(
+      message,
+      '[@eggjs/core/egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)'
+    );
   });
 
   it('should not warn when the config.strict is false', async () => {
     let message = '';
     app = createApp('plugin-strict');
-    mm(app.console, 'warn', function(m: string) {
+    mm(app.console, 'warn', (m: string) => {
       message = m;
     });
     const loader = app.loader;
@@ -226,7 +238,8 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     app = createApp('plugin-ts-src');
     const loader = app.loader;
     await loader.loadPlugin();
-    assert.match(loader.allPlugins.agg.path!, /src$/);
+    assert(loader.allPlugins.agg.path);
+    assert.match(loader.allPlugins.agg.path, /src$/);
   });
 
   it('should loadConfig plugins with custom plugins config', async () => {
@@ -237,7 +250,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
         path: path.join(baseDir, 'node_modules/d'),
       },
       d1: {
-        env: [ 'unittest' ],
+        env: ['unittest'],
       },
     };
     app = createApp('plugin', { plugins });
@@ -251,7 +264,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
       package: 'd',
       dependencies: [],
       optionalDependencies: [],
-      env: [ 'unittest' ],
+      env: ['unittest'],
       path: path.join(baseDir, 'node_modules/d'),
       from: '<options.plugins>',
     });
@@ -298,7 +311,9 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
 
   it('should validate plugin.package', async () => {
     await assert.rejects(async () => {
-      app = createApp('plugin', { plugins: { foo: { package: '../' }, bar: { package: 'c:\\' } } });
+      app = createApp('plugin', {
+        plugins: { foo: { package: '../' }, bar: { package: 'c:\\' } },
+      });
       const loader = app.loader;
       await loader.loadPlugin();
       await loader.loadConfig();
@@ -343,19 +358,10 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert.deepEqual(loader.orderPlugins.map(function(plugin) {
-      return plugin.name;
-    }), [
-      'session',
-      'zzz',
-      'package',
-      'b',
-      'c1',
-      'f',
-      'a',
-      'd',
-      'e',
-    ]);
+    assert.deepEqual(
+      loader.orderPlugins.map(plugin => plugin.name),
+      ['session', 'zzz', 'package', 'b', 'c1', 'f', 'a', 'd', 'e']
+    );
   });
 
   it('should throw when plugin is recursive', async () => {
@@ -386,7 +392,10 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
       //   - eagleeye required by [hsfclient]
       //   - configclient required by [hsfclient]
       //   - diamond required by [hsfclient]
-      assert.equal(msg, 'Following plugins will be enabled implicitly.\n  - eagleeye required by [hsfclient]\n  - configclient required by [hsfclient]\n  - diamond required by [hsfclient]');
+      assert.equal(
+        msg,
+        'Following plugins will be enabled implicitly.\n  - eagleeye required by [hsfclient]\n  - configclient required by [hsfclient]\n  - diamond required by [hsfclient]'
+      );
     });
     const loader = app.loader;
     await loader.loadPlugin();
@@ -415,7 +424,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     assert.equal(loader.plugins.d.enable, true);
     assert.equal(loader.plugins.c.enable, true);
     assert.equal(loader.plugins.e.enable, true);
-    assert.deepEqual(Object.keys(loader.plugins), [ 'b', 'e', 'c', 'a', 'd' ]);
+    assert.deepEqual(Object.keys(loader.plugins), ['b', 'e', 'c', 'a', 'd']);
   });
 
   it('should enable when not match env', async () => {
@@ -424,9 +433,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader.loadPlugin();
     await loader.loadConfig();
     assert(!loader.plugins.testMe);
-    const plugins = loader.orderPlugins.map(function(plugin) {
-      return plugin.name;
-    });
+    const plugins = loader.orderPlugins.map(plugin => plugin.name);
     assert(!plugins.includes('testMe'));
   });
 
@@ -440,9 +447,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader1.loadConfig();
 
     // unittest 环境不开启
-    const keys1 = loader1.orderPlugins.map(function(plugin) {
-      return plugin.name;
-    }).join(',');
+    const keys1 = loader1.orderPlugins.map(plugin => plugin.name).join(',');
     assert(keys1.includes('b,c,d1,f,e'));
     assert(!loader1.plugins.a1);
 
@@ -451,16 +456,14 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     const loader2 = app2.loader;
     await loader2.loadPlugin();
     await loader2.loadConfig();
-    const keys2 = loader2.orderPlugins.map(function(plugin) {
-      return plugin.name;
-    }).join(',');
+    const keys2 = loader2.orderPlugins.map(plugin => plugin.name).join(',');
     assert(keys2.includes('d1,a1,b,c,f,e'));
     assert.deepEqual(loader2.plugins.a1, {
       enable: true,
       name: 'a1',
-      dependencies: [ 'd1' ],
+      dependencies: ['d1'],
       optionalDependencies: [],
-      env: [ 'local', 'prod' ],
+      env: ['local', 'prod'],
       path: path.join(baseDir, 'node_modules/a1'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
@@ -490,13 +493,22 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader.loadPlugin();
     await loader.loadConfig();
     assert(!loader.plugins.session.package);
-    assert.equal(loader.plugins.session.path, getFilepath('plugin-path-package/session'));
+    assert.equal(
+      loader.plugins.session.path,
+      getFilepath('plugin-path-package/session')
+    );
     assert(loader.plugins.hsfclient.package);
-    assert.equal(loader.plugins.hsfclient.path, getFilepath('plugin-path-package/node_modules/hsfclient'));
+    assert.equal(
+      loader.plugins.hsfclient.path,
+      getFilepath('plugin-path-package/node_modules/hsfclient')
+    );
   });
 
   it('should resolve the realpath of plugin path', async () => {
-    fs.rmSync(getFilepath('realpath/node_modules/a'), { force: true, recursive: true });
+    fs.rmSync(getFilepath('realpath/node_modules/a'), {
+      force: true,
+      recursive: true,
+    });
     fs.symlinkSync('../a', getFilepath('realpath/node_modules/a'), 'dir');
     app = createApp('realpath');
     const loader = app.loader;
@@ -508,10 +520,10 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
 
   it('should get the defining plugin path in every plugin', async () => {
     class Application extends EggCore {
-      get [ Symbol.for('egg#loader') ]() {
+      get [Symbol.for('egg#loader')]() {
         return EggLoader;
       }
-      get [ Symbol.for('egg#eggPath') ]() {
+      get [Symbol.for('egg#eggPath')]() {
         return getFilepath('plugin-from/framework');
       }
     }
@@ -520,8 +532,14 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     });
     const loader = app.loader;
     await loader.loadPlugin();
-    assert.equal(loader.plugins.a.from, getFilepath('plugin-from/config/plugin.js'));
-    assert.equal(loader.plugins.b.from, getFilepath('plugin-from/framework/config/plugin.js'));
+    assert.equal(
+      loader.plugins.a.from,
+      getFilepath('plugin-from/config/plugin.js')
+    );
+    assert.equal(
+      loader.plugins.b.from,
+      getFilepath('plugin-from/framework/config/plugin.js')
+    );
   });
 
   it('should load plugin.unittest.js override default', async () => {
@@ -555,30 +573,46 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
 
   it('should warn when redefine plugin', async () => {
     app = createApp('load-plugin-config-override');
-    mm(app.console, 'warn', function(msg: string, name: string, targetPlugin: object, from: string) {
-      assert.equal(msg, 'plugin %s has been defined that is %j, but you define again in %s');
-      assert.equal(name, 'zzz');
-      assert.deepEqual(targetPlugin, {
-        enable: true,
-        path: getFilepath('egg/plugins/zzz'),
-        name: 'zzz',
-        dependencies: [],
-        optionalDependencies: [],
-        env: [],
-        from: getFilepath('egg/config/plugin.js'),
-      });
-      assert.equal(from, getFilepath('load-plugin-config-override/config/plugin.js'));
-    });
+    mm(
+      app.console,
+      'warn',
+      (msg: string, name: string, targetPlugin: object, from: string) => {
+        assert.equal(
+          msg,
+          'plugin %s has been defined that is %j, but you define again in %s'
+        );
+        assert.equal(name, 'zzz');
+        assert.deepEqual(targetPlugin, {
+          enable: true,
+          path: getFilepath('egg/plugins/zzz'),
+          name: 'zzz',
+          dependencies: [],
+          optionalDependencies: [],
+          env: [],
+          from: getFilepath('egg/config/plugin.js'),
+        });
+        assert.equal(
+          from,
+          getFilepath('load-plugin-config-override/config/plugin.js')
+        );
+      }
+    );
     const loader = app.loader;
     await loader.loadPlugin();
-    assert.equal(loader.allPlugins.zzz.path, getFilepath('load-plugin-config-override/plugins/zzz'));
+    assert.equal(
+      loader.allPlugins.zzz.path,
+      getFilepath('load-plugin-config-override/plugins/zzz')
+    );
   });
 
   it('should support optionalDependencies', async () => {
     app = createApp('plugin-optional-dependencies');
     const loader = app.loader;
     await loader.loadPlugin();
-    assert.deepEqual(loader.orderPlugins.slice(2).map(p => p.name), [ 'package', 'e', 'b', 'a', 'f' ]);
+    assert.deepEqual(
+      loader.orderPlugins.map(p => p.name),
+      ['session', 'zzz', 'package', 'e', 'b', 'a', 'f']
+    );
   });
 
   it('should warn when redefine plugin', async () => {
@@ -607,14 +641,10 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     });
     const loader = app.loader;
     await loader.loadPlugin();
-    assert.deepEqual(loader.orderPlugins.map(p => p.name), [
-      'zookeeper',
-      'ddcs',
-      'vip',
-      'zoneclient',
-      'rpc',
-      'ldc',
-    ]);
+    assert.deepEqual(
+      loader.orderPlugins.map(p => p.name),
+      ['zookeeper', 'ddcs', 'vip', 'zoneclient', 'rpc', 'ldc']
+    );
   });
 
   it('should parse implicitly enable dependencies', async () => {
@@ -629,17 +659,14 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     });
     const loader = app.loader;
     await loader.loadPlugin();
-    assert.deepEqual(loader.orderPlugins.map(p => p.name), [
-      'zoneclient',
-      'ldc',
-      'rpcServer',
-      'tracelog',
-      'gateway',
-    ]);
+    assert.deepEqual(
+      loader.orderPlugins.map(p => p.name),
+      ['zoneclient', 'ldc', 'rpcServer', 'tracelog', 'gateway']
+    );
 
     assert.equal(loader.allPlugins.zoneclient.enable, true);
     assert.equal(loader.allPlugins.zoneclient.implicitEnable, true);
-    assert.deepEqual(loader.allPlugins.zoneclient.dependents, [ 'ldc' ]);
+    assert.deepEqual(loader.allPlugins.zoneclient.dependents, ['ldc']);
   });
 
   it('should load plugin from scope', async () => {
@@ -699,7 +726,9 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
         return EggLoader;
       }
       get [Symbol.for('egg#eggPath')]() {
-        return getFilepath(path.join('plugin-duplicate', 'node_modules', '@scope', 'b'));
+        return getFilepath(
+          path.join('plugin-duplicate', 'node_modules', '@scope', 'b')
+        );
       }
     }
 
@@ -715,7 +744,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
       enable: true,
       name: 'a-duplicate',
       dependencies: [],
-      optionalDependencies: [ 'a' ],
+      optionalDependencies: ['a'],
       env: [],
       package: '@scope/a',
       path: path.join(baseDir, 'node_modules', '@scope', 'a'),

@@ -1,4 +1,3 @@
 module.exports = {
-  method1: function() {
-  }
+  method1: function () {},
 };

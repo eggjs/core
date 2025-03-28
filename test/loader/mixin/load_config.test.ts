@@ -1,8 +1,10 @@
 import path from 'node:path';
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { mm } from 'mm';
+
 import { EggCore } from '../../../src/index.js';
-import { Application, createApp, getFilepath } from '../../helper.js';
+import { createApp, getFilepath, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_config.test.ts', () => {
   let app: Application;
@@ -19,9 +21,9 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     // 支持嵌套覆盖
     assert.deepEqual(loader.config.urllib, {
       keepAlive: false,
-      keepAliveTimeout: 30000,
-      timeout: 30000,
-      maxSockets: Infinity,
+      keepAliveTimeout: 30_000,
+      timeout: 30_000,
+      maxSockets: Number.POSITIVE_INFINITY,
       maxFreeSockets: 256,
     });
   });
@@ -55,12 +57,16 @@ describe('test/loader/mixin/load_config.test.ts', () => {
   });
 
   it('should override config by env.EGG_APP_CONFIG', async () => {
-    mm(process.env, 'EGG_APP_CONFIG', JSON.stringify({
-      egg: 'env_egg',
-      foo: {
-        bar: 'env_bar',
-      },
-    }));
+    mm(
+      process.env,
+      'EGG_APP_CONFIG',
+      JSON.stringify({
+        egg: 'env_egg',
+        foo: {
+          bar: 'env_bar',
+        },
+      })
+    );
     app = createApp('config-env-app-config');
     const loader = app.loader;
     await loader.loadPlugin();
@@ -107,7 +113,11 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       await loader.loadConfig();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(err.message.includes(`Can not define middleware in ${path.join(pluginDir, 'config/config.default.js')}`));
+      assert(
+        err.message.includes(
+          `Can not define middleware in ${path.join(pluginDir, 'config/config.default.js')}`
+        )
+      );
     }
   });
 
@@ -143,7 +153,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     app = createApp('config-array');
     await app.loader.loadPlugin();
     await app.loader.loadConfig();
-    assert.deepEqual(app.config.array, [ 1, 2 ]);
+    assert.deepEqual(app.config.array, [1, 2]);
   });
 
   it('should generate configMeta', async () => {
@@ -165,7 +175,10 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       assert.equal(configMeta.date.toLowerCase(), configPath);
       assert.equal(configMeta.ooooo.toLowerCase(), configPath);
       assert.equal(configMeta.urllib.keepAlive.toLowerCase(), configPath);
-      assert.equal(configMeta.urllib.timeout.toLowerCase(), getFilepath('egg-esm/config/config.default.js'));
+      assert.equal(
+        configMeta.urllib.timeout.toLowerCase(),
+        getFilepath('egg-esm/config/config.default.js')
+      );
       assert.equal(configMeta.urllib.foo.toLowerCase(), configPath);
       assert.equal(configMeta.urllib.n.toLowerCase(), configPath);
       assert.equal(configMeta.urllib.dd.toLowerCase(), configPath);
@@ -183,7 +196,10 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       assert.equal(configMeta.date, configPath);
       assert.equal(configMeta.ooooo, configPath);
       assert.equal(configMeta.urllib.keepAlive, configPath);
-      assert.equal(configMeta.urllib.timeout, getFilepath('egg-esm/config/config.default.js'));
+      assert.equal(
+        configMeta.urllib.timeout,
+        getFilepath('egg-esm/config/config.default.js')
+      );
       assert.equal(configMeta.urllib.foo, configPath);
       assert.equal(configMeta.urllib.n, configPath);
       assert.equal(configMeta.urllib.dd, configPath);

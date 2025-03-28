@@ -1,7 +1,9 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { request } from '@eggjs/supertest';
 import { mm } from 'mm';
-import { Application, createApp } from '../../helper.js';
+
+import { createApp, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_extend.test.ts', () => {
   let app: Application;

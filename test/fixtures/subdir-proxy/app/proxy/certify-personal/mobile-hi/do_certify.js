@@ -6,7 +6,7 @@ module.exports = function (app) {
       super(ctx);
     }
 
-    * exec(cmd) {
+    *exec(cmd) {
       return {
         cmd: cmd,
         method: this.ctx.method,

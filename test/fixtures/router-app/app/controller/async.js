@@ -5,5 +5,5 @@ module.exports = app => {
     async index() {
       this.ctx.body.push('async');
     }
-  }
+  };
 };

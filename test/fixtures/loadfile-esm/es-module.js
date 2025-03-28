@@ -1,3 +1,3 @@
 export function fn() {
-    console.log(fn);
+  console.log(fn);
 }

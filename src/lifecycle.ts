@@ -1,11 +1,12 @@
 import assert from 'node:assert';
 import { EventEmitter } from 'node:events';
 import { debuglog, format } from 'node:util';
+
 import { isClass } from 'is-type-of';
-import { Ready as ReadyObject } from 'get-ready';
-import type { ReadyFunctionArg } from 'get-ready';
+import { Ready as ReadyObject, type ReadyFunctionArg } from 'get-ready';
 import { Ready } from 'ready-callback';
 import { EggConsoleLogger } from 'egg-logger';
+
 import utils from './utils/index.js';
 import type { Fun } from './utils/index.js';
 import type { EggCore } from './egg.js';
@@ -54,7 +55,7 @@ export interface ILifecycleBoot {
   beforeClose?(): Promise<void>;
 }
 
-export type BootImplClass<T = ILifecycleBoot> = new(...args: any[]) => T;
+export type BootImplClass<T = ILifecycleBoot> = new (...args: any[]) => T;
 
 export interface LifecycleOptions {
   baseDir: string;
@@ -89,20 +90,29 @@ export class Lifecycle extends EventEmitter {
 
     this.timing.start(`${this.options.app.type} Start`);
     // get app timeout from env or use default timeout 10 second
-    const eggReadyTimeoutEnv = parseInt(process.env.EGG_READY_TIMEOUT_ENV || '10000');
+    const eggReadyTimeoutEnv = Number.parseInt(
+      process.env.EGG_READY_TIMEOUT_ENV || '10000'
+    );
     assert(
       Number.isInteger(eggReadyTimeoutEnv),
-      `process.env.EGG_READY_TIMEOUT_ENV ${process.env.EGG_READY_TIMEOUT_ENV} should be able to parseInt.`);
+      `process.env.EGG_READY_TIMEOUT_ENV ${process.env.EGG_READY_TIMEOUT_ENV} should be able to parseInt.`
+    );
     this.readyTimeout = eggReadyTimeoutEnv;
 
     this.#initReady();
-    this
-      .on('ready_stat', data => {
-        this.logger.info('[@eggjs/core/lifecycle:ready_stat] end ready task %s, remain %j', data.id, data.remain);
-      })
-      .on('ready_timeout', id => {
-        this.logger.warn('[@eggjs/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.', this.readyTimeout / 1000, id);
-      });
+    this.on('ready_stat', data => {
+      this.logger.info(
+        '[@eggjs/core/lifecycle:ready_stat] end ready task %s, remain %j',
+        data.id,
+        data.remain
+      );
+    }).on('ready_timeout', id => {
+      this.logger.warn(
+        '[@eggjs/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.',
+        this.readyTimeout / 1000,
+        id
+      );
+    });
 
     this.ready(err => {
       this.triggerDidReady(err);
@@ -136,10 +146,12 @@ export class Lifecycle extends EventEmitter {
     const timingKeyPrefix = 'readyCallback';
     const timing = this.timing;
     const cb = this.loadReady.readyCallback(name, opt);
-    const timingKey = `${timingKeyPrefix} in ` + utils.getResolvedFilename(name, this.app.baseDir);
+    const timingKey =
+      `${timingKeyPrefix} in ` +
+      utils.getResolvedFilename(name, this.app.baseDir);
     this.timing.start(timingKey);
     debug('register legacyReadyCallback');
-    return function legacyReadyCallback(...args: any[]) {
+    return function legacyReadyCallback(...args: unknown[]) {
       timing.end(timingKey);
       debug('end legacyReadyCallback');
       cb(...args);
@@ -147,12 +159,21 @@ export class Lifecycle extends EventEmitter {
   }
 
   addBootHook(bootHootOrBootClass: BootImplClass | ILifecycleBoot) {
-    assert(this.#init === false, 'do not add hook when lifecycle has been initialized');
+    assert(
+      this.#init === false,
+      'do not add hook when lifecycle has been initialized'
+    );
     this.#bootHooks.push(bootHootOrBootClass);
   }
 
-  addFunctionAsBootHook<T = EggCore>(hook: (app: T) => void, fullPath?: string) {
-    assert(this.#init === false, 'do not add hook when lifecycle has been initialized');
+  addFunctionAsBootHook<T = EggCore>(
+    hook: (app: T) => void,
+    fullPath?: string
+  ) {
+    assert(
+      this.#init === false,
+      'do not add hook when lifecycle has been initialized'
+    );
     // app.js is exported as a function
     // call this function in configDidLoad
     class Boot implements ILifecycleBoot {
@@ -190,8 +211,7 @@ export class Lifecycle extends EventEmitter {
   }
 
   registerBeforeStart(scope: Fun, name: string) {
-    debug('%s add registerBeforeStart, name: %o',
-      this.options.app.type, name);
+    debug('%s add registerBeforeStart, name: %o', this.options.app.type, name);
     this.#registerReadyCallback({
       scope,
       ready: this.loadReady,
@@ -207,15 +227,22 @@ export class Lifecycle extends EventEmitter {
       fn.fullPath = fullPath;
     }
     this.#closeFunctionSet.add(fn);
-    debug('%s register beforeClose at %o, count: %d',
-      this.app.type, fullPath, this.#closeFunctionSet.size);
+    debug(
+      '%s register beforeClose at %o, count: %d',
+      this.app.type,
+      fullPath,
+      this.#closeFunctionSet.size
+    );
   }
 
   async close() {
     // close in reverse order: first created, last closed
     const closeFns = Array.from(this.#closeFunctionSet);
-    debug('%s start trigger %d beforeClose functions',
-      this.app.type, closeFns.length);
+    debug(
+      '%s start trigger %d beforeClose functions',
+      this.app.type,
+      closeFns.length
+    );
     for (const fn of closeFns.reverse()) {
       debug('%s trigger beforeClose at %o', this.app.type, fn.fullPath);
       await utils.callFn(fn);
@@ -301,7 +328,11 @@ export class Lifecycle extends EventEmitter {
           try {
             await boot.didReady(err);
           } catch (err) {
-            debug('trigger didReady error at %o, error: %s', boot.fullPath, err);
+            debug(
+              'trigger didReady error at %o, error: %s',
+              boot.fullPath,
+              err
+            );
             this.emit('error', err);
           }
         }
@@ -321,7 +352,11 @@ export class Lifecycle extends EventEmitter {
         try {
           await boot.serverDidReady();
         } catch (err) {
-          debug('trigger serverDidReady error at %o, error: %s', boot.fullPath, err);
+          debug(
+            'trigger serverDidReady error at %o, error: %s',
+            boot.fullPath,
+            err
+          );
           this.emit('error', err);
         }
       }
@@ -355,8 +390,8 @@ export class Lifecycle extends EventEmitter {
 
   #delegateReadyEvent(ready: Ready) {
     ready.once('error', (err?: Error) => ready.ready(err));
-    ready.on('ready_timeout', (id: any) => this.emit('ready_timeout', id));
-    ready.on('ready_stat', (data: any) => this.emit('ready_stat', data));
+    ready.on('ready_timeout', (id: unknown) => this.emit('ready_timeout', id));
+    ready.on('ready_stat', (data: unknown) => this.emit('ready_stat', data));
     ready.on('error', (err?: Error) => this.emit('error', err));
   }
 
@@ -368,12 +403,14 @@ export class Lifecycle extends EventEmitter {
   }) {
     const { scope, ready, timingKeyPrefix, scopeFullName } = args;
     if (typeof scope !== 'function') {
-      throw new Error('boot only support function');
+      throw new TypeError('boot only support function');
     }
 
     // get filename from stack if scopeFullName is undefined
     const name = scopeFullName || utils.getCalleeFromStack(true, 4);
-    const timingKey = `${timingKeyPrefix} in ` + utils.getResolvedFilename(name, this.app.baseDir);
+    const timingKey =
+      `${timingKeyPrefix} in ` +
+      utils.getResolvedFilename(name, this.app.baseDir);
 
     this.timing.start(timingKey);
 
@@ -381,19 +418,21 @@ export class Lifecycle extends EventEmitter {
     const done = ready.readyCallback(name);
 
     // ensure scope executes after load completed
-    process.nextTick(() => {
-      utils.callFn(scope).then(() => {
+    process.nextTick(async () => {
+      try {
+        await utils.callFn(scope);
         debug('[registerReadyCallback] end name: %o', name);
         done();
         this.timing.end(timingKey);
-      }, (err: Error) => {
+      } catch (e) {
+        let err = e as Error;
         // avoid non-stringify error: TypeError: Cannot convert object to primitive value
         if (!(err instanceof Error)) {
           err = new Error(format('%s', err));
         }
         done(err);
         this.timing.end(timingKey);
-      });
+      }
     });
   }
 }

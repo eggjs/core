@@ -10,7 +10,7 @@
   "description": "A core plugin framework based on @eggjs/koa",
   "scripts": {
     "clean": "rimraf dist",
-    "lint": "eslint src test --ext ts",
+    "lint": "oxlint",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "egg-bin test",
     "posttest": "npm run clean",
@@ -18,7 +18,15 @@
     "preci": "npm run clean && npm run lint && npm run prepublishOnly",
     "ci": "egg-bin cov",
     "postci": "npm run clean",
-    "prepublishOnly": "tshy && tshy-after && attw --pack"
+    "prepublishOnly": "tshy && tshy-after && attw --pack",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown --cache",
+    "*.{ts,js,json,md,yml}": [
+      "prettier --ignore-unknown --write",
+      "oxlint --fix"
+    ]
   },
   "repository": {
     "type": "git",
@@ -51,7 +59,7 @@
     "utility": "^2.1.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.1",
+    "@arethetypeswrong/cli": "^0.17.4",
     "@eggjs/bin": "7",
     "@eggjs/supertest": "^8.1.1",
     "@eggjs/tsconfig": "1",
@@ -60,8 +68,10 @@
     "@types/node": "22",
     "await-event": "2",
     "coffee": "5",
-    "eslint": "8",
-    "eslint-config-egg": "14",
+    "husky": "9",
+    "lint-staged": "15",
+    "oxlint": "^0.16.2",
+    "prettier": "3",
     "gals": "1",
     "js-yaml": "3",
     "mm": "^4.0.2",

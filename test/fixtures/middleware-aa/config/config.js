@@ -1,4 +1,4 @@
-exports.middleware = [ 'static', 'match', 'common' ];
+exports.middleware = ['static', 'match', 'common'];
 
 exports.match = {
   match: '/match',

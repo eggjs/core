@@ -2,6 +2,8 @@
   "name": "a",
   "eggPlugin": {
     "name": "customA",
-    "dep": [ "customB" ]
+    "dep": [
+      "customB"
+    ]
   }
 }

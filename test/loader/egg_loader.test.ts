@@ -1,9 +1,11 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import os from 'node:os';
 import path from 'node:path';
+
 import { mm } from 'mm';
 import { getPlugins } from '@eggjs/utils';
-import { Application, createApp, getFilepath } from '../helper.js';
+
+import { createApp, getFilepath, type Application } from '../helper.js';
 import { EggLoader } from '../../src/index.js';
 
 describe('test/loader/egg_loader.test.ts', () => {
@@ -68,7 +70,11 @@ describe('test/loader/egg_loader.test.ts', () => {
         logger: console,
       } as any);
 
-      let ret = await loader.loadFile(getFilepath('load_file/function.js'), 1, 2);
+      let ret = await loader.loadFile(
+        getFilepath('load_file/function.js'),
+        1,
+        2
+      );
       assert.equal(ret[0], 1);
       assert.equal(ret[1], 2);
 
@@ -81,7 +87,7 @@ describe('test/loader/egg_loader.test.ts', () => {
   it('should be loaded by loadToApp, support symbol property', async () => {
     const baseDir = getFilepath('load_to_app');
     const directory = path.join(baseDir, 'app/model');
-    const prop = Symbol();
+    const prop = Symbol('prop');
     const app = {};
     const loader = new EggLoader({
       baseDir,
@@ -95,7 +101,7 @@ describe('test/loader/egg_loader.test.ts', () => {
   it('should be loaded by loadToContext', async () => {
     const baseDir = getFilepath('load_to_app');
     const directory = path.join(baseDir, 'app/service');
-    const prop = Symbol();
+    const prop = Symbol('prop');
     const app = { context: {} };
     const loader = new EggLoader({
       baseDir,

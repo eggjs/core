@@ -1,5 +1,5 @@
-module.exports = function(obj) {
+module.exports = function (obj) {
   return {
-    a: 1
+    a: 1,
   };
 };

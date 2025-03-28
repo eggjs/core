@@ -15,12 +15,11 @@ export interface TimingItem {
 
 export class Timing {
   #enable: boolean;
-  #startTime: number | null;
+  #startTime: number;
   #map: Map<string, TimingItem>;
   #list: TimingItem[];
   constructor() {
     this.#enable = true;
-    this.#startTime = null;
     this.#map = new Map();
     this.#list = [];
     this.init();
@@ -28,10 +27,16 @@ export class Timing {
 
   init() {
     // process start time
-    this.start('Process Start', Date.now() - Math.floor(process.uptime() * 1000));
+    this.start(
+      'Process Start',
+      Date.now() - Math.floor(process.uptime() * 1000)
+    );
     this.end('Process Start');
 
-    if ('scriptStartTime' in process && typeof process.scriptStartTime === 'number') {
+    if (
+      'scriptStartTime' in process &&
+      typeof process.scriptStartTime === 'number'
+    ) {
       // js script start execute time
       this.start('Script Start', process.scriptStartTime);
       this.end('Script Start');
@@ -46,7 +51,7 @@ export class Timing {
     }
 
     start = start || Date.now();
-    if (this.#startTime === null) {
+    if (!this.#startTime) {
       this.#startTime = start;
     }
     const item: TimingItem = {
@@ -63,9 +68,8 @@ export class Timing {
 
   end(name?: string) {
     if (!name || !this.#enable) return;
-    assert(this.#map.has(name), `should run timing.start('${name}') first`);
-
-    const item = this.#map.get(name)!;
+    const item = this.#map.get(name);
+    assert(item, `should run timing.start('${name}') first`);
     item.end = Date.now();
     item.duration = item.end - item.start;
     debug('end %j', item);
@@ -91,24 +95,34 @@ export class Timing {
 
   itemToString(timelineEnd: number, item: TimingItem, times: number) {
     const isEnd = typeof item.duration === 'number';
-    const duration = isEnd ? item.duration! : timelineEnd - item.start;
-    const offset = item.start - this.#startTime!;
+    const duration = isEnd
+      ? (item.duration as number)
+      : timelineEnd - item.start;
+    const offset = item.start - this.#startTime;
     const status = `${duration}ms${isEnd ? '' : ' NOT_END'}`;
     const timespan = Math.floor(Number((offset * times).toFixed(6)));
     let timeline = Math.floor(Number((duration * times).toFixed(6)));
     timeline = timeline > 0 ? timeline : 1; // make sure there is at least one unit
     const message = `#${item.index} ${item.name}`;
-    return ' '.repeat(timespan) + '▇'.repeat(timeline) + ` [${status}] - ${message}`;
+    return (
+      ' '.repeat(timespan) + '▇'.repeat(timeline) + ` [${status}] - ${message}`
+    );
   }
 
   toString(prefix = 'egg start timeline:', width = 50) {
     const timelineEnd = Date.now();
-    const timelineDuration = timelineEnd - this.#startTime!;
+    const timelineDuration = timelineEnd - this.#startTime;
     let times = 1;
     if (timelineDuration > width) {
       times = width / timelineDuration;
     }
     // follow https://github.com/node-modules/time-profile/blob/master/lib/profiler.js#L88
-    return prefix + EOL + this.#list.map(item => this.itemToString(timelineEnd, item, times)).join(EOL);
+    return (
+      prefix +
+      EOL +
+      this.#list
+        .map(item => this.itemToString(timelineEnd, item, times))
+        .join(EOL)
+    );
   }
 }

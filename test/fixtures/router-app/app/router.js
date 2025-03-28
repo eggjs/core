@@ -12,13 +12,28 @@ module.exports = function (app) {
     .resources('posts', '/posts', 'posts')
     .resources('members', '/members', app.controller.members)
     .resources('/comments', app.controller.comments)
-    .get('comment_index', '/comments/:id?filter=', app.controller.comments.index)
+    .get(
+      'comment_index',
+      '/comments/:id?filter=',
+      app.controller.comments.index
+    )
     .get('params', '/params/:a/:b', app.controller.locals.router)
     .get('/middleware', common, asyncMw, generator, 'middleware')
-    .get('middleware', '/named_middleware', common, asyncMw, generator, 'middleware')
-    .get('/mix', generatorBoth , 'async.index')
-    .register('/comments', [ 'post' ] , app.controller.comments.new)
-    .register('/register_middleware', [ 'get' ], [ common, asyncMw, generator, 'middleware' ])
+    .get(
+      'middleware',
+      '/named_middleware',
+      common,
+      asyncMw,
+      generator,
+      'middleware'
+    )
+    .get('/mix', generatorBoth, 'async.index')
+    .register('/comments', ['post'], app.controller.comments.new)
+    .register(
+      '/register_middleware',
+      ['get'],
+      [common, asyncMw, generator, 'middleware']
+    )
     .redirect('/redirect', '/middleware', 302);
 
   app.router
@@ -27,6 +42,6 @@ module.exports = function (app) {
 
   app.get('packages', /^\/packages\/(.*)/, 'package.get');
 
-  app.get([ '/url1', '/url2' ], 'members.index')
-  app.get([ '/urlm1', '/urlm2' ], common, asyncMw, generator, 'middleware')
+  app.get(['/url1', '/url2'], 'members.index');
+  app.get(['/urlm1', '/urlm2'], common, asyncMw, generator, 'middleware');
 };

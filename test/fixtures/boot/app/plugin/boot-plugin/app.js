@@ -10,7 +10,7 @@ module.exports = app => {
     app.bootLog.push('beforeStart');
   });
 
-  app.ready(()=> {
+  app.ready(() => {
     app.bootLog.push('ready');
   });
 };

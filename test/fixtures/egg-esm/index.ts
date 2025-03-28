@@ -40,4 +40,3 @@ export class Application extends EggCore {
 }
 
 export { EggCoreInitOptions } from '../../../src/index.js';
- 

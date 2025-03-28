@@ -1,7 +1,7 @@
 const { scheduler } = require('node:timers/promises');
 
 module.exports = function (app) {
-  app.beforeStart(function() {
+  app.beforeStart(function () {
     app.beforeStartFunction = true;
   });
   app.beforeStart(async function () {

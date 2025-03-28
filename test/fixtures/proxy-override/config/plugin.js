@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  a: true
+  a: true,
 };

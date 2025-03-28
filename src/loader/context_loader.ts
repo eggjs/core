@@ -38,7 +38,8 @@ export class ClassLoader {
   }
 }
 
-export interface ContextLoaderOptions extends Omit<FileLoaderOptions, 'target'> {
+export interface ContextLoaderOptions
+  extends Omit<FileLoaderOptions, 'target'> {
   /** required inject */
   inject: Record<string, any>;
   /** property name defined to target */
@@ -71,14 +72,14 @@ export class ContextLoader extends FileLoader {
       ...options,
       target,
     });
-    this.#inject = this.options.inject!;
+    this.#inject = this.options.inject as Record<string, any>;
 
     const app = this.#inject;
     const property = options.property;
     // define ctx.service
     Object.defineProperty(app.context, property, {
       get() {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        // oxlint-disable-next-line unicorn/no-this-assignment, typescript/no-this-alias
         const ctx = this;
         // distinguish property cache,
         // cache's lifecycle is the same with this context instance
@@ -86,11 +87,12 @@ export class ContextLoader extends FileLoader {
         if (!ctx[CLASS_LOADER]) {
           ctx[CLASS_LOADER] = new Map();
         }
-        const classLoader: Map<string | symbol, ClassLoader> = ctx[CLASS_LOADER];
+        const classLoader: Map<string | symbol, ClassLoader> =
+          ctx[CLASS_LOADER];
         let instance = classLoader.get(property);
         if (!instance) {
           instance = getInstance(target, ctx);
-          classLoader.set(property, instance!);
+          classLoader.set(property, instance as ClassLoader);
         }
         return instance;
       },
@@ -110,8 +112,8 @@ function getInstance(values: any, ctx: Context) {
       // it's just an object
       instance = Class;
     }
-  // Can't set property to primitive, so check again
-  // e.x. module.exports = 1;
+    // Can't set property to primitive, so check again
+    // e.x. module.exports = 1;
   } else if (isPrimitive(values)) {
     instance = values;
   } else {

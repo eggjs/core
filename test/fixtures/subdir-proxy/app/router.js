@@ -1,5 +1,5 @@
 module.exports = function (app) {
-  app.get('/', function*() {
+  app.get('/', function* () {
     this.body = {
       user: yield this.proxy.user.get('123'),
       cif: yield this.proxy.cif.user.get('123cif'),
@@ -13,4 +13,4 @@ module.exports = function (app) {
       oldStyle: yield this.proxy.oldStyle.url(this),
     };
   });
-}
+};

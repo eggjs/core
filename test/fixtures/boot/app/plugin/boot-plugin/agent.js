@@ -7,7 +7,7 @@ module.exports = agent => {
     agent.bootLog.push('beforeStart');
   });
 
-  agent.ready(()=> {
+  agent.ready(() => {
     agent.bootLog.push('ready');
   });
 };

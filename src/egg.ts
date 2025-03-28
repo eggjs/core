@@ -1,26 +1,33 @@
 /* eslint-disable prefer-spread */
 import assert from 'node:assert';
 import { debuglog } from 'node:util';
+
 import {
-  Application as KoaApplication, Context as KoaContext,
-  Request as KoaRequest, Response as KoaResponse,
+  Application as KoaApplication,
+  Context as KoaContext,
+  Request as KoaRequest,
+  Response as KoaResponse,
+  type MiddlewareFunc as KoaMiddlewareFunc,
+  type Next,
 } from '@eggjs/koa';
-import type {
-  MiddlewareFunc as KoaMiddlewareFunc,
-  Next,
-} from '@eggjs/koa';
-import { EggConsoleLogger, Logger } from 'egg-logger';
-import { RegisterOptions, ResourcesController, EggRouter as Router } from '@eggjs/router';
+import { EggConsoleLogger, type Logger } from 'egg-logger';
+import {
+  EggRouter as Router,
+  type RegisterOptions,
+  type ResourcesController,
+} from '@eggjs/router';
 import type { ReadyFunctionArg } from 'get-ready';
+
 import { BaseContextClass } from './base_context_class.js';
 import { Timing } from './utils/timing.js';
-import type { Fun } from './utils/index.js';
 import { Lifecycle } from './lifecycle.js';
 import { EggLoader } from './loader/egg_loader.js';
-import utils from './utils/index.js';
-import { EggAppConfig } from './types.js';
+import utils, { type Fun } from './utils/index.js';
+import type { EggAppConfig } from './types.js';
 import {
-  Singleton, type SingletonCreateMethod, type SingletonOptions,
+  Singleton,
+  type SingletonCreateMethod,
+  type SingletonOptions,
 } from './singleton.js';
 
 const debug = debuglog('@eggjs/core/egg');
@@ -38,15 +45,10 @@ export interface EggCoreOptions {
 export type EggCoreInitOptions = Partial<EggCoreOptions>;
 
 // export @eggjs/koa classes
-export {
-  KoaRequest, KoaResponse, KoaContext, KoaApplication,
-  Router,
-};
+export { KoaRequest, KoaResponse, KoaContext, KoaApplication, Router };
 
 // export @eggjs/koa types
-export type {
-  Next, KoaMiddlewareFunc,
-};
+export type { Next, KoaMiddlewareFunc };
 
 // export @eggjs/core classes
 export class Request extends KoaRequest {
@@ -96,7 +98,8 @@ export class Context extends KoaContext {
 }
 
 // export @eggjs/core types
-export type MiddlewareFunc<T = Context> = KoaMiddlewareFunc<T>;
+export type MiddlewareFunc<T extends KoaContext = Context> =
+  KoaMiddlewareFunc<T>;
 
 export class EggCore extends KoaApplication {
   options: EggCoreOptions;
@@ -112,27 +115,38 @@ export class EggCore extends KoaApplication {
   #router?: Router;
 
   /** auto inject on loadService() */
+
   readonly serviceClasses: Record<string, any> = {};
   /** auto inject on loadController() */
+
   readonly controller: Record<string, any> = {};
   /** auto inject on loadMiddleware() */
-  readonly middlewares: Record<string, (opt: any, app: EggCore) => MiddlewareFunc> = {};
+  readonly middlewares: Record<
+    string,
+    (opt: unknown, app: EggCore) => MiddlewareFunc
+  > = {};
 
   /**
    * @class
    * @param {Object} options - options
-   * @param {String} [options.baseDir=process.cwd()] - the directory of application
-   * @param {String} [options.type=application|agent] - whether it's running in app worker or agent worker
+   * @param {String} [options.baseDir] - the directory of application
+   * @param {String} [options.type] - whether it's running in app worker or agent worker
    * @param {Object} [options.plugins] - custom plugins
    * @since 1.0.0
    */
   constructor(options: EggCoreInitOptions = {}) {
     options.baseDir = options.baseDir ?? process.cwd();
     options.type = options.type ?? 'application';
-    assert(typeof options.baseDir === 'string', 'options.baseDir required, and must be a string');
+    assert(
+      typeof options.baseDir === 'string',
+      'options.baseDir required, and must be a string'
+    );
     // assert(fs.existsSync(options.baseDir), `Directory ${options.baseDir} not exists`);
     // assert(fs.statSync(options.baseDir).isDirectory(), `Directory ${options.baseDir} is not a directory`);
-    assert(options.type === 'application' || options.type === 'agent', 'options.type should be application or agent');
+    assert(
+      options.type === 'application' || options.type === 'agent',
+      'options.type should be application or agent'
+    );
     super();
 
     this.timing = new Timing();
@@ -205,7 +219,7 @@ export class EggCore extends KoaApplication {
      * @since 1.0.0
      */
     const Loader = this[EGG_LOADER];
-    assert(Loader, 'Symbol.for(\'egg#loader\') is required');
+    assert(Loader, "Symbol.for('egg#loader') is required");
     this.loader = new Loader({
       baseDir: options.baseDir,
       app: this,
@@ -249,7 +263,7 @@ export class EggCore extends KoaApplication {
    * override koa's app.use, support generator function
    * @since 1.0.0
    */
-  use(fn: MiddlewareFunc) {
+  use<T extends KoaContext = Context>(fn: MiddlewareFunc<T>) {
     assert(typeof fn === 'function', 'app.use() requires a function');
     debug('[use] add middleware: %o', fn._name || fn.name || '-');
     this.middleware.push(fn as unknown as KoaMiddlewareFunc);
@@ -309,7 +323,7 @@ export class EggCore extends KoaApplication {
    * @since 1.0.0
    */
   get config(): EggAppConfig {
-    return this.loader ? this.loader.config : {} as EggAppConfig;
+    return this.loader ? this.loader.config : ({} as EggAppConfig);
   }
 
   /**
@@ -326,7 +340,9 @@ export class EggCore extends KoaApplication {
    * @param {string} [name] scope name, default is empty string
    */
   beforeStart(scope: Fun, name?: string) {
-    this.deprecate('`beforeStart` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles');
+    this.deprecate(
+      '`beforeStart` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
+    );
     this.lifecycle.registerBeforeStart(scope, name ?? '');
   }
 
@@ -363,13 +379,15 @@ export class EggCore extends KoaApplication {
    * @param {object} opts -
    *   - {Number} [timeout=10000] - emit `ready_timeout` when it doesn't finish but reach the timeout
    *   - {Boolean} [isWeakDep=false] - whether it's a weak dependency
-   * @return {Function} - a callback
+   * @returns {Function} - a callback
    * @example
    * const done = app.readyCallback('mysql');
    * mysql.ready(done);
    */
   readyCallback(name: string, opts: object) {
-    this.deprecate('`readyCallback` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles');
+    this.deprecate(
+      '`readyCallback` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
+    );
     return this.lifecycle.legacyReadyCallback(name, opts);
   }
 
@@ -386,7 +404,9 @@ export class EggCore extends KoaApplication {
    * @param {Function} fn - the function that can be generator function or async function.
    */
   beforeClose(fn: Fun, name?: string) {
-    this.deprecate('`beforeClose` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles');
+    this.deprecate(
+      '`beforeClose` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
+    );
     this.lifecycle.registerBeforeClose(fn, name);
   }
 
@@ -398,7 +418,7 @@ export class EggCore extends KoaApplication {
    *
    * If error is thrown when it's closing, the promise will reject.
    * It will also reject after following call.
-   * @return {Promise} promise
+   * @returns {Promise} promise
    * @since 1.0.0
    */
   async close(): Promise<void> {
@@ -416,25 +436,33 @@ export class EggCore extends KoaApplication {
     if (this.#router) {
       return this.#router;
     }
-    const router = this.#router = new Router({ sensitive: true }, this);
-    return router;
+    this.#router = new Router({ sensitive: true }, this);
+    return this.#router;
   }
 
   /**
    * Alias to {@link Router#url}
    * @param {String} name - Router name
    * @param {Object} params - more parameters
-   * @return {String} url
+   * @returns {String} url
    */
-  url(name: string, params?: any): string {
+  url(name: string, params?: Parameters<Router['url']>[1]): string {
     return this.router.url(name, params);
   }
 
   // delegate all router method to application
   // 'head', 'options', 'get', 'put', 'patch', 'post', 'delete'
   // 'all', 'resources', 'register', 'redirect'
-  head(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  head(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  head(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  head(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+
   head(...args: any): EggCore {
     this.router.head.apply(this.router, args);
     return this;
@@ -445,68 +473,140 @@ export class EggCore extends KoaApplication {
   //   this.router.options.apply(this.router, args);
   //   return this;
   // }
-  get(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  get(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  get(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  get(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+
   get(...args: any): EggCore {
     this.router.get.apply(this.router, args);
     return this;
   }
-  put(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  put(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  put(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  put(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+
   put(...args: any): EggCore {
     this.router.put.apply(this.router, args);
     return this;
   }
-  patch(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  patch(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  patch(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  patch(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+
   patch(...args: any): EggCore {
     this.router.patch.apply(this.router, args);
     return this;
   }
-  post(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  post(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  post(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  post(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+
   post(...args: any): EggCore {
     this.router.post.apply(this.router, args);
     return this;
   }
-  delete(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  delete(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  delete(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  delete(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+
   delete(...args: any): EggCore {
     this.router.delete.apply(this.router, args);
     return this;
   }
-  del(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  del(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  del(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  del(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+
   del(...args: any): EggCore {
     this.router.del.apply(this.router, args);
     return this;
   }
 
-  all(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  all(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  all(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  all(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+
   all(...args: any): EggCore {
     this.router.all.apply(this.router, args);
     return this;
   }
 
   resources(prefix: string, controller: string | ResourcesController): EggCore;
-  resources(prefix: string, middleware: MiddlewareFunc, controller: string | ResourcesController): EggCore;
-  resources(name: string, prefix: string, controller: string | ResourcesController): EggCore;
-  resources(name: string, prefix: string, middleware: MiddlewareFunc, controller: string | ResourcesController): EggCore;
+  resources(
+    prefix: string,
+    middleware: MiddlewareFunc,
+    controller: string | ResourcesController
+  ): EggCore;
+  resources(
+    name: string,
+    prefix: string,
+    controller: string | ResourcesController
+  ): EggCore;
+  resources(
+    name: string,
+    prefix: string,
+    middleware: MiddlewareFunc,
+    controller: string | ResourcesController
+  ): EggCore;
+
   resources(...args: any): EggCore {
     this.router.resources.apply(this.router, args);
     return this;
   }
 
-  redirect(source: string, destination: string, status: number = 301) {
+  redirect(source: string, destination: string, status = 301) {
     this.router.redirect(source, destination, status);
     return this;
   }
 
-  register(path: string | RegExp | (string | RegExp)[],
+  register(
+    path: string | RegExp | (string | RegExp)[],
     methods: string[],
     middleware: MiddlewareFunc | MiddlewareFunc[],
-    opts?: RegisterOptions) {
+    opts?: RegisterOptions
+  ) {
     this.router.register(path, methods, middleware, opts);
     return this;
   }

@@ -14,8 +14,7 @@ describe('test/support-typescript.test.ts', () => {
   });
 
   it('should ignore *.js when *.ts same file exists', async () => {
-    const res = await request(app.callback())
-      .get('/');
+    const res = await request(app.callback()).get('/');
     assert.equal(res.status, 200);
     assert.equal(res.text, 'Hello World');
   });

@@ -6,5 +6,5 @@ module.exports = {
   a: {
     enable: true,
     path: path.join(__dirname, '../a'),
-  }
+  },
 };

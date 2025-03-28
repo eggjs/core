@@ -8,4 +8,4 @@ module.exports = class One {
   get() {
     return this.ctx.name + ':one';
   }
-}
+};

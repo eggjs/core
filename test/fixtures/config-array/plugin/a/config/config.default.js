@@ -1,3 +1,3 @@
 'use strict';
 
-exports.array = [ 1, 2, 3 ];
+exports.array = [1, 2, 3];

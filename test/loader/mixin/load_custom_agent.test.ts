@@ -17,7 +17,7 @@ describe('test/loader/mixin/load_custom_agent.test.ts', () => {
     assert(agent.agent === 'agent');
   });
 
-  it('should agent.js of plugin before application\'s', () => {
+  it("should agent.js of plugin before application's", () => {
     assert(agent.dateB <= agent.date);
     assert(agent.dateC <= agent.date);
   });

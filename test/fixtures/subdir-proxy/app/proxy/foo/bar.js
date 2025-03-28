@@ -6,7 +6,7 @@ module.exports = function (app) {
       super(ctx);
     }
 
-    * get(name) {
+    *get(name) {
       return {
         name: name,
         bar: 'bar1',

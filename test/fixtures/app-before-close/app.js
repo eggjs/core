@@ -12,7 +12,7 @@ module.exports = app => {
     app.closeGeneratorFn = true;
     app.closeOrderArray.push('closeGeneratorFn');
   });
-  app.beforeClose(function() {
+  app.beforeClose(function () {
     app.closeOrderArray.push('closeAsyncFn');
     return new Promise(resolve => {
       app.closeAsyncFn = true;

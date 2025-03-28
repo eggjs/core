@@ -62,7 +62,7 @@ Then you can start with code below
 import { EggCore as Application } from '@eggjs/core';
 
 const app = new Application({
-  baseDir: '/path/to/app'
+  baseDir: '/path/to/app',
 });
 app.ready(() => {
   app.listen(3000);
@@ -140,13 +140,13 @@ Load app/service
 Retrieve application environment variable values via `serverEnv`.
 You can access directly by calling `this.serverEnv` after instantiation.
 
-serverEnv | description
----       | ---
-default   | default environment
-test      | system integration testing environment
-prod      | production environment
-local     | local environment on your own computer
-unittest  | unit test environment
+| serverEnv | description                            |
+| --------- | -------------------------------------- |
+| default   | default environment                    |
+| test      | system integration testing environment |
+| prod      | production environment                 |
+| local     | local environment on your own computer |
+| unittest  | unit test environment                  |
 
 #### getEggPaths()
 
@@ -163,7 +163,7 @@ This function will get add loadUnits follow the order:
 2. framework
 3. app
 
-loadUnit has a path and a type. Type must be one of those values: *app*, *framework*, *plugin*.
+loadUnit has a path and a type. Type must be one of those values: _app_, _framework_, _plugin_.
 
 ```js
 {
@@ -174,7 +174,7 @@ loadUnit has a path and a type. Type must be one of those values: *app*, *framew
 
 #### getAppname()
 
-To get application name from *package.json*
+To get application name from _package.json_
 
 #### appInfo
 
@@ -228,18 +228,18 @@ await this.loadExtend('application', app);
 
 ### LoaderOptions
 
-Param          | Type           | Description
--------------- | -------------- | ------------------------
-directory      | `String/Array` | directories to be loaded
-target         | `Object`       | attach the target object from loaded files
-match          | `String/Array` | match the files when load, default to `**/*.js`(if process.env.EGG_TYPESCRIPT was true, default to `[ '**/*.(js|ts)', '!**/*.d.ts' ]`)
-ignore         | `String/Array` | ignore the files when load
-initializer    | `Function`     | custom file exports, receive two parameters, first is the inject object(if not js file, will be content buffer), second is an `options` object that contain `path`
-caseStyle      | `String/Function` | set property's case when converting a filepath to property list.
-override       | `Boolean`      | determine whether override the property when get the same name
-call           | `Boolean`      | determine whether invoke when exports is function
-inject         | `Object`       | an object that be the argument when invoke the function
-filter         | `Function`     | a function that filter the exports which can be loaded
+| Param       | Type              | Description                                                                                                                                                        |
+| ----------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| directory   | `String/Array`    | directories to be loaded                                                                                                                                           |
+| target      | `Object`          | attach the target object from loaded files                                                                                                                         |
+| match       | `String/Array`    | match the files when load, default to `**/*.js`(if process.env.EGG\*TYPESCRIPT was true, default to `[ '\*\*/\_.(js                                                | ts)', '!\*_/_.d.ts' ]`) |
+| ignore      | `String/Array`    | ignore the files when load                                                                                                                                         |
+| initializer | `Function`        | custom file exports, receive two parameters, first is the inject object(if not js file, will be content buffer), second is an `options` object that contain `path` |
+| caseStyle   | `String/Function` | set property's case when converting a filepath to property list.                                                                                                   |
+| override    | `Boolean`         | determine whether override the property when get the same name                                                                                                     |
+| call        | `Boolean`         | determine whether invoke when exports is function                                                                                                                  |
+| inject      | `Object`          | an object that be the argument when invoke the function                                                                                                            |
+| filter      | `Function`        | a function that filter the exports which can be loaded                                                                                                             |
 
 ## Timing
 

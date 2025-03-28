@@ -8,4 +8,4 @@ module.exports = class TestClass {
     this.app = app;
     this.path = fullpath;
   }
-}
+};

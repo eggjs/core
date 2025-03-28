@@ -8,7 +8,5 @@
     "moduleResolution": "NodeNext",
     "declaration": false
   },
-  "exclude": [
-    "test"
-  ]
+  "exclude": ["test"]
 }

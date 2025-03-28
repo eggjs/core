@@ -2,5 +2,5 @@
 
 module.exports = {
   foo: 'app bar',
-  bar: 'foo'
+  bar: 'foo',
 };

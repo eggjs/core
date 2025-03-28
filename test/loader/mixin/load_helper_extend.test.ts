@@ -1,5 +1,6 @@
 import { request } from '@eggjs/supertest';
-import { Application, createApp } from '../../helper.js';
+
+import { createApp, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_helper_extend.test.ts', () => {
   describe('helper', () => {

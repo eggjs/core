@@ -1,5 +1,5 @@
-"use strict";
+'use strict';
 exports.__esModule = true;
-exports["default"] = {
-  fn() {}
+exports['default'] = {
+  fn() {},
 };

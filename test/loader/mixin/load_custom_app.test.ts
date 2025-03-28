@@ -1,5 +1,6 @@
-import { strict as assert } from 'node:assert';
-import { Application, createApp } from '../../helper.js';
+import assert from 'node:assert/strict';
+
+import { createApp, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_custom_app.test.ts', () => {
   describe('app.js as function', () => {
@@ -18,7 +19,7 @@ describe('test/loader/mixin/load_custom_app.test.ts', () => {
       assert((app as any).app === 'app');
     });
 
-    it('should app.js of plugin before application\'s', () => {
+    it("should app.js of plugin before application's", () => {
       assert((app as any).dateB <= (app as any).date);
       assert((app as any).dateC <= (app as any).date);
     });

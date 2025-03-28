@@ -1,7 +1,9 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { mm } from 'mm';
 import { importModule } from '@eggjs/utils';
-import { Application, createApp, getFilepath } from '../helper.js';
+
+import { createApp, getFilepath, type Application } from '../helper.js';
 import { EggLoader, EggCore } from '../../src/index.js';
 
 describe('test/loader/get_framework_paths.test.ts', () => {
@@ -15,11 +17,14 @@ describe('test/loader/get_framework_paths.test.ts', () => {
     if (process.platform === 'win32') {
       eggPaths = eggPaths.map(filepath => filepath.toLowerCase());
     }
-    assert.deepEqual(eggPaths, [ getFilepath('egg-esm') ]);
+    assert.deepEqual(eggPaths, [getFilepath('egg-esm')]);
   });
 
   it('should get from framework using symbol', async () => {
-    const Application = await importModule(getFilepath('framework-symbol/index.js'), { importDefaultOnly: true });
+    const Application = await importModule(
+      getFilepath('framework-symbol/index.js'),
+      { importDefaultOnly: true }
+    );
     app = createApp('eggpath', {
       Application,
     });
@@ -31,7 +36,10 @@ describe('test/loader/get_framework_paths.test.ts', () => {
   });
 
   it.skip('should throw when one of the Application do not specify symbol', async () => {
-    const AppClass = await importModule(getFilepath('framework-nosymbol/index.js'), { importDefaultOnly: true });
+    const AppClass = await importModule(
+      getFilepath('framework-nosymbol/index.js'),
+      { importDefaultOnly: true }
+    );
     assert.throws(() => {
       const app = createApp('eggpath', {
         Application: AppClass,
@@ -42,7 +50,9 @@ describe('test/loader/get_framework_paths.test.ts', () => {
 
   it('should remove dulplicate eggPath', async () => {
     app = createApp('eggpath', {
-      Application: await importModule(getFilepath('framework-dulp/index.js'), { importDefaultOnly: true }),
+      Application: await importModule(getFilepath('framework-dulp/index.js'), {
+        importDefaultOnly: true,
+      }),
     });
     assert.deepEqual(app.loader.eggPaths, [
       getFilepath('egg'),
@@ -64,7 +74,9 @@ describe('test/loader/get_framework_paths.test.ts', () => {
       get [Symbol.for('egg#eggPath')]() {
         return getFilepath('egg-esm');
       }
-      close() {}
+      close() {
+        // empty
+      }
     }
 
     app = createApp('eggpath', {
@@ -77,7 +89,10 @@ describe('test/loader/get_framework_paths.test.ts', () => {
   it('should assert eggPath type', async () => {
     await assert.rejects(async () => {
       createApp('eggpath', {
-        Application: await importModule(getFilepath('framework-wrong-eggpath/index.js'), { importDefaultOnly: true }),
+        Application: await importModule(
+          getFilepath('framework-wrong-eggpath/index.js'),
+          { importDefaultOnly: true }
+        ),
       });
     }, /Symbol.for\('egg#eggPath'\) should be string/);
   });

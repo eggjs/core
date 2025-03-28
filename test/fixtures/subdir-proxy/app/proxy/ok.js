@@ -6,10 +6,10 @@ module.exports = app => {
       super(ctx);
     }
 
-    * get() {
+    *get() {
       return {
         ok: true,
       };
     }
-  }
+  };
 };

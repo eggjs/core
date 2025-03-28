@@ -5,7 +5,7 @@ module.exports = {
     enable: true,
     package: '@scope/b',
   },
-  "a-duplicate": {
+  'a-duplicate': {
     enable: true,
     package: '@scope/a',
   },

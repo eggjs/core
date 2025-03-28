@@ -1,11 +1,11 @@
-exports.app = function() {
+exports.app = function () {
   return 'app';
 };
 
-exports.override = function() {
+exports.override = function () {
   return 'app';
 };
 
-exports.exists = function(obj) {
+exports.exists = function (obj) {
   return obj !== undefined;
 };
