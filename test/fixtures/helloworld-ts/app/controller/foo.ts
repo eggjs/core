@@ -1,4 +1,3 @@
 export default class FooController {
-  async render() {
-  }
+  async render() {}
 }

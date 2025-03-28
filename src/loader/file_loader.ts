@@ -4,7 +4,12 @@ import { debuglog } from 'node:util';
 import path from 'node:path';
 
 import globby from 'globby';
-import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
+import {
+  isClass,
+  isGeneratorFunction,
+  isAsyncFunction,
+  isPrimitive,
+} from 'is-type-of';
 import { isSupportTypeScript } from '@eggjs/utils';
 
 import utils, { type Fun } from '../utils/index.js';
@@ -21,14 +26,17 @@ export enum CaseStyle {
 }
 
 export type CaseStyleFunction = (filepath: string) => string[];
-export type FileLoaderInitializer = (exports: unknown, options: { path: string; pathName: string }) => unknown;
+export type FileLoaderInitializer = (
+  exports: unknown,
+  options: { path: string; pathName: string }
+) => unknown;
 export type FileLoaderFilter = (exports: unknown) => boolean;
 
 export interface FileLoaderOptions {
   /** directories to be loaded */
   directory: string | string[];
   /** attach the target object from loaded files */
-  
+
   target: Record<string, any>;
   /** match the files when load, support glob, default to all js files */
   match?: string | string[];
@@ -41,7 +49,7 @@ export interface FileLoaderOptions {
   /** determine whether override the property when get the same name */
   override?: boolean;
   /** an object that be the argument when invoke the function */
-  
+
   inject?: Record<string, any>;
   /** a function that filter the exports which can be loaded */
   filter?: FileLoaderFilter;
@@ -69,7 +77,8 @@ export class FileLoader {
     return EXPORTS;
   }
 
-  readonly options: FileLoaderOptions & Required<Pick<FileLoaderOptions, 'caseStyle'>>;
+  readonly options: FileLoaderOptions &
+    Required<Pick<FileLoaderOptions, 'caseStyle'>>;
 
   /**
    * @class
@@ -121,7 +130,9 @@ export class FileLoader {
         const properties = item.properties.slice(0, index + 1).join('.');
         if (index === item.properties.length - 1) {
           if (property in target && !this.options.override) {
-            throw new Error(`can't overwrite property '${properties}' from ${target[property][FULLPATH]} by ${item.fullpath}`);
+            throw new Error(
+              `can't overwrite property '${properties}' from ${target[property][FULLPATH]} by ${item.fullpath}`
+            );
           }
           obj = item.exports;
           if (obj && !isPrimitive(obj)) {
@@ -168,31 +179,37 @@ export class FileLoader {
   protected async parse(): Promise<FileLoaderParseItem[]> {
     let files = this.options.match;
     if (files) {
-      files = Array.isArray(files) ? files : [ files ];
+      files = Array.isArray(files) ? files : [files];
     } else {
       files = isSupportTypeScript()
-        ? [ '**/*.(js|ts)', '!**/*.d.ts' ]
-        : [ '**/*.js' ];
+        ? ['**/*.(js|ts)', '!**/*.d.ts']
+        : ['**/*.js'];
     }
 
     let ignore = this.options.ignore;
     if (ignore) {
-      ignore = Array.isArray(ignore) ? ignore : [ ignore ];
+      ignore = Array.isArray(ignore) ? ignore : [ignore];
       ignore = ignore.filter(f => !!f).map(f => '!' + f);
       files = files.concat(ignore);
     }
 
     let directories = this.options.directory;
     if (!Array.isArray(directories)) {
-      directories = [ directories ];
+      directories = [directories];
     }
 
-    const filter = typeof this.options.filter === 'function' ? this.options.filter : null;
+    const filter =
+      typeof this.options.filter === 'function' ? this.options.filter : null;
     const items: FileLoaderParseItem[] = [];
     debug('[parse] parsing directories: %j', directories);
     for (const directory of directories) {
       const filepaths = globby.sync(files, { cwd: directory });
-      debug('[parse] globby files: %o, cwd: %o => %o', files, directory, filepaths);
+      debug(
+        '[parse] globby files: %o, cwd: %o => %o',
+        files,
+        directory,
+        filepaths
+      );
       for (const filepath of filepaths) {
         const fullpath = path.join(directory, filepath);
         if (!fs.statSync(fullpath).isFile()) continue;
@@ -207,12 +224,17 @@ export class FileLoader {
         // app/service/foo/bar.js => [ 'foo', 'bar' ]
         const properties = getProperties(filepath, this.options.caseStyle);
         // app/service/foo/bar.js => service.foo.bar
-        const pathName = directory.split(/[/\\]/).slice(-1) + '.' + properties.join('.');
+        const pathName =
+          directory.split(/[/\\]/).slice(-1) + '.' + properties.join('.');
         // get exports from the file
         const exports = await getExports(fullpath, this.options, pathName);
 
         // ignore exports when it's null or false returned by filter function
-        if (exports === null || exports === undefined || (filter && filter(exports) === false)) {
+        if (
+          exports === null ||
+          exports === undefined ||
+          (filter && filter(exports) === false)
+        ) {
           continue;
         }
 
@@ -223,7 +245,12 @@ export class FileLoader {
         }
 
         items.push({ fullpath, properties, exports });
-        debug('[parse] parse %s, properties %j, exports %o', fullpath, properties, exports);
+        debug(
+          '[parse] parse %s, properties %j, exports %o',
+          fullpath,
+          properties,
+          exports
+        );
       }
     }
 
@@ -233,11 +260,17 @@ export class FileLoader {
 
 // convert file path to an array of properties
 // a/b/c.js => ['a', 'b', 'c']
-function getProperties(filepath: string, caseStyle: CaseStyle | CaseStyleFunction) {
+function getProperties(
+  filepath: string,
+  caseStyle: CaseStyle | CaseStyleFunction
+) {
   // if caseStyle is function, return the result of function
   if (typeof caseStyle === 'function') {
     const result = caseStyle(filepath);
-    assert(Array.isArray(result), `caseStyle expect an array, but got ${JSON.stringify(result)}`);
+    assert(
+      Array.isArray(result),
+      `caseStyle expect an array, but got ${JSON.stringify(result)}`
+    );
     return result;
   }
   // use default camelize
@@ -246,7 +279,11 @@ function getProperties(filepath: string, caseStyle: CaseStyle | CaseStyleFunctio
 
 // Get exports from filepath
 // If exports is null/undefined, it will be ignored
-async function getExports(fullpath: string, options: FileLoaderOptions, pathName: string) {
+async function getExports(
+  fullpath: string,
+  options: FileLoaderOptions,
+  pathName: string
+) {
   let exports = await utils.loadFile(fullpath);
   // process exports as you like
   if (options.initializer) {
@@ -255,7 +292,9 @@ async function getExports(fullpath: string, options: FileLoaderOptions, pathName
   }
 
   if (isGeneratorFunction(exports)) {
-    throw new TypeError(`Support for generators was removed, fullpath: ${fullpath}`);
+    throw new TypeError(
+      `Support for generators was removed, fullpath: ${fullpath}`
+    );
   }
 
   // return exports when it's a class or async function
@@ -296,7 +335,9 @@ function defaultCamelize(filepath: string, caseStyle: CaseStyle) {
     // FooBar.js  > FooBar
     // FooBar.js  > FooBar
     // FooBar.js  > fooBar (if lowercaseFirst is true)
-    property = property.replaceAll(/[_-][a-z]/ig, s => s.slice(1).toUpperCase());
+    property = property.replaceAll(/[_-][a-z]/gi, s =>
+      s.slice(1).toUpperCase()
+    );
     let first = property[0];
     if (caseStyle === CaseStyle.lower) {
       first = first.toLowerCase();

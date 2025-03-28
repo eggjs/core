@@ -5,5 +5,5 @@ module.exports = {
   d: {
     enable: true,
     package: 'd',
-  }
+  },
 };

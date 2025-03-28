@@ -6,6 +6,6 @@ module.exports = {
 
   // 标准写法
   b: {
-    enable: true
+    enable: true,
   },
 };

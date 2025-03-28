@@ -2,7 +2,13 @@ import * as assert from 'assert';
 import * as path from 'path';
 const EGG_LOADER = Symbol.for('egg#loader');
 const EGG_PATH = Symbol.for('egg#eggPath');
-import { BaseContextClass, EggCore, EggCoreOptions, EggLoader, EggLoaderOptions } from '../../..';
+import {
+  BaseContextClass,
+  EggCore,
+  EggCoreOptions,
+  EggLoader,
+  EggLoaderOptions,
+} from '../../..';
 
 // normal
 const app = new EggCore<{ env: string }>();
@@ -41,17 +47,25 @@ new BaseContextClass({ app: {} });
 
 // ready & close
 (async function test() {
-  const app2 = new EggCore({ baseDir: path.resolve(__dirname, '../app-getter/') });
+  const app2 = new EggCore({
+    baseDir: path.resolve(__dirname, '../app-getter/'),
+  });
   assert(app2.type === 'application');
   assert(app2.name === 'app-getter');
   assert(app2.plugins === app.loader.plugins);
   app2.beforeClose(() => {});
   app2.beforeStart(() => {});
-  const result = await app2.toAsyncFunction<{ env: number; }>(function*() { return yield { env: 1 } })();
+  const result = await app2.toAsyncFunction<{ env: number }>(function* () {
+    return yield { env: 1 };
+  })();
   assert(result.env === 1);
   await app2.toPromise([
-    function*() { yield {} },
-    function*() { yield {} }
+    function* () {
+      yield {};
+    },
+    function* () {
+      yield {};
+    },
   ]);
   await app2.ready();
   await app2.close();
@@ -83,9 +97,9 @@ class MyLoader extends EggLoader {
     this.loadHelperExtend();
     this.loadCustomAgent();
     this.loadService();
-    this.loadController({ ignore: [ '**/node_module' ] });
+    this.loadController({ ignore: ['**/node_module'] });
     this.loadRouter();
-    this.loadMiddleware({ ignore: [ '**/node_module' ] });
+    this.loadMiddleware({ ignore: ['**/node_module'] });
   }
 }
 const app3 = new MyEgg({ baseDir: path.resolve(__dirname, '../app-getter/') });
@@ -93,7 +107,6 @@ assert(app3.plugins === app3.loader.plugins);
 assert(app3.config === app3.loader.config);
 assert(app3.deprecate);
 app3.deprecate('is deprecate');
-
 
 // loadTo
 const app4 = { context: {} } as any;
@@ -119,10 +132,15 @@ const loader2 = new EggLoader({
 });
 loader2.loadToApp('dao', 'dao', { match: '**/test*.js', caseStyle: 'lower' });
 assert(app5.dao);
-loader2.loadToContext('dao', 'dao', { caseStyle: 'lower', ignore: [ 'testFunction.js', 'testReturnFunction.js' ] });
+loader2.loadToContext('dao', 'dao', {
+  caseStyle: 'lower',
+  ignore: ['testFunction.js', 'testReturnFunction.js'],
+});
 assert(app5.context.dao);
 assert(loader2.loadFile(path.resolve(baseDir2, './dao/testFunction')));
-assert(loader2.loadFile(path.resolve(baseDir2, './dao/testFunction'), { abc: 123 }));
+assert(
+  loader2.loadFile(path.resolve(baseDir2, './dao/testFunction'), { abc: 123 })
+);
 
 // file loader
 const FileLoader = loader.FileLoader;
@@ -130,9 +148,11 @@ const app6 = {} as any;
 new FileLoader({
   directory: path.join(__dirname, '../load_dirs'),
   target: app6,
-  match: [ 'dao/*' ],
+  match: ['dao/*'],
   caseStyle: 'upper',
-  filter(obj) { return !!obj; },
+  filter(obj) {
+    return !!obj;
+  },
   initializer(obj, options) {
     assert(options.path);
     assert(options.pathName);
@@ -153,9 +173,11 @@ class CustomFileLoader extends FileLoader {
 new CustomFileLoader({
   directory: path.join(__dirname, '../load_dirs'),
   target: app9,
-  match: [ 'dao/*' ],
+  match: ['dao/*'],
   caseStyle: 'upper',
-  filter(obj) { return !!obj; },
+  filter(obj) {
+    return !!obj;
+  },
   initializer(obj, options) {
     assert(options.path);
     assert(options.pathName);
@@ -171,9 +193,11 @@ new ContextLoader({
   property: 'kick',
   fieldClass: 'ass',
   inject: app7,
-  match: [ 'dao/*' ],
+  match: ['dao/*'],
   caseStyle: 'upper',
-  filter(obj) { return !!obj; },
+  filter(obj) {
+    return !!obj;
+  },
   initializer(obj, options) {
     assert(options.path);
     assert(options.pathName);
@@ -184,7 +208,6 @@ assert(app7.ass.Dao.TestClass);
 assert(app7.ass.Dao.TestFunction);
 assert(app7.context.kick.Dao.TestClass);
 assert(app7.context.kick.Dao.TestFunction);
-
 
 // custom context loader
 const app8 = { context: {} } as any;
@@ -199,9 +222,11 @@ new CustomContextLoader({
   property: 'kick',
   fieldClass: 'ass',
   inject: app8,
-  match: [ 'dao/*' ],
+  match: ['dao/*'],
   caseStyle: 'upper',
-  filter(obj) { return !!obj; },
+  filter(obj) {
+    return !!obj;
+  },
   initializer(obj, options) {
     assert(options.path);
     assert(options.pathName);

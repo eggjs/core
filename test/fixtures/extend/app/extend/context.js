@@ -5,7 +5,7 @@ module.exports = {
     return 'app context';
   },
 
-  ajax: function() {
+  ajax: function () {
     return 'app ajax patch';
-  }
+  },
 };

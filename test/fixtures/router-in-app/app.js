@@ -2,4 +2,4 @@
 
 module.exports = app => {
   app.router;
-}
+};

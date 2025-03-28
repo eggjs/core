@@ -1,4 +1,4 @@
-module.exports = async function() {
+module.exports = async function () {
   try {
     this.body = `
       app: ${this.helper.exists(this.helper.app)}
@@ -7,7 +7,7 @@ module.exports = async function() {
       override: ${this.helper.override()}
       not exists on locals: ${this.helper.exists(this.notExistsApp)}
     `;
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
-}
+};

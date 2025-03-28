@@ -1,4 +1,4 @@
-import { Context } from '../../../../../src/index.js'
+import { Context } from '../../../../../src/index.js';
 
 export default class MyContext extends Context {
   get appContext() {

@@ -13,6 +13,6 @@ module.exports = async (ctx: any) => {
     ctx.app.config.test,
     ctx.app.config.testFromA,
     ctx.mid,
-    serviceText
+    serviceText,
   ].join(',');
-}
+};

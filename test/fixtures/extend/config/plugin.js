@@ -3,5 +3,5 @@
 module.exports = {
   a: false,
 
-  b: true
+  b: true,
 };

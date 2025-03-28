@@ -2,7 +2,6 @@
 
 const EggApplication = require('../egg').Application;
 
-
 class Application extends EggApplication {
   get a() {}
 }

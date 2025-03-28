@@ -5,5 +5,5 @@ module.exports = app => {
     echo() {
       return `echo ${app.config.pkgName}`;
     },
-  }
+  };
 };

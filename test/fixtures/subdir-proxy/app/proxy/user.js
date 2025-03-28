@@ -6,9 +6,9 @@ module.exports = function (app) {
       super(ctx);
     }
 
-    * get(uid) {
+    *get(uid) {
       return {
-        uid: uid
+        uid: uid,
       };
     }
   }

@@ -1,4 +1,4 @@
-import { Response } from '../../../../../src/index.js'
+import { Response } from '../../../../../src/index.js';
 
 export default class AppResponse extends Response {
   get appResponse() {

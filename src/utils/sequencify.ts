@@ -12,11 +12,17 @@ export interface SequencifyTask {
   optionalDependencies: string[];
 }
 
-// oxlint-disable-next-line max-params
-function sequence(tasks: Record<string, SequencifyTask>,
-  names: string[], result: SequencifyResult,
-  missing: string[], recursive: string[],
-  nest: string[], optional: boolean, parent: string) {
+function sequence(
+  // oxlint-disable-next-line max-params
+  tasks: Record<string, SequencifyTask>,
+  names: string[],
+  result: SequencifyResult,
+  missing: string[],
+  recursive: string[],
+  nest: string[],
+  optional: boolean,
+  parent: string
+) {
   for (const name of names) {
     if (result.requires[name]) {
       continue;
@@ -31,13 +37,34 @@ function sequence(tasks: Record<string, SequencifyTask>,
       nest.push(name);
       recursive.push(...nest.slice(0));
       nest.pop();
-    } else if (node.dependencies.length > 0 || node.optionalDependencies.length > 0) {
+    } else if (
+      node.dependencies.length > 0 ||
+      node.optionalDependencies.length > 0
+    ) {
       nest.push(name);
       if (node.dependencies.length > 0) {
-        sequence(tasks, node.dependencies, result, missing, recursive, nest, optional, name);
+        sequence(
+          tasks,
+          node.dependencies,
+          result,
+          missing,
+          recursive,
+          nest,
+          optional,
+          name
+        );
       }
       if (node.optionalDependencies.length > 0) {
-        sequence(tasks, node.optionalDependencies, result, missing, recursive, nest, true, name);
+        sequence(
+          tasks,
+          node.optionalDependencies,
+          result,
+          missing,
+          recursive,
+          nest,
+          true,
+          name
+        );
       }
       nest.pop();
     }
@@ -53,7 +80,10 @@ function sequence(tasks: Record<string, SequencifyTask>,
 
 // tasks: object with keys as task names
 // names: array of task names
-export function sequencify(tasks: Record<string, SequencifyTask>, names: string[]) {
+export function sequencify(
+  tasks: Record<string, SequencifyTask>,
+  names: string[]
+) {
   const result: SequencifyResult = {
     sequence: [],
     requires: {},

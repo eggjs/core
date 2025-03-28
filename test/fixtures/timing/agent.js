@@ -7,5 +7,5 @@ module.exports = agent => {
 
   agent.beforeStart(function* () {
     block();
-  })
+  });
 };

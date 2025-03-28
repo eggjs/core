@@ -7,4 +7,3 @@ module.exports = function (app) {
   });
   app.beforeStartFunction = false;
 };
-

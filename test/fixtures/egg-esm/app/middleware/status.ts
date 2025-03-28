@@ -1,4 +1,4 @@
-export default function() {
+export default function () {
   return (ctx: any, next: any) => {
     ctx.traceId = `trace:${Date.now()}`;
     if (ctx.path === '/status') {
@@ -8,4 +8,4 @@ export default function() {
 
     return next();
   };
-};
+}

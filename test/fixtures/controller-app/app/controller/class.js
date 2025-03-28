@@ -1,5 +1,4 @@
 module.exports = class HomeController {
-
   constructor(ctx) {
     this.ctx = ctx;
   }

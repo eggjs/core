@@ -1,3 +1,3 @@
-module.exports = function(app) {
+module.exports = function (app) {
   app.get('/', app.controller.home);
 };

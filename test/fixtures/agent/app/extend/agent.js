@@ -2,5 +2,5 @@
 
 module.exports = {
   foo: 'agent bar',
-  bar: 'foo'
+  bar: 'foo',
 };

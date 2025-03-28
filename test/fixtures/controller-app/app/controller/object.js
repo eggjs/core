@@ -32,5 +32,5 @@ module.exports = {
 
   get nofunction() {
     return 'done';
-  }
+  },
 };

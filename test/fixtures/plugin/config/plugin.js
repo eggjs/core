@@ -39,5 +39,4 @@ module.exports = {
     dep: ['session'],
     package: 'rds',
   },
-
 };

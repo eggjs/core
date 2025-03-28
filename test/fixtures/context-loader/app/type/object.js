@@ -3,5 +3,5 @@
 module.exports = {
   get() {
     return 'object.get';
-  }
+  },
 };

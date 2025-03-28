@@ -38,7 +38,8 @@ export class ClassLoader {
   }
 }
 
-export interface ContextLoaderOptions extends Omit<FileLoaderOptions, 'target'> {
+export interface ContextLoaderOptions
+  extends Omit<FileLoaderOptions, 'target'> {
   /** required inject */
   inject: Record<string, any>;
   /** property name defined to target */
@@ -86,7 +87,8 @@ export class ContextLoader extends FileLoader {
         if (!ctx[CLASS_LOADER]) {
           ctx[CLASS_LOADER] = new Map();
         }
-        const classLoader: Map<string | symbol, ClassLoader> = ctx[CLASS_LOADER];
+        const classLoader: Map<string | symbol, ClassLoader> =
+          ctx[CLASS_LOADER];
         let instance = classLoader.get(property);
         if (!instance) {
           instance = getInstance(target, ctx);
@@ -110,8 +112,8 @@ function getInstance(values: any, ctx: Context) {
       // it's just an object
       instance = Class;
     }
-  // Can't set property to primitive, so check again
-  // e.x. module.exports = 1;
+    // Can't set property to primitive, so check again
+    // e.x. module.exports = 1;
   } else if (isPrimitive(values)) {
     instance = values;
   } else {

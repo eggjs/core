@@ -1,17 +1,17 @@
-exports.appOverrideChair = async function() {
+exports.appOverrideChair = async function () {
   this.body = {
-    value: this.ajax()
+    value: this.ajax(),
   };
 };
 
-exports.pluginOverrideChair = async function() {
+exports.pluginOverrideChair = async function () {
   this.body = {
-    value: this.ip
+    value: this.ip,
   };
 };
 
-exports.appOverridePlugin = async function() {
+exports.appOverridePlugin = async function () {
   this.body = {
-    value: this.response.overridePlugin
+    value: this.response.overridePlugin,
   };
 };

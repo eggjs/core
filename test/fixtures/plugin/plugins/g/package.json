@@ -1,7 +1,9 @@
 {
   "eggPlugin": {
     "name": "g",
-    "dep": [ "f" ]
+    "dep": [
+      "f"
+    ]
   },
   "version": "1.0.0"
 }

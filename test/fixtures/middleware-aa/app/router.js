@@ -10,4 +10,4 @@ module.exports = app => {
 
 function controller() {
   this.body = 'hello';
-};
+}
