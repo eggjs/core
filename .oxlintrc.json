@@ -139,5 +139,20 @@
     "jsdoc/require-returns": "allow",
     "jsdoc/require-param": "allow"
   },
-  "ignorePatterns": ["index.d.ts", "test/fixtures/**", "__snapshots__", "test", "benchmark"]
+  "overrides": [
+    {
+      "rules": {
+        "unicorn/no-array-for-each": "allow",
+        "promise/avoid-new": "allow",
+        "max-nested-callbacks": "allow"
+      },
+      "files": ["test/**/*.ts"]
+    }
+  ],
+  "ignorePatterns": [
+    "index.d.ts",
+    "test/fixtures/**",
+    "__snapshots__",
+    "benchmark"
+  ]
 }

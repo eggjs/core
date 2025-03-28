@@ -1,5 +1,6 @@
 import { request } from '@eggjs/supertest';
-import { getFilepath, createApp, Application } from '../helper.js';
+
+import { createApp, getFilepath, type Application } from '../helper.js';
 
 describe('test/loader/context_loader.test.ts', () => {
   let app: Application;
@@ -67,10 +68,7 @@ describe('test/loader/context_loader.test.ts', () => {
       .expect('pathname.a.b.c')
       .expect(200);
 
-    await request(app.callback())
-      .get('/config')
-      .expect('config')
-      .expect(200);
+    await request(app.callback()).get('/config').expect('config').expect(200);
   });
 
   it('should load file with service', () => {

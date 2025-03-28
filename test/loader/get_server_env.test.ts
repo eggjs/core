@@ -1,6 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { mm } from 'mm';
-import { Application, createApp } from '../helper.js';
+
+import { createApp, type Application } from '../helper.js';
 
 describe('test/loader/get_server_env.test.ts', () => {
   let app: Application;

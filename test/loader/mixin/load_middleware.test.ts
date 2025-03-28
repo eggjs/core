@@ -1,7 +1,9 @@
 import path from 'node:path';
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { request } from '@eggjs/supertest';
-import { Application, createApp, getFilepath } from '../../helper.js';
+
+import { createApp, getFilepath, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_middleware.test.ts', () => {
   let app: Application;
@@ -38,29 +40,32 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
       names.push(mw._name);
     }
     try {
-      assert.deepEqual(names, [ 'status', 'static', 'custom', 'routerMiddleware' ]);
+      assert.deepEqual(names, [
+        'status',
+        'static',
+        'custom',
+        'routerMiddleware',
+      ]);
     } catch {
-      assert.deepEqual(names, [ 'statusDebugWrapper', 'staticDebugWrapper', 'customDebugWrapper', 'routerMiddleware' ]);
+      assert.deepEqual(names, [
+        'statusDebugWrapper',
+        'staticDebugWrapper',
+        'customDebugWrapper',
+        'routerMiddleware',
+      ]);
     }
   });
 
   it('should override middlewares of plugin by framework', async () => {
-    await request(app.callback())
-      .get('/status')
-      .expect('egg status');
+    await request(app.callback()).get('/status').expect('egg status');
   });
 
   it('should override middlewares of plugin by application', async () => {
-    await request(app.callback())
-      .get('/custom')
-      .expect('app custom');
+    await request(app.callback()).get('/custom').expect('app custom');
   });
 
   it('should override middlewares of egg by application', async () => {
-    await request(app.callback())
-      .get('/static')
-      .expect(200)
-      .expect('static');
+    await request(app.callback()).get('/static').expect(200).expect('static');
   });
 
   it('should throw when middleware return no-generator', async () => {
@@ -102,9 +107,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
     await app.loader.loadController();
     await app.loader.loadRouter();
 
-    await request(app.callback())
-      .get('/status')
-      .expect(404);
+    await request(app.callback()).get('/status').expect(404);
     app.close();
   });
 
@@ -117,13 +120,9 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
     await app.loader.loadController();
     await app.loader.loadRouter();
 
-    await request(app.callback())
-      .get('/status')
-      .expect('egg status');
+    await request(app.callback()).get('/status').expect('egg status');
 
-    await request(app.callback())
-      .post('/status')
-      .expect(404);
+    await request(app.callback()).post('/status').expect(404);
     app.close();
   });
 
@@ -136,13 +135,9 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
     await app.loader.loadController();
     await app.loader.loadRouter();
 
-    await request(app.callback())
-      .post('/status')
-      .expect('egg status');
+    await request(app.callback()).post('/status').expect('egg status');
 
-    await request(app.callback())
-      .get('/status')
-      .expect(404);
+    await request(app.callback()).get('/status').expect(404);
     app.close();
   });
 
@@ -155,9 +150,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
     await app.loader.loadController();
     await app.loader.loadRouter();
 
-    await request(app.callback())
-      .get('/static')
-      .expect(404);
+    await request(app.callback()).get('/static').expect(404);
     app.close();
   });
 
@@ -205,9 +198,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
     });
 
     it('should support common functions', async () => {
-      await request(app.callback())
-        .get('/common')
-        .expect('common');
+      await request(app.callback()).get('/common').expect('common');
     });
   });
 
@@ -219,7 +210,9 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
       await app.loader.loadPlugin();
       await app.loader.loadConfig();
       await app.loader.loadCustomApp();
-      const directory = app.loader.getLoadUnits().map(unit => path.join(unit.path, 'app/middleware'));
+      const directory = app.loader
+        .getLoadUnits()
+        .map(unit => path.join(unit.path, 'app/middleware'));
       directory.push(path.join(baseDir, 'app/other-middleware'));
       await app.loader.loadMiddleware({
         directory,

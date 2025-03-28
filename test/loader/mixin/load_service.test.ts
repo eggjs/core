@@ -1,8 +1,10 @@
 import path from 'node:path';
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { request } from '@eggjs/supertest';
 import { mm } from 'mm';
-import { Application, createApp, getFilepath } from '../../helper.js';
+
+import { createApp, getFilepath, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_service.test.ts', () => {
   let app: Application;
@@ -72,15 +74,9 @@ describe('test/loader/mixin/load_service.test.ts', () => {
     await app.loader.loadRouter();
     await app.loader.loadMiddleware();
 
-    await request(app.callback())
-      .get('/same?t=1')
-      .expect('true')
-      .expect(200);
+    await request(app.callback()).get('/same?t=1').expect('true').expect(200);
 
-    await request(app.callback())
-      .get('/same?t=2')
-      .expect('true')
-      .expect(200);
+    await request(app.callback()).get('/same?t=2').expect('true').expect(200);
   });
 
   it('should extend app.Service', async () => {
@@ -94,12 +90,8 @@ describe('test/loader/mixin/load_service.test.ts', () => {
     await app.loader.loadRouter();
     await app.loader.loadMiddleware();
 
-    await request(app.callback())
-      .get('/user')
-      .expect(function(res) {
-        assert(res.body.user === '123mock');
-      })
-      .expect(200);
+    const res = await request(app.callback()).get('/user').expect(200);
+    assert.equal(res.body.user, '123mock');
   });
 
   describe('subdir', () => {

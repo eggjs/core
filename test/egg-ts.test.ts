@@ -1,9 +1,11 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { mm } from 'mm';
 import { request } from '@eggjs/supertest';
 import coffee from 'coffee';
+
 import { utils } from '../src/index.js';
-import { Application, createApp, getFilepath } from './helper.js';
+import { createApp, getFilepath, type Application } from './helper.js';
 
 describe('test/egg-ts.test.ts', () => {
   let app: Application | undefined;
@@ -14,7 +16,9 @@ describe('test/egg-ts.test.ts', () => {
   });
 
   afterEach(async () => {
-    app && await app.close();
+    if (app) {
+      await app.close();
+    }
     app = undefined;
     return mm.restore();
     // delete require.extensions['.ts'];
@@ -143,7 +147,7 @@ describe('test/egg-ts.test.ts', () => {
 
   it.skip('should not load ts files while EGG_TYPESCRIPT was true but no extensions', async () => {
     mm(process.env, 'EGG_TYPESCRIPT', 'true');
-    mm(utils, 'extensions', [ '.js', '.json' ]);
+    mm(utils, 'extensions', ['.js', '.json']);
     app = createApp('egg-ts-js');
     await app.loader.loadService();
     assert(app.serviceClasses.lord);
@@ -152,11 +156,20 @@ describe('test/egg-ts.test.ts', () => {
 
   it.skip('should compile app-ts without error', async () => {
     await coffee
-      .spawn('node', [ '--require', 'ts-node/register/type-check', getFilepath('app-ts/app.ts') ], {
-        env: Object.assign({}, process.env, {
-          TS_NODE_PROJECT: getFilepath('app-ts/tsconfig.json'),
-        }),
-      })
+      .spawn(
+        'node',
+        [
+          '--require',
+          'ts-node/register/type-check',
+          getFilepath('app-ts/app.ts'),
+        ],
+        {
+          env: {
+            ...process.env,
+            TS_NODE_PROJECT: getFilepath('app-ts/tsconfig.json'),
+          },
+        }
+      )
       .debug()
       .expect('code', 0)
       .end();
@@ -164,14 +177,29 @@ describe('test/egg-ts.test.ts', () => {
 
   it.skip('should compile error with app-ts/error', async () => {
     await coffee
-      .spawn('node', [ '--require', 'ts-node/register/type-check', getFilepath('app-ts/app-error.ts') ], {
-        env: Object.assign({}, process.env, {
-          TS_NODE_PROJECT: getFilepath('app-ts/tsconfig.json'),
-        }),
-      })
+      .spawn(
+        'node',
+        [
+          '--require',
+          'ts-node/register/type-check',
+          getFilepath('app-ts/app-error.ts'),
+        ],
+        {
+          env: {
+            ...process.env,
+            TS_NODE_PROJECT: getFilepath('app-ts/tsconfig.json'),
+          },
+        }
+      )
       .debug()
-      .expect('stderr', /Property 'abb' does not exist on type 'EggCore<{ env: string; }>'/)
-      .expect('stderr', /Property 'abc' does not exist on type 'typeof BaseContextClass'/)
+      .expect(
+        'stderr',
+        /Property 'abb' does not exist on type 'EggCore<{ env: string; }>'/
+      )
+      .expect(
+        'stderr',
+        /Property 'abc' does not exist on type 'typeof BaseContextClass'/
+      )
       .expect('stderr', /'loadPlugin' is protected/)
       .expect('stderr', /'loadConfig' is protected/)
       .expect('stderr', /'loadApplicationExtend' is protected/)
@@ -183,7 +211,10 @@ describe('test/egg-ts.test.ts', () => {
       .expect('stderr', /'loadCustomAgent' is protected/)
       .expect('stderr', /'loadService' is protected/)
       .expect('stderr', /'loadController' is protected/)
-      .expect('stderr', /Property 'checkEnvType' does not exist on type 'string'/)
+      .expect(
+        'stderr',
+        /Property 'checkEnvType' does not exist on type 'string'/
+      )
       .expect('stderr', /'ctx' is protected/)
       .expect('code', 1)
       .end();

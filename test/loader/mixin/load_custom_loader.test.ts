@@ -1,6 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { request } from '@eggjs/supertest';
-import { Application, createApp } from '../../helper.js';
+
+import { createApp, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_custom_loader.test.ts', () => {
   let app: Application;
@@ -47,7 +49,6 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
     assert(name === 'pluginb');
   });
 
-
   it('should loadConfig first', async () => {
     const app = createApp('custom-loader');
     try {
@@ -65,14 +66,15 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
     try {
       app.loader.config = {
         customLoader: {
-          custom: {
-          },
+          custom: {},
         },
       } as any;
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(err.message === 'directory is required for config.customLoader.custom');
+      assert(
+        err.message === 'directory is required for config.customLoader.custom'
+      );
     } finally {
       app.close();
     }

@@ -1,7 +1,11 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EggCore } from '../src/index.js';
-import { Application, EggCoreInitOptions } from './fixtures/egg-esm/index.js';
+
+import type { EggCore } from '../src/index.js';
+import {
+  Application,
+  type EggCoreInitOptions,
+} from './fixtures/egg-esm/index.js';
 
 export { Application } from './fixtures/egg-esm/index.js';
 
@@ -16,7 +20,10 @@ export function getFilepath(name: string) {
   return filepath;
 }
 
-export function createApp(name: string, options?: EggCoreInitOptions & { Application?: typeof EggCore }): Application {
+export function createApp(
+  name: string,
+  options?: EggCoreInitOptions & { Application?: typeof EggCore }
+): Application {
   const baseDir = getFilepath(name);
   options = options ?? {};
   options.baseDir = baseDir;

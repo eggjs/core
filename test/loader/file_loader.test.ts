@@ -1,4 +1,6 @@
-import { strict as assert } from 'node:assert';
+// oxlint-disable promise/catch-or-return, promise/prefer-catch, promise/prefer-await-to-then, promise/no-callback-in-promise, promise/avoid-new
+
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import { isClass } from 'is-type-of';
 import yaml from 'js-yaml';
@@ -51,15 +53,12 @@ describe('test/loader/file_loader.test.ts', () => {
         foo: {},
       },
     };
-    await assert.rejects(
-      async () => {
-        await new FileLoader({
-          directory: path.join(dirBase, 'services'),
-          target: app.services,
-        }).load();
-      },
-      /can't overwrite property 'foo'/,
-    );
+    await assert.rejects(async () => {
+      await new FileLoader({
+        directory: path.join(dirBase, 'services'),
+        target: app.services,
+      }).load();
+    }, /can't overwrite property 'foo'/);
   });
 
   it('should not overwrite property from loading', async () => {
@@ -152,7 +151,7 @@ describe('test/loader/file_loader.test.ts', () => {
     await new FileLoader({
       directory: path.join(dirBase, 'ignore'),
       target: app.services,
-      ignore: [ 'util/a.js', 'util/b/b.js' ],
+      ignore: ['util/a.js', 'util/b/b.js'],
     }).load();
     assert.equal(app.services.a.a, 1);
   });
@@ -182,7 +181,10 @@ describe('test/loader/file_loader.test.ts', () => {
     assert(app.dao.TestClass);
     assert.deepEqual(app.dao.TestClass.user, { name: 'kai.fangk' });
     assert.equal(app.dao.TestClass.app, app);
-    assert.equal(app.dao.TestClass.path, path.join(dirBase, 'dao/TestClass.js'));
+    assert.equal(
+      app.dao.TestClass.path,
+      path.join(dirBase, 'dao/TestClass.js')
+    );
     assert.deepEqual(app.dao.testFunction.user, { name: 'kai.fangk' });
     assert.deepEqual(app.dao.testReturnFunction.user, { name: 'kai.fangk' });
   });
@@ -321,7 +323,7 @@ describe('test/loader/file_loader.test.ts', () => {
           return filepath
             .replace('.js', '')
             .split('/')
-            .map(property => property.replace(/_/g, ''));
+            .map(property => property.replaceAll('_', ''));
         },
       }).load();
 
@@ -371,7 +373,8 @@ describe('test/loader/file_loader.test.ts', () => {
 
     assert.equal(inject.b, true);
 
-    new target.a(inject);
+    const instance = new target.a(inject);
+    assert(instance);
     assert.equal(inject.a, true);
   });
 
@@ -384,7 +387,7 @@ describe('test/loader/file_loader.test.ts', () => {
         return Array.isArray(obj);
       },
     }).load();
-    assert.deepEqual(Object.keys(target), [ 'arr' ]);
+    assert.deepEqual(Object.keys(target), ['arr']);
 
     await new FileLoader({
       directory: path.join(dirBase, 'filter'),
@@ -393,6 +396,6 @@ describe('test/loader/file_loader.test.ts', () => {
         return isClass(obj);
       },
     }).load();
-    assert.deepEqual(Object.keys(target), [ 'arr', 'class' ]);
+    assert.deepEqual(Object.keys(target), ['arr', 'class']);
   });
 });

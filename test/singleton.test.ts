@@ -1,5 +1,6 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { scheduler } from 'node:timers/promises';
+
 import { Singleton } from '../src/singleton.js';
 
 class DataService {
@@ -32,9 +33,7 @@ describe('test/singleton.test.ts', () => {
     it('should init with client', async () => {
       const name = 'dataService';
 
-      const clients = [
-        { foo: 'bar' },
-      ];
+      const clients = [{ foo: 'bar' }];
       for (const client of clients) {
         const app: any = { config: { dataService: { client } } };
         const singleton = new Singleton({
@@ -99,7 +98,7 @@ describe('test/singleton.test.ts', () => {
           dataService: {
             clients: {
               first: { foo: 'bar1' },
-              second: { },
+              second: {},
             },
             default: { foo: 'bar' },
           },
@@ -115,11 +114,21 @@ describe('test/singleton.test.ts', () => {
       singleton.init();
       assert(app.dataService instanceof Singleton);
       assert(app.dataService.get('first').config.foo === 'bar1');
-      assert(app.dataService.getSingletonInstance('first').config.foo === 'bar1');
-      assert(app.dataService.get('first'), app.dataService.getSingletonInstance('first'));
+      assert(
+        app.dataService.getSingletonInstance('first').config.foo === 'bar1'
+      );
+      assert(
+        app.dataService.get('first'),
+        app.dataService.getSingletonInstance('first')
+      );
       assert(app.dataService.get('second').config.foo === 'bar');
-      assert(app.dataService.getSingletonInstance('second').config.foo === 'bar');
-      assert(app.dataService.get('second'), app.dataService.getSingletonInstance('second'));
+      assert(
+        app.dataService.getSingletonInstance('second').config.foo === 'bar'
+      );
+      assert(
+        app.dataService.get('second'),
+        app.dataService.getSingletonInstance('second')
+      );
       assert(typeof app.dataService.createInstance === 'function');
     });
 
@@ -169,7 +178,9 @@ describe('test/singleton.test.ts', () => {
         create,
       });
       singleton.init();
-      const dataService = await app.dataService.createInstanceAsync({ foo1: 'bar1' });
+      const dataService = await app.dataService.createInstanceAsync({
+        foo1: 'bar1',
+      });
       assert(dataService instanceof DataService);
       assert(dataService.config.foo1 === 'bar1');
       assert(dataService.config.foo === 'bar');
@@ -198,7 +209,9 @@ describe('test/singleton.test.ts', () => {
       });
       singleton.init();
 
-      const dataService = await app.dataService.createInstanceAsync({ foo1: 'bar1' });
+      const dataService = await app.dataService.createInstanceAsync({
+        foo1: 'bar1',
+      });
       assert(dataService instanceof DataService);
       assert(dataService.config.foo1 === 'bar1');
       assert(dataService.config.foo === 'bar');
@@ -206,6 +219,7 @@ describe('test/singleton.test.ts', () => {
 
     it('should work with no prototype and frozen', async () => {
       let warn = false;
+      // oxlint-disable-next-line unicorn/consistent-function-scoping
       function create() {
         const d = Object.create(null);
         Object.freeze(d);
@@ -274,9 +288,7 @@ describe('test/singleton.test.ts', () => {
     it('should init with client', async () => {
       const name = 'dataService';
 
-      const clients = [
-        { foo: 'bar' },
-      ];
+      const clients = [{ foo: 'bar' }];
       for (const client of clients) {
         const app: any = { config: { dataService: { client } } };
         const singleton = new Singleton({
@@ -290,7 +302,6 @@ describe('test/singleton.test.ts', () => {
         assert(typeof app.dataService.createInstance === 'function');
       }
     });
-
 
     it('should init with clients', async () => {
       const name = 'dataService';
@@ -331,7 +342,9 @@ describe('test/singleton.test.ts', () => {
       await singleton.init();
       assert(app.dataService === singleton);
       assert(app.dataService instanceof Singleton);
-      app.dataService = await app.dataService.createInstanceAsync({ foo1: 'bar1' });
+      app.dataService = await app.dataService.createInstanceAsync({
+        foo1: 'bar1',
+      });
       assert(app.dataService instanceof DataService);
       assert(app.dataService.config.foo1 === 'bar1');
       assert(app.dataService.config.foo === 'bar');

@@ -1,6 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { request } from '@eggjs/supertest';
-import { Application, createApp } from '../helper.js';
+
+import { createApp, type Application } from '../helper.js';
 
 describe('test/utils/router.test.ts', () => {
   let app: Application;
@@ -100,21 +102,15 @@ describe('test/utils/router.test.ts', () => {
       });
 
       it('should POST /members', () => {
-        return request(app.callback())
-          .post('/members')
-          .expect(404);
+        return request(app.callback()).post('/members').expect(404);
       });
 
       it('should PUT /members/:id', () => {
-        return request(app.callback())
-          .put('/members/1231')
-          .expect(404);
+        return request(app.callback()).put('/members/1231').expect(404);
       });
 
       it('should GET /POSTS', () => {
-        return request(app.callback())
-          .get('/POSTS')
-          .expect(404);
+        return request(app.callback()).get('/POSTS').expect(404);
       });
 
       it('should GET /members/delete/:id', () => {
@@ -132,9 +128,7 @@ describe('test/utils/router.test.ts', () => {
       });
 
       it('should GET /packages/(.*)', () => {
-        return request(app.callback())
-          .get('/packages/urllib')
-          .expect('urllib');
+        return request(app.callback()).get('/packages/urllib').expect('urllib');
       });
     });
 
@@ -158,7 +152,7 @@ describe('test/utils/router.test.ts', () => {
       it('should execute by the correct order', () => {
         return request(app.callback())
           .get('/mix')
-          .expect([ 'generator before', 'async', 'generator after' ])
+          .expect(['generator before', 'async', 'generator after'])
           .expect(200);
       });
     });
@@ -179,26 +173,55 @@ describe('test/utils/router.test.ts', () => {
       // no match params
       assert(app.router.url('edit_post', {}) === '/posts/:id/edit');
       assert(app.router.url('noname') === '');
-      assert(app.router.url('comment_index', { id: 1, a: 1 }) === '/comments/1?filter=&a=1');
+      assert(
+        app.router.url('comment_index', { id: 1, a: 1 }) ===
+          '/comments/1?filter=&a=1'
+      );
     });
 
     it('should work with unknow params', () => {
-      assert(app.router.url('posts', { name: 'foo', page: 2 }) === '/posts?name=foo&page=2');
-      assert(app.router.url('posts', { name: 'foo&?', page: 2 }) === '/posts?name=foo%26%3F&page=2');
-      assert(app.router.url('edit_post', { id: 10, page: 2 }) === '/posts/10/edit?page=2');
-      assert(app.router.url('edit_post', { i: 2, id: 10 }) === '/posts/10/edit?i=2');
-      assert(app.router.url('edit_post', { id: 10, page: 2, tags: [ 'chair', 'develop' ] }) ===
-         '/posts/10/edit?page=2&tags=chair&tags=develop');
-      assert(app.router.url('edit_post', { id: [ 10 ], page: [ 2 ], tags: [ 'chair', 'develop' ] }) ===
-         '/posts/10/edit?page=2&tags=chair&tags=develop');
-      assert(app.router.url('edit_post', { id: [ 10, 11 ], page: [ 2 ], tags: [ 'chair', 'develop' ] }) ===
-         '/posts/10/edit?page=2&tags=chair&tags=develop');
+      assert(
+        app.router.url('posts', { name: 'foo', page: 2 }) ===
+          '/posts?name=foo&page=2'
+      );
+      assert(
+        app.router.url('posts', { name: 'foo&?', page: 2 }) ===
+          '/posts?name=foo%26%3F&page=2'
+      );
+      assert(
+        app.router.url('edit_post', { id: 10, page: 2 }) ===
+          '/posts/10/edit?page=2'
+      );
+      assert(
+        app.router.url('edit_post', { i: 2, id: 10 }) === '/posts/10/edit?i=2'
+      );
+      assert(
+        app.router.url('edit_post', {
+          id: 10,
+          page: 2,
+          tags: ['chair', 'develop'],
+        }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
+      );
+      assert(
+        app.router.url('edit_post', {
+          id: [10],
+          page: [2],
+          tags: ['chair', 'develop'],
+        }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
+      );
+      assert(
+        app.router.url('edit_post', {
+          id: [10, 11],
+          page: [2],
+          tags: ['chair', 'develop'],
+        }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
+      );
     });
 
     it('should not support regular url', () => {
       assert.throws(() => {
-        app.router.url('packages', [ 'urllib' ] as any);
-      }, 'Can\'t get the url for regExp /^\/packages\/(.*)/ for by name \'posts\'');
+        app.router.url('packages', ['urllib'] as any);
+      }, "Can't get the url for regExp /^/packages/(.*)/ for by name 'posts'");
     });
   });
 
@@ -219,28 +242,28 @@ describe('test/utils/router.test.ts', () => {
       return request(app.callback())
         .get('/middleware')
         .expect(200)
-        .expect([ 'generator', 'async', 'common' ]);
+        .expect(['generator', 'async', 'common']);
     });
 
     it('should support all kinds of middlewares with name', () => {
       return request(app.callback())
         .get('/named_middleware')
         .expect(200)
-        .expect([ 'generator', 'async', 'common' ]);
+        .expect(['generator', 'async', 'common']);
     });
 
     it('should support all kinds of middlewares with register', () => {
       return request(app.callback())
         .get('/register_middleware')
         .expect(200)
-        .expect([ 'generator', 'async', 'common' ]);
+        .expect(['generator', 'async', 'common']);
     });
 
     it('should app.router support all kinds of middlewares', () => {
       return request(app.callback())
         .get('/router_middleware')
         .expect(200)
-        .expect([ 'generator', 'async', 'common' ]);
+        .expect(['generator', 'async', 'common']);
     });
   });
 
@@ -262,28 +285,22 @@ describe('test/utils/router.test.ts', () => {
 
   describe('controller mutli url', () => {
     it('should GET /url1', () => {
-      return request(app.callback())
-        .get('/url1')
-        .expect(200)
-        .expect('index');
+      return request(app.callback()).get('/url1').expect(200).expect('index');
     });
     it('should GET /url2', () => {
-      return request(app.callback())
-        .get('/url2')
-        .expect(200)
-        .expect('index');
+      return request(app.callback()).get('/url2').expect(200).expect('index');
     });
     it('use middlewares /urlm1', () => {
       return request(app.callback())
         .get('/urlm1')
         .expect(200)
-        .expect([ 'generator', 'async', 'common' ]);
+        .expect(['generator', 'async', 'common']);
     });
     it('use middlewares /urlm2', () => {
       return request(app.callback())
         .get('/urlm2')
         .expect(200)
-        .expect([ 'generator', 'async', 'common' ]);
+        .expect(['generator', 'async', 'common']);
     });
   });
 
@@ -302,7 +319,10 @@ describe('test/utils/router.test.ts', () => {
         app.get('/hello', 'not.exist.controller');
         throw new Error('should not run here');
       } catch (err: any) {
-        assert.match(err.message, /app\.controller\.not\.exist\.controller not exists/);
+        assert.match(
+          err.message,
+          /app\.controller\.not\.exist\.controller not exists/
+        );
       }
     });
 
@@ -320,7 +340,10 @@ describe('test/utils/router.test.ts', () => {
         app.router.resources('/test', 'not.exist.controller');
         throw new Error('should not run here');
       } catch (err: any) {
-        assert.match(err.message, /app\.controller\.not\.exist\.controller not exists/);
+        assert.match(
+          err.message,
+          /app\.controller\.not\.exist\.controller not exists/
+        );
       }
     });
   });
@@ -335,10 +358,7 @@ describe('test/utils/router.test.ts', () => {
     after(() => app.close());
 
     it('should always load router middleware at last', () => {
-      return request(app.callback())
-        .get('/')
-        .expect(200)
-        .expect('foo');
+      return request(app.callback()).get('/').expect(200).expect('foo');
     });
   });
 });

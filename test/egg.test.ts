@@ -1,13 +1,17 @@
+// oxlint-disable promise/catch-or-return, promise/prefer-catch, promise/prefer-await-to-then, promise/no-callback-in-promise
+
 import util from 'node:util';
 import path from 'node:path';
-import { strict as assert } from 'node:assert';
+import { strict as assert } from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
+
 import { mm } from 'mm';
 import { request } from '@eggjs/supertest';
 import { pending } from 'pedding';
 import coffee from 'coffee';
-import { createApp, getFilepath, Application } from './helper.js';
+
+import { createApp, getFilepath, type Application } from './helper.js';
 import { EggCore } from '../src/index.js';
 
 describe('test/egg.test.ts', () => {
@@ -53,42 +57,53 @@ describe('test/egg.test.ts', () => {
     });
 
     it('should not set value expect for application and agent', () => {
-      assert.throws(() => {
-        new EggCore({
-          type: 'nothing',
-        } as any);
-      }, /options.type should be application or agent/);
+      assert.throws(
+        () =>
+          new EggCore({
+            // @ts-expect-error test error
+            type: 'nothing',
+          }),
+        /options.type should be application or agent/
+      );
     });
 
     it('should throw options.baseDir required', () => {
-      assert.throws(() => {
-        new EggCore({
-          baseDir: 1,
-        } as any);
-      }, /options.baseDir required, and must be a string/);
+      assert.throws(
+        () =>
+          new EggCore({
+            // @ts-expect-error test error
+            baseDir: 1,
+          }),
+        /options.baseDir required, and must be a string/
+      );
     });
 
     it('should throw options.baseDir not exist', () => {
-      assert.throws(() => {
-        new EggCore({
-          baseDir: 'not-exist',
-        });
-      }, /not-exist not exists/);
+      assert.throws(
+        () =>
+          new EggCore({
+            baseDir: 'not-exist',
+          }),
+        /not-exist not exists/
+      );
     });
 
     it('should throw options.baseDir is not a directory', () => {
-      assert.throws(() => {
-        new EggCore({
-          baseDir: getFilepath('egg/index.js'),
-        });
-      }, /not a directory|no such file or directory/);
+      assert.throws(
+        () =>
+          new EggCore({
+            baseDir: getFilepath('egg/index.js'),
+          }),
+        /not a directory|no such file or directory/
+      );
     });
 
     it('should throw process.env.EGG_READY_TIMEOUT_ENV should be able to parseInt', () => {
       mm(process.env, 'EGG_READY_TIMEOUT_ENV', 'notAnNumber');
-      assert.throws(() => {
-        new EggCore();
-      }, /process.env.EGG_READY_TIMEOUT_ENV notAnNumber should be able to parseInt/);
+      assert.throws(
+        () => new EggCore(),
+        /process.env.EGG_READY_TIMEOUT_ENV notAnNumber should be able to parseInt/
+      );
     });
   });
 
@@ -144,7 +159,10 @@ describe('test/egg.test.ts', () => {
     it('should log info when plugin is not ready', done => {
       app = createApp('notready');
       mm(app.console, 'warn', (message: string, b: any, a: any) => {
-        assert.equal(message, '[@eggjs/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.');
+        assert.equal(
+          message,
+          '[@eggjs/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.'
+        );
         assert.equal(b, 10);
         assert.equal(a, 'a');
         // console.log(app.timing.toString());
@@ -162,11 +180,19 @@ describe('test/egg.test.ts', () => {
       app.loader.loadAll();
       let message = '';
       mm(app.console, 'info', (a: any, b: any, c: any) => {
-        message += util.format.apply(null, [ a, b, c ]);
+        message += util.format(a, b, c);
       });
       app.ready(() => {
-        assert(/\[@eggjs\/core\/lifecycle:ready_stat] end ready task a, remain \["b"]/.test(message));
-        assert(/\[@eggjs\/core\/lifecycle:ready_stat] end ready task b, remain \[]/.test(message));
+        assert(
+          /\[@eggjs\/core\/lifecycle:ready_stat] end ready task a, remain \["b"]/.test(
+            message
+          )
+        );
+        assert(
+          /\[@eggjs\/core\/lifecycle:ready_stat] end ready task b, remain \[]/.test(
+            message
+          )
+        );
         // console.log(app.timing.toString());
         done();
       });
@@ -188,10 +214,26 @@ describe('test/egg.test.ts', () => {
       app = createApp('beforestart');
       await app.loader.loadAll();
       await app.ready();
-      assert.equal((app as any).beforeStartFunction, true, 'beforeStartFunction');
-      assert.equal((app as any).beforeStartGeneratorFunction, true, 'beforeStartGeneratorFunction');
-      assert.equal((app as any).beforeStartAsyncFunction, true, 'beforeStartAsyncFunction');
-      assert.equal((app as any).beforeStartTranslateAsyncFunction, true, 'beforeStartTranslateAsyncFunction');
+      assert.equal(
+        (app as any).beforeStartFunction,
+        true,
+        'beforeStartFunction'
+      );
+      assert.equal(
+        (app as any).beforeStartGeneratorFunction,
+        true,
+        'beforeStartGeneratorFunction'
+      );
+      assert.equal(
+        (app as any).beforeStartAsyncFunction,
+        true,
+        'beforeStartAsyncFunction'
+      );
+      assert.equal(
+        (app as any).beforeStartTranslateAsyncFunction,
+        true,
+        'beforeStartTranslateAsyncFunction'
+      );
     });
 
     it('should beforeStart execute success with EGG_READY_TIMEOUT_ENV', async () => {
@@ -199,24 +241,33 @@ describe('test/egg.test.ts', () => {
       app = createApp('beforestart-with-timeout-env');
       await app.loader.loadAll();
       await app.ready();
-      assert.equal((app as any).beforeStartFunction, true, 'beforeStartFunction');
+      assert.equal(
+        (app as any).beforeStartFunction,
+        true,
+        'beforeStartFunction'
+      );
       const timeline = app.timing.toString();
       // console.log(timeline);
       assert.match(timeline, /#14 Before Start in app.js:4:7/);
     });
 
-    it('should beforeStart execute timeout without EGG_READY_TIMEOUT_ENV too short', function(done) {
+    it('should beforeStart execute timeout without EGG_READY_TIMEOUT_ENV too short', done => {
       done = pending(2, done);
       mm(process.env, 'EGG_READY_TIMEOUT_ENV', '1000');
       app = createApp('beforestart-with-timeout-env');
       app.loader.loadAll().then(done, done);
       app.once('ready_timeout', id => {
-        const file = path.normalize('test/fixtures/beforestart-with-timeout-env/app.js');
+        const file = path.normalize(
+          'test/fixtures/beforestart-with-timeout-env/app.js'
+        );
         assert(id.includes(file));
         const timeline = app.timing.toString();
         // console.log(timeline);
         assert.match(timeline, /▇ \[\d+ms NOT_END] - #1 application Start/);
-        assert.match(timeline, /▇ \[\d+ms NOT_END] - #14 Before Start in app.js:4:7/);
+        assert.match(
+          timeline,
+          /▇ \[\d+ms NOT_END] - #14 Before Start in app.js:4:7/
+        );
         done();
       });
     });
@@ -269,11 +320,11 @@ describe('test/egg.test.ts', () => {
       app.close().then(done, done);
     });
 
-    it('should return a promise', done => {
+    it('should return a promise', async () => {
       app = createApp('close');
       const promise = app.close();
       assert(promise instanceof Promise);
-      promise.then(done, done);
+      await promise;
     });
 
     it('should throw when close error', done => {
@@ -341,8 +392,10 @@ describe('test/egg.test.ts', () => {
       assert.equal((app as any).closeAsyncFn, true, 'closeAsyncFn');
       assert.equal((app as any).onlyOnce, false, 'onlyOnce');
       assert.equal((app as any).closeEvent, 'after', 'closeEvent');
-      assert.equal((app as any).closeOrderArray.join(','),
-        'closeAsyncFn,closeGeneratorFn,closeFn');
+      assert.equal(
+        (app as any).closeOrderArray.join(','),
+        'closeAsyncFn,closeGeneratorFn,closeFn'
+      );
     });
 
     it('should throw when call beforeClose without function', () => {
@@ -384,7 +437,8 @@ describe('test/egg.test.ts', () => {
   describe.skip('run with DEBUG', () => {
     it('should ready', async () => {
       mm(process.env, 'DEBUG', '*');
-      await coffee.fork(getFilepath('run-with-debug/index.js'))
+      await coffee
+        .fork(getFilepath('run-with-debug/index.js'))
         .debug()
         .expect('code', 0)
         .end();
@@ -475,7 +529,8 @@ describe('test/egg.test.ts', () => {
         assert(json.length === 28);
 
         assert(json[1].name === 'application Start');
-        assert(json[1].end! - json[1].start === json[1].duration);
+        assert(json[1].end);
+        assert.equal(json[1].end - json[1].start, json[1].duration);
         assert(json[1].pid === process.pid);
 
         // loadPlugin
@@ -497,7 +552,9 @@ describe('test/egg.test.ts', () => {
         assert(json[13].name === 'Require(7) app.js');
         assert.equal(json[14].name, 'Before Start in app.js:9:7');
         assert(json[15].name === 'Before Start in mock Block');
-        assert(json[16].name === 'readyCallback in mockReadyCallbackWithoutFunction');
+        assert(
+          json[16].name === 'readyCallback in mockReadyCallbackWithoutFunction'
+        );
 
         assert(json[17].name === 'Load "proxy" to Context');
         assert(json[18].name === 'Load Controller');
@@ -534,7 +591,8 @@ describe('test/egg.test.ts', () => {
         assert(json.length === 14);
 
         assert.equal(json[1].name, 'application Start');
-        assert.equal(json[1].end! - json[1].start, json[1].duration);
+        assert(json[1].end);
+        assert.equal(json[1].end - json[1].start, json[1].duration);
         assert.equal(json[1].pid, process.pid);
 
         // loadPlugin
@@ -559,14 +617,20 @@ describe('test/egg.test.ts', () => {
     describe.skip('script timing', () => {
       it('should work', async () => {
         const fixtureApp = getFilepath('timing');
-        await coffee.fork(path.join(fixtureApp, 'index.js'))
+        await coffee
+          .fork(path.join(fixtureApp, 'index.js'))
           .beforeScript(path.join(fixtureApp, 'preload'))
           .debug()
           .expect('code', 0)
           .end();
-        const timingJSON = await fs.readFile(path.join(fixtureApp, 'timing.json'), 'utf8');
+        const timingJSON = await fs.readFile(
+          path.join(fixtureApp, 'timing.json'),
+          'utf8'
+        );
         const timing = JSON.parse(timingJSON);
-        const scriptStart = timing.find((item: any) => item.name === 'Script Start');
+        const scriptStart = timing.find(
+          (item: any) => item.name === 'Script Start'
+        );
         assert(scriptStart);
         assert(scriptStart.start);
         assert(scriptStart.end);
@@ -581,60 +645,52 @@ describe('test/egg.test.ts', () => {
           const app = createApp('boot');
           await app.loader.loadAll();
           await app.ready();
-          assert.deepStrictEqual(
-            (app as any).bootLog,
-            [
-              'configDidLoad in plugin',
-              'app.js in plugin',
-              'configDidLoad in app',
-              'didLoad',
-              'beforeStart',
-              'willReady',
-              'ready',
-            ]);
+          assert.deepStrictEqual((app as any).bootLog, [
+            'configDidLoad in plugin',
+            'app.js in plugin',
+            'configDidLoad in app',
+            'didLoad',
+            'beforeStart',
+            'willReady',
+            'ready',
+          ]);
           await sleep(10);
-          assert.deepStrictEqual(
-            (app as any).bootLog,
-            [
-              'configDidLoad in plugin',
-              'app.js in plugin',
-              'configDidLoad in app',
-              'didLoad',
-              'beforeStart',
-              'willReady',
-              'ready',
-              'didReady',
-            ]);
+          assert.deepStrictEqual((app as any).bootLog, [
+            'configDidLoad in plugin',
+            'app.js in plugin',
+            'configDidLoad in app',
+            'didLoad',
+            'beforeStart',
+            'willReady',
+            'ready',
+            'didReady',
+          ]);
           await app.lifecycle.triggerServerDidReady();
           await sleep(10);
-          assert.deepStrictEqual(
-            (app as any).bootLog,
-            [
-              'configDidLoad in plugin',
-              'app.js in plugin',
-              'configDidLoad in app',
-              'didLoad',
-              'beforeStart',
-              'willReady',
-              'ready',
-              'didReady',
-              'serverDidReady',
-            ]);
+          assert.deepStrictEqual((app as any).bootLog, [
+            'configDidLoad in plugin',
+            'app.js in plugin',
+            'configDidLoad in app',
+            'didLoad',
+            'beforeStart',
+            'willReady',
+            'ready',
+            'didReady',
+            'serverDidReady',
+          ]);
           await app.close();
-          assert.deepStrictEqual(
-            (app as any).bootLog,
-            [
-              'configDidLoad in plugin',
-              'app.js in plugin',
-              'configDidLoad in app',
-              'didLoad',
-              'beforeStart',
-              'willReady',
-              'ready',
-              'didReady',
-              'serverDidReady',
-              'beforeClose',
-            ]);
+          assert.deepStrictEqual((app as any).bootLog, [
+            'configDidLoad in plugin',
+            'app.js in plugin',
+            'configDidLoad in app',
+            'didLoad',
+            'beforeStart',
+            'willReady',
+            'ready',
+            'didReady',
+            'serverDidReady',
+            'beforeClose',
+          ]);
         });
       });
 
@@ -645,68 +701,58 @@ describe('test/egg.test.ts', () => {
           await app.loader.loadConfig();
           await app.loader.loadAgentExtend();
           await app.loader.loadCustomAgent();
-          assert.deepStrictEqual(
-            (app as any).bootLog,
-            [
-              'configDidLoad in plugin',
-              'agent.js in plugin',
-              'configDidLoad in app',
-            ]);
+          assert.deepStrictEqual((app as any).bootLog, [
+            'configDidLoad in plugin',
+            'agent.js in plugin',
+            'configDidLoad in app',
+          ]);
           await app.ready();
-          assert.deepStrictEqual(
-            (app as any).bootLog,
-            [
-              'configDidLoad in plugin',
-              'agent.js in plugin',
-              'configDidLoad in app',
-              'didLoad',
-              'beforeStart',
-              'willReady',
-              'ready',
-            ]);
+          assert.deepStrictEqual((app as any).bootLog, [
+            'configDidLoad in plugin',
+            'agent.js in plugin',
+            'configDidLoad in app',
+            'didLoad',
+            'beforeStart',
+            'willReady',
+            'ready',
+          ]);
           await sleep(10);
-          assert.deepStrictEqual(
-            (app as any).bootLog,
-            [
-              'configDidLoad in plugin',
-              'agent.js in plugin',
-              'configDidLoad in app',
-              'didLoad',
-              'beforeStart',
-              'willReady',
-              'ready',
-              'didReady',
-            ]);
+          assert.deepStrictEqual((app as any).bootLog, [
+            'configDidLoad in plugin',
+            'agent.js in plugin',
+            'configDidLoad in app',
+            'didLoad',
+            'beforeStart',
+            'willReady',
+            'ready',
+            'didReady',
+          ]);
           await app.lifecycle.triggerServerDidReady();
           await sleep(10);
-          assert.deepStrictEqual(
-            (app as any).bootLog,
-            [
-              'configDidLoad in plugin',
-              'agent.js in plugin',
-              'configDidLoad in app',
-              'didLoad',
-              'beforeStart',
-              'willReady',
-              'ready',
-              'didReady',
-              'serverDidReady',
-            ]);
+          assert.deepStrictEqual((app as any).bootLog, [
+            'configDidLoad in plugin',
+            'agent.js in plugin',
+            'configDidLoad in app',
+            'didLoad',
+            'beforeStart',
+            'willReady',
+            'ready',
+            'didReady',
+            'serverDidReady',
+          ]);
           await app.close();
-          assert.deepStrictEqual(
-            (app as any).bootLog,
-            [
-              'configDidLoad in plugin',
-              'agent.js in plugin',
-              'configDidLoad in app',
-              'didLoad',
-              'beforeStart',
-              'willReady',
-              'ready',
-              'didReady',
-              'serverDidReady',
-              'beforeClose',
-            ]);
+          assert.deepStrictEqual((app as any).bootLog, [
+            'configDidLoad in plugin',
+            'agent.js in plugin',
+            'configDidLoad in app',
+            'didLoad',
+            'beforeStart',
+            'willReady',
+            'ready',
+            'didReady',
+            'serverDidReady',
+            'beforeClose',
+          ]);
         });
       });
     });
@@ -737,17 +783,18 @@ describe('test/egg.test.ts', () => {
           error = e;
         }
         assert.strictEqual(error.message, 'didLoad error');
-        assert.deepStrictEqual((app as any).bootLog, [ 'configDidLoad' ]);
+        assert.deepStrictEqual((app as any).bootLog, ['configDidLoad']);
         await sleep(10);
-        assert.deepStrictEqual((app as any).bootLog, [ 'configDidLoad', 'didReady' ]);
+        assert.deepStrictEqual((app as any).bootLog, [
+          'configDidLoad',
+          'didReady',
+        ]);
         await app.close();
-        assert.deepStrictEqual(
-          (app as any).bootLog,
-          [
-            'configDidLoad',
-            'didReady',
-            'beforeClose',
-          ]);
+        assert.deepStrictEqual((app as any).bootLog, [
+          'configDidLoad',
+          'didReady',
+          'beforeClose',
+        ]);
         // console.log(app.timing.toString());
         assert.match(app.timing.toString(), /egg start timeline:/);
         assert.match(app.timing.toString(), /#1 application Start/);
@@ -765,10 +812,17 @@ describe('test/egg.test.ts', () => {
         } catch (e) {
           error = e;
         }
-        assert.deepStrictEqual((app as any).bootLog, [ 'configDidLoad', 'didLoad' ]);
+        assert.deepStrictEqual((app as any).bootLog, [
+          'configDidLoad',
+          'didLoad',
+        ]);
         assert.strictEqual(error.message, 'willReady error');
         await sleep(10);
-        assert.deepStrictEqual((app as any).bootLog, [ 'configDidLoad', 'didLoad', 'didReady' ]);
+        assert.deepStrictEqual((app as any).bootLog, [
+          'configDidLoad',
+          'didLoad',
+          'didReady',
+        ]);
         await app.close();
         // assert.deepStrictEqual(
         //   (app as any).bootLog,
@@ -788,7 +842,11 @@ describe('test/egg.test.ts', () => {
         await app.loader.loadAll();
         await app.ready();
 
-        assert.deepStrictEqual((app as any).bootLog, [ 'configDidLoad', 'didLoad', 'willReady' ]);
+        assert.deepStrictEqual((app as any).bootLog, [
+          'configDidLoad',
+          'didLoad',
+          'willReady',
+        ]);
         let error: any;
         try {
           await new Promise((_resolve, reject) => {
@@ -799,14 +857,12 @@ describe('test/egg.test.ts', () => {
         }
         assert.strictEqual(error.message, 'didReady error');
         await app.close();
-        assert.deepStrictEqual(
-          (app as any).bootLog,
-          [
-            'configDidLoad',
-            'didLoad',
-            'willReady',
-            'beforeClose',
-          ]);
+        assert.deepStrictEqual((app as any).bootLog, [
+          'configDidLoad',
+          'didLoad',
+          'willReady',
+          'beforeClose',
+        ]);
       });
     });
 
@@ -841,34 +897,30 @@ describe('test/egg.test.ts', () => {
         const app = createApp('boot');
         await app.loader.loadAll();
         await app.ready();
-        assert.deepStrictEqual(
-          (app as any).bootLog,
-          [
-            'configDidLoad in plugin',
-            'app.js in plugin',
-            'configDidLoad in app',
-            'didLoad',
-            'beforeStart',
-            'willReady',
-            'ready',
-          ]);
+        assert.deepEqual((app as any).bootLog, [
+          'configDidLoad in plugin',
+          'app.js in plugin',
+          'configDidLoad in app',
+          'didLoad',
+          'beforeStart',
+          'willReady',
+          'ready',
+        ]);
         app.ready(() => {
           (app as any).bootLog.push('readyFunction');
         });
         await sleep(10);
-        assert.deepStrictEqual(
-          (app as any).bootLog,
-          [
-            'configDidLoad in plugin',
-            'app.js in plugin',
-            'configDidLoad in app',
-            'didLoad',
-            'beforeStart',
-            'willReady',
-            'ready',
-            'readyFunction',
-            'didReady',
-          ]);
+        assert.deepEqual((app as any).bootLog, [
+          'configDidLoad in plugin',
+          'app.js in plugin',
+          'configDidLoad in app',
+          'didLoad',
+          'beforeStart',
+          'willReady',
+          'ready',
+          'readyFunction',
+          'didReady',
+        ]);
         await app.close();
       });
     });
@@ -898,13 +950,11 @@ describe('test/egg.test.ts', () => {
         const app = createApp('boot-before-close');
         await app.loader.loadAll();
         await app.close();
-        assert.deepStrictEqual(
-          (app as any).bootLog,
-          [
-            'beforeClose in app',
-            'beforeClose in plugin',
-            'beforeClose in plugin dep',
-          ]);
+        assert.deepEqual((app as any).bootLog, [
+          'beforeClose in app',
+          'beforeClose in plugin',
+          'beforeClose in plugin dep',
+        ]);
       });
     });
   });
