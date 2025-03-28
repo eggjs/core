@@ -39,7 +39,7 @@ describe('test/loader/load_file.test.ts', () => {
     const buf = await app.loader.loadFile(getFilepath('load_file/no-js.yml'));
     let result = buf.toString();
     if (process.platform === 'win32') {
-      result = result.replaceAll(String.raw`\r\n`, '\n');
+      result = result.replaceAll('\r\n', '\n');
     }
     assert.equal(result, '---\nmap:\n  a: 1\n  b: 2\n');
   });

@@ -81,7 +81,7 @@ describe('test/utils/index.test.ts', () => {
       const buf = await utils.loadFile(path.join(baseDir, 'no-js.yml'));
       let result = buf.toString();
       if (process.platform === 'win32') {
-        result = result.replaceAll(String.raw`\r\n`, '\n');
+        result = result.replaceAll('\r\n', '\n');
       }
       assert.equal(result, '---\nmap:\n  a: 1\n  b: 2\n');
     });
@@ -157,7 +157,7 @@ describe('test/utils/index.test.ts', () => {
       const buf = await utils.loadFile(path.join(baseDir, 'no-js.yml'));
       let result = buf.toString();
       if (process.platform === 'win32') {
-        result = result.replaceAll(String.raw`\r\n`, '\n');
+        result = result.replaceAll('\r\n', '\n');
       }
       assert.equal(result, '---\nmap:\n  a: 1\n  b: 2\n');
     });
