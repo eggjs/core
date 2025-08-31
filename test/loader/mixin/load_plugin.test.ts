@@ -22,21 +22,21 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     app = createApp('plugin');
     const loader = app.loader;
     await loader.loadPlugin();
-    assert('allPlugins' in loader);
-    assert('appPlugins' in loader);
-    assert('customPlugins' in loader);
-    assert('eggPlugins' in loader);
+    assert.ok('allPlugins' in loader);
+    assert.ok('appPlugins' in loader);
+    assert.ok('customPlugins' in loader);
+    assert.ok('eggPlugins' in loader);
   });
 
   it('should load plugin by pkg.eggPlugin.exports', async () => {
     app = createApp('plugin-pkg-exports');
     const loader = app.loader;
     await loader.loadPlugin();
-    assert('allPlugins' in loader);
-    assert('appPlugins' in loader);
-    assert('customPlugins' in loader);
-    assert('eggPlugins' in loader);
-    assert(loader.plugins.a.enable);
+    assert.ok('allPlugins' in loader);
+    assert.ok('appPlugins' in loader);
+    assert.ok('customPlugins' in loader);
+    assert.ok('eggPlugins' in loader);
+    assert.ok(loader.plugins.a.enable);
   });
 
   it('should loadConfig all plugins', async () => {
@@ -72,7 +72,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
       path: path.join(baseDir, 'plugins/e'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
-    assert(Array.isArray(loader.orderPlugins));
+    assert.ok(Array.isArray(loader.orderPlugins));
   });
 
   it('should loadPlugin with order', async () => {
@@ -133,10 +133,10 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader.loadPlugin();
     await loader.loadConfig();
     // console.log(loader.plugins, loader.config);
-    assert(loader.plugins.a);
-    assert(loader.plugins.b);
-    assert(loader.config.a === 'a');
-    assert(loader.config.b === 'b');
+    assert.ok(loader.plugins.a);
+    assert.ok(loader.plugins.b);
+    assert.ok(loader.config.a === 'a');
+    assert.ok(loader.config.b === 'b');
   });
 
   it('should support pnpm node_modules style with scope', async () => {
@@ -157,10 +157,10 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader.loadPlugin();
     await loader.loadConfig();
     // console.log(loader.plugins, loader.config);
-    assert(loader.plugins.a);
-    assert(loader.plugins.b);
-    assert(loader.config.a === 'a');
-    assert(loader.config.b === 'b');
+    assert.ok(loader.plugins.a);
+    assert.ok(loader.plugins.b);
+    assert.ok(loader.config.a === 'a');
+    assert.ok(loader.config.b === 'b');
   });
 
   it('should support alias', async () => {
@@ -180,7 +180,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
       path: path.join(baseDir, 'node_modules/d'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
-    assert(!loader.plugins.d);
+    assert.ok(!loader.plugins.d);
   });
 
   it('should support config in package.json', async () => {
@@ -231,14 +231,14 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     });
     const loader = app.loader;
     await loader.loadPlugin();
-    assert(!message);
+    assert.ok(!message);
   });
 
   it('should load plugin when eggPlugin.exports.typescript = "./src" exists', async () => {
     app = createApp('plugin-ts-src');
     const loader = app.loader;
     await loader.loadPlugin();
-    assert(loader.allPlugins.agg.path);
+    assert.ok(loader.allPlugins.agg.path);
     assert.match(loader.allPlugins.agg.path, /src$/);
   });
 
@@ -277,7 +277,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
       path: path.join(baseDir, 'node_modules/d'),
       from: '<options.plugins>',
     });
-    assert(!loader.plugins.d);
+    assert.ok(!loader.plugins.d);
   });
 
   it('should custom plugins with EGG_PLUGINS', async () => {
@@ -289,15 +289,17 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
         path: path.join(baseDir, 'node_modules/h'),
       },
     };
-    mm(process.env, 'EGG_PLUGINS', `${JSON.stringify(plugins)}`);
+    mm(process.env, 'EGG_PLUGINS', JSON.stringify(plugins));
     app = createApp('plugin');
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
 
-    assert(loader.allPlugins.b.enable === false);
-    assert(loader.allPlugins.h.enable === true);
-    assert(loader.allPlugins.h.path === path.join(baseDir, 'node_modules/h'));
+    assert.ok(loader.allPlugins.b.enable === false);
+    assert.ok(loader.allPlugins.h.enable === true);
+    assert.ok(
+      loader.allPlugins.h.path === path.join(baseDir, 'node_modules/h')
+    );
   });
 
   it('should ignore when EGG_PLUGINS parse error', async () => {
@@ -306,7 +308,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(!loader.allPlugins.h);
+    assert.ok(!loader.allPlugins.h);
   });
 
   it('should validate plugin.package', async () => {
@@ -432,9 +434,9 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(!loader.plugins.testMe);
+    assert.ok(!loader.plugins.testMe);
     const plugins = loader.orderPlugins.map(plugin => plugin.name);
-    assert(!plugins.includes('testMe'));
+    assert.ok(!plugins.includes('testMe'));
   });
 
   it('should complement infomation by config/plugin.js from plugin', async () => {
@@ -448,8 +450,8 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
 
     // unittest 环境不开启
     const keys1 = loader1.orderPlugins.map(plugin => plugin.name).join(',');
-    assert(keys1.includes('b,c,d1,f,e'));
-    assert(!loader1.plugins.a1);
+    assert.ok(keys1.includes('b,c,d1,f,e'));
+    assert.ok(!loader1.plugins.a1);
 
     mm(process.env, 'NODE_ENV', 'development');
     const app2 = createApp('plugin');
@@ -457,7 +459,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader2.loadPlugin();
     await loader2.loadConfig();
     const keys2 = loader2.orderPlugins.map(plugin => plugin.name).join(',');
-    assert(keys2.includes('d1,a1,b,c,f,e'));
+    assert.ok(keys2.includes('d1,a1,b,c,f,e'));
     assert.deepEqual(loader2.plugins.a1, {
       enable: true,
       name: 'a1',
@@ -492,12 +494,12 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(!loader.plugins.session.package);
+    assert.ok(!loader.plugins.session.package);
     assert.equal(
       loader.plugins.session.path,
       getFilepath('plugin-path-package/session')
     );
-    assert(loader.plugins.hsfclient.package);
+    assert.ok(loader.plugins.hsfclient.package);
     assert.equal(
       loader.plugins.hsfclient.path,
       getFilepath('plugin-path-package/node_modules/hsfclient')
@@ -557,7 +559,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     assert.equal(loader.allPlugins.a.enable, true);
-    assert(!loader.allPlugins.b);
+    assert.ok(!loader.allPlugins.b);
     assert.equal(loader.allPlugins.c.enable, true);
   });
 
@@ -566,7 +568,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     app = createApp('load-plugin-default');
     const loader = app.loader;
     await loader.loadPlugin();
-    assert(!loader.allPlugins.a);
+    assert.ok(!loader.allPlugins.a);
     assert.equal(loader.allPlugins.b.enable, true);
     assert.equal(loader.allPlugins.c.enable, true);
   });
@@ -685,8 +687,8 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
     await loader.loadPlugin();
     assert.equal(loader.allPlugins.a.enable, false);
     assert.equal(loader.allPlugins.b.enable, true);
-    assert(!loader.allPlugins.c);
-    assert(!loader.allPlugins.d);
+    assert.ok(!loader.allPlugins.c);
+    assert.ok(!loader.allPlugins.d);
   });
 
   it('should load plugin from scope and prod env', async () => {

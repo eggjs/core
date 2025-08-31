@@ -14,18 +14,18 @@ describe('test/loader/mixin/load_custom_app.test.ts', () => {
     after(() => app.close());
 
     it('should load app.js', () => {
-      assert((app as any).b === 'plugin b');
-      assert((app as any).c === 'plugin c');
-      assert((app as any).app === 'app');
+      assert.ok((app as any).b === 'plugin b');
+      assert.ok((app as any).c === 'plugin c');
+      assert.ok((app as any).app === 'app');
     });
 
     it("should app.js of plugin before application's", () => {
-      assert((app as any).dateB <= (app as any).date);
-      assert((app as any).dateC <= (app as any).date);
+      assert.ok((app as any).dateB <= (app as any).date);
+      assert.ok((app as any).dateC <= (app as any).date);
     });
 
     it('should not load plugin that is disabled', () => {
-      assert(!(app as any).a);
+      assert.ok(!(app as any).a);
     });
   });
 });

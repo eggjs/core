@@ -69,7 +69,7 @@ export class Timing {
   end(name?: string) {
     if (!name || !this.#enable) return;
     const item = this.#map.get(name);
-    assert(item, `should run timing.start('${name}') first`);
+    assert.ok(item, `should run timing.start('${name}') first`);
     item.end = Date.now();
     item.duration = item.end - item.start;
     debug('end %j', item);

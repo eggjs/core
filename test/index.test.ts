@@ -5,10 +5,10 @@ import type { EggAppConfig } from '../src/index.js';
 
 describe('test/index.test.ts', () => {
   it('should expose properties', () => {
-    assert(EggCore.EggCore);
-    assert(EggCore.EggLoader);
-    assert(EggCore.BaseContextClass);
-    assert(EggCore.utils);
+    assert.ok(EggCore.EggCore);
+    assert.ok(EggCore.EggLoader);
+    assert.ok(EggCore.BaseContextClass);
+    assert.ok(EggCore.utils);
     console.log(Object.keys(EggCore));
     assert.deepEqual(Object.keys(EggCore), [
       'BaseContextClass',
@@ -42,7 +42,7 @@ describe('test/index.test.ts', () => {
       coreMiddleware: [],
       middleware: [],
     } as EggAppConfig;
-    assert(config.middleware);
-    assert(config.coreMiddleware);
+    assert.ok(config.middleware);
+    assert.ok(config.coreMiddleware);
   });
 });

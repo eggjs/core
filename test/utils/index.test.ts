@@ -14,10 +14,10 @@ describe('test/utils/index.test.ts', () => {
 
     it('should load object', async () => {
       const filepath1 = utils.resolvePath(path.join(baseDir, 'object.js'));
-      assert(filepath1);
+      assert.ok(filepath1);
       const filepath2 = utils.resolvePath(path.join(baseDir, 'object'));
-      assert(filepath2, filepath1);
-      assert(filepath2.endsWith('.js'), filepath2);
+      assert.ok(filepath2, filepath1);
+      assert.ok(filepath2.endsWith('.js'), filepath2);
     });
   });
 
@@ -46,14 +46,14 @@ describe('test/utils/index.test.ts', () => {
 
     it('should load es module', async () => {
       const result = await utils.loadFile(path.join(baseDir, 'es-module.js'));
-      assert(result.fn);
+      assert.ok(result.fn);
     });
 
     it('should load es module with default', async () => {
       const result = await utils.loadFile(
         path.join(baseDir, 'es-module-default.js')
       );
-      assert(result.fn);
+      assert.ok(result.fn);
     });
 
     it('should load es module with default = null', async () => {
@@ -67,14 +67,14 @@ describe('test/utils/index.test.ts', () => {
       const result = await utils.loadFile(
         path.join(baseDir, 'es-module-default-async.js')
       );
-      assert(typeof result().then === 'function');
+      assert.ok(typeof result().then === 'function');
     });
 
     it('should load es module with default = function returning a promise', async () => {
       const result = await utils.loadFile(
         path.join(baseDir, 'es-module-default-promise.js')
       );
-      assert(typeof result().then === 'function');
+      assert.ok(typeof result().then === 'function');
     });
 
     it('should load no js file', async () => {
@@ -122,14 +122,14 @@ describe('test/utils/index.test.ts', () => {
 
     it('should load es module', async () => {
       const result = await utils.loadFile(path.join(baseDir, 'es-module.js'));
-      assert(result.fn);
+      assert.ok(result.fn);
     });
 
     it('should load es module with default', async () => {
       const result = await utils.loadFile(
         path.join(baseDir, 'es-module-default.js')
       );
-      assert(result.fn);
+      assert.ok(result.fn);
     });
 
     it('should load es module with default = null', async () => {
@@ -143,14 +143,14 @@ describe('test/utils/index.test.ts', () => {
       const result = await utils.loadFile(
         path.join(baseDir, 'es-module-default-async.js')
       );
-      assert(typeof result().then === 'function');
+      assert.ok(typeof result().then === 'function');
     });
 
     it('should load es module with default = function returning a promise', async () => {
       const result = await utils.loadFile(
         path.join(baseDir, 'es-module-default-promise.js')
       );
-      assert(typeof result().then === 'function');
+      assert.ok(typeof result().then === 'function');
     });
 
     it('should load no js file', async () => {

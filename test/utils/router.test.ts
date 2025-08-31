@@ -160,56 +160,56 @@ describe('test/utils/router.test.ts', () => {
 
   describe('router.url', () => {
     it('should work', () => {
-      assert(app.url('posts') === '/posts');
+      assert.ok(app.url('posts') === '/posts');
 
-      assert(app.router.url('posts') === '/posts');
-      assert(app.router.url('members') === '/members');
-      assert(app.router.url('post', { id: 1 }) === '/posts/1');
-      assert(app.router.url('member', { id: 1 }) === '/members/1');
-      assert(app.router.url('new_post') === '/posts/new');
-      assert(app.router.url('new_member') === '/members/new');
-      assert(app.router.url('edit_post', { id: 1 }) === '/posts/1/edit');
-      assert(app.router.url('params', { a: 1, b: 2 }) === '/params/1/2');
+      assert.ok(app.router.url('posts') === '/posts');
+      assert.ok(app.router.url('members') === '/members');
+      assert.ok(app.router.url('post', { id: 1 }) === '/posts/1');
+      assert.ok(app.router.url('member', { id: 1 }) === '/members/1');
+      assert.ok(app.router.url('new_post') === '/posts/new');
+      assert.ok(app.router.url('new_member') === '/members/new');
+      assert.ok(app.router.url('edit_post', { id: 1 }) === '/posts/1/edit');
+      assert.ok(app.router.url('params', { a: 1, b: 2 }) === '/params/1/2');
       // no match params
-      assert(app.router.url('edit_post', {}) === '/posts/:id/edit');
-      assert(app.router.url('noname') === '');
-      assert(
+      assert.ok(app.router.url('edit_post', {}) === '/posts/:id/edit');
+      assert.ok(app.router.url('noname') === '');
+      assert.ok(
         app.router.url('comment_index', { id: 1, a: 1 }) ===
           '/comments/1?filter=&a=1'
       );
     });
 
     it('should work with unknow params', () => {
-      assert(
+      assert.ok(
         app.router.url('posts', { name: 'foo', page: 2 }) ===
           '/posts?name=foo&page=2'
       );
-      assert(
+      assert.ok(
         app.router.url('posts', { name: 'foo&?', page: 2 }) ===
           '/posts?name=foo%26%3F&page=2'
       );
-      assert(
+      assert.ok(
         app.router.url('edit_post', { id: 10, page: 2 }) ===
           '/posts/10/edit?page=2'
       );
-      assert(
+      assert.ok(
         app.router.url('edit_post', { i: 2, id: 10 }) === '/posts/10/edit?i=2'
       );
-      assert(
+      assert.ok(
         app.router.url('edit_post', {
           id: 10,
           page: 2,
           tags: ['chair', 'develop'],
         }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
       );
-      assert(
+      assert.ok(
         app.router.url('edit_post', {
           id: [10],
           page: [2],
           tags: ['chair', 'develop'],
         }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
       );
-      assert(
+      assert.ok(
         app.router.url('edit_post', {
           id: [10, 11],
           page: [2],
@@ -227,13 +227,13 @@ describe('test/utils/router.test.ts', () => {
 
   describe('router.pathFor', () => {
     it('should work', () => {
-      assert(app.router.pathFor('posts') === '/posts');
+      assert.ok(app.router.pathFor('posts') === '/posts');
     });
   });
 
   describe('router.method', () => {
     it('router method include HEAD', () => {
-      assert(app.router.methods.includes('HEAD'));
+      assert.ok(app.router.methods.includes('HEAD'));
     });
   });
 
@@ -310,7 +310,7 @@ describe('test/utils/router.test.ts', () => {
         app.router.get('/test', app.controller.not_exist);
         throw new Error('should not run here');
       } catch (err: any) {
-        assert(err.message.includes('controller not exists'));
+        assert.ok(err.message.includes('controller not exists'));
       }
     });
 

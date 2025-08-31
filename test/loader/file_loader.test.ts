@@ -17,16 +17,16 @@ describe('test/loader/file_loader.test.ts', () => {
       target: services,
     }).load();
 
-    assert(services.dir.abc);
-    assert(services.dir.service);
-    assert(services.foo);
-    assert(services.fooBarHello);
-    assert(services.fooService);
-    assert(services.hyphenDir.a);
-    assert(services.underscoreDir.a);
-    assert(services.userProfile);
-    assert('load' in services.dir.service);
-    assert('app' in services.dir.service);
+    assert.ok(services.dir.abc);
+    assert.ok(services.dir.service);
+    assert.ok(services.foo);
+    assert.ok(services.fooBarHello);
+    assert.ok(services.fooService);
+    assert.ok(services.hyphenDir.a);
+    assert.ok(services.underscoreDir.a);
+    assert.ok(services.userProfile);
+    assert.ok('load' in services.dir.service);
+    assert.ok('app' in services.dir.service);
     assert.equal(services.dir.service.load, true);
 
     await Promise.all([
@@ -130,10 +130,10 @@ describe('test/loader/file_loader.test.ts', () => {
       call: false,
       // filters: [ 'm1', 'm2', 'dm1', 'dm2' ],
     }).load();
-    assert(app.middlewares.m1);
-    assert(app.middlewares.m2);
-    assert(app.middlewares.dm1);
-    assert(app.middlewares.dm2);
+    assert.ok(app.middlewares.m1);
+    assert.ok(app.middlewares.m2);
+    assert.ok(app.middlewares.dm1);
+    assert.ok(app.middlewares.dm2);
   });
 
   it('should support ignore string', async () => {
@@ -163,9 +163,9 @@ describe('test/loader/file_loader.test.ts', () => {
       target: app.services,
       lowercaseFirst: true,
     }).load();
-    assert(app.services.someClass);
-    assert(app.services.someDir);
-    assert(app.services.someDir.someSubClass);
+    assert.ok(app.services.someClass);
+    assert.ok(app.services.someDir);
+    assert.ok(app.services.someDir.someSubClass);
   });
 
   it('should support options.initializer with es6 class', async () => {
@@ -178,7 +178,7 @@ describe('test/loader/file_loader.test.ts', () => {
         return new exports(app, opt.path);
       },
     }).load();
-    assert(app.dao.TestClass);
+    assert.ok(app.dao.TestClass);
     assert.deepEqual(app.dao.TestClass.user, { name: 'kai.fangk' });
     assert.equal(app.dao.TestClass.app, app);
     assert.equal(
@@ -199,7 +199,7 @@ describe('test/loader/file_loader.test.ts', () => {
         return yaml.load(exports.toString());
       },
     }).load();
-    assert(app.yml.config);
+    assert.ok(app.yml.config);
     assert.deepEqual(app.yml.config.map, { a: 1, b: 2 });
   });
 
@@ -220,7 +220,7 @@ describe('test/loader/file_loader.test.ts', () => {
     }).load();
     assert.equal(app.model.mod.a, 1);
     assert.equal(app.model.mod2.foo, 'bar');
-    assert(app.model.mod2.HelloFoo);
+    assert.ok(app.model.mod2.HelloFoo);
     assert.equal(app.model.mod3.ok, true);
     assert.equal(app.model.mod3.foo, 'bar');
   });
@@ -280,10 +280,10 @@ describe('test/loader/file_loader.test.ts', () => {
         caseStyle: CaseStyle.upper,
       }).load();
 
-      assert(target.FooBar1);
-      assert(target.FooBar2);
-      assert(target.FooBar3);
-      assert(target.FooBar4);
+      assert.ok(target.FooBar1);
+      assert.ok(target.FooBar2);
+      assert.ok(target.FooBar3);
+      assert.ok(target.FooBar4);
     });
 
     it('should load when caseStyle = camel', async () => {
@@ -294,10 +294,10 @@ describe('test/loader/file_loader.test.ts', () => {
         caseStyle: CaseStyle.camel,
       }).load();
 
-      assert(target.fooBar1);
-      assert(target.fooBar2);
-      assert(target.FooBar3);
-      assert(target.fooBar4);
+      assert.ok(target.fooBar1);
+      assert.ok(target.fooBar2);
+      assert.ok(target.FooBar3);
+      assert.ok(target.fooBar4);
     });
 
     it('should load when caseStyle = lower', async () => {
@@ -308,10 +308,10 @@ describe('test/loader/file_loader.test.ts', () => {
         caseStyle: CaseStyle.lower,
       }).load();
 
-      assert(target.fooBar1);
-      assert(target.fooBar2);
-      assert(target.fooBar3);
-      assert(target.fooBar4);
+      assert.ok(target.fooBar1);
+      assert.ok(target.fooBar2);
+      assert.ok(target.fooBar3);
+      assert.ok(target.fooBar4);
     });
 
     it('should load when caseStyle is function', async () => {
@@ -327,10 +327,10 @@ describe('test/loader/file_loader.test.ts', () => {
         },
       }).load();
 
-      assert(target.foobar1);
-      assert(target.fooBar2);
-      assert(target.FooBar3);
-      assert(target['foo-bar4']);
+      assert.ok(target.foobar1);
+      assert.ok(target.fooBar2);
+      assert.ok(target.FooBar3);
+      assert.ok(target['foo-bar4']);
     });
 
     it('should throw when caseStyle do not return array', async () => {
@@ -355,10 +355,10 @@ describe('test/loader/file_loader.test.ts', () => {
         lowercaseFirst: true,
       }).load();
 
-      assert(target.fooBar1);
-      assert(target.fooBar2);
-      assert(target.fooBar3);
-      assert(target.fooBar4);
+      assert.ok(target.fooBar1);
+      assert.ok(target.fooBar2);
+      assert.ok(target.fooBar3);
+      assert.ok(target.fooBar4);
     });
   });
 
@@ -374,7 +374,7 @@ describe('test/loader/file_loader.test.ts', () => {
     assert.equal(inject.b, true);
 
     const instance = new target.a(inject);
-    assert(instance);
+    assert.ok(instance);
     assert.equal(inject.a, true);
   });
 

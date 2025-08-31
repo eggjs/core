@@ -12,3 +12,14 @@ export * from './loader/context_loader.js';
 export * from './utils/sequencify.js';
 export * from './utils/timing.js';
 export type * from './types.js';
+
+export default function hello() {
+  const a = {
+    b: 1,
+    c: 2,
+  };
+
+  const b = a.b;
+
+  return b;
+}

@@ -17,8 +17,8 @@ describe('test/loader/egg_loader.test.ts', () => {
   after(() => app.close());
 
   it('should container FileLoader and ContextLoader', () => {
-    assert(app.loader.FileLoader);
-    assert(app.loader.ContextLoader);
+    assert.ok(app.loader.FileLoader);
+    assert.ok(app.loader.ContextLoader);
   });
 
   describe('loader.getHomedir()', () => {
@@ -95,7 +95,7 @@ describe('test/loader/egg_loader.test.ts', () => {
       logger: console,
     } as any);
     await loader.loadToApp(directory, prop);
-    assert(Reflect.get(app, prop).user);
+    assert.ok(Reflect.get(app, prop).user);
   });
 
   it('should be loaded by loadToContext', async () => {
@@ -109,6 +109,6 @@ describe('test/loader/egg_loader.test.ts', () => {
       logger: console,
     } as any);
     await loader.loadToContext(directory, prop);
-    assert(Reflect.get(app.context, prop).user);
+    assert.ok(Reflect.get(app.context, prop).user);
   });
 });

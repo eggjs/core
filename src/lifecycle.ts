@@ -7,8 +7,7 @@ import { Ready as ReadyObject, type ReadyFunctionArg } from 'get-ready';
 import { Ready } from 'ready-callback';
 import { EggConsoleLogger } from 'egg-logger';
 
-import utils from './utils/index.js';
-import type { Fun } from './utils/index.js';
+import utils, { type Fun } from './utils/index.js';
 import type { EggCore } from './egg.js';
 
 const debug = debuglog('@eggjs/core/lifecycle');
@@ -93,7 +92,7 @@ export class Lifecycle extends EventEmitter {
     const eggReadyTimeoutEnv = Number.parseInt(
       process.env.EGG_READY_TIMEOUT_ENV || '10000'
     );
-    assert(
+    assert.ok(
       Number.isInteger(eggReadyTimeoutEnv),
       `process.env.EGG_READY_TIMEOUT_ENV ${process.env.EGG_READY_TIMEOUT_ENV} should be able to parseInt.`
     );
@@ -159,7 +158,7 @@ export class Lifecycle extends EventEmitter {
   }
 
   addBootHook(bootHootOrBootClass: BootImplClass | ILifecycleBoot) {
-    assert(
+    assert.ok(
       this.#init === false,
       'do not add hook when lifecycle has been initialized'
     );
@@ -170,7 +169,7 @@ export class Lifecycle extends EventEmitter {
     hook: (app: T) => void,
     fullPath?: string
   ) {
-    assert(
+    assert.ok(
       this.#init === false,
       'do not add hook when lifecycle has been initialized'
     );
@@ -195,7 +194,7 @@ export class Lifecycle extends EventEmitter {
    */
   init() {
     debug('%s init lifecycle', this.app.type);
-    assert(this.#init === false, 'lifecycle have been init');
+    assert.ok(this.#init === false, 'lifecycle have been init');
     this.#init = true;
     this.#boots = this.#bootHooks.map(BootHootOrBootClass => {
       let instance = BootHootOrBootClass as ILifecycleBoot;
@@ -221,8 +220,8 @@ export class Lifecycle extends EventEmitter {
   }
 
   registerBeforeClose(fn: FunWithFullPath, fullPath?: string) {
-    assert(typeof fn === 'function', 'argument should be function');
-    assert(this.#isClosed === false, 'app has been closed');
+    assert.ok(typeof fn === 'function', 'argument should be function');
+    assert.ok(this.#isClosed === false, 'app has been closed');
     if (fullPath) {
       fn.fullPath = fullPath;
     }

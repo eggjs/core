@@ -12,17 +12,17 @@ describe('test/loader/mixin/load_custom_agent.test.ts', () => {
   after(() => agent.close());
 
   it('should load agent.js', () => {
-    assert(agent.b === 'plugin b');
-    assert(agent.c === 'plugin c');
-    assert(agent.agent === 'agent');
+    assert.ok(agent.b === 'plugin b');
+    assert.ok(agent.c === 'plugin c');
+    assert.ok(agent.agent === 'agent');
   });
 
   it("should agent.js of plugin before application's", () => {
-    assert(agent.dateB <= agent.date);
-    assert(agent.dateC <= agent.date);
+    assert.ok(agent.dateB <= agent.date);
+    assert.ok(agent.dateC <= agent.date);
   });
 
   it('should not load plugin that is disabled', () => {
-    assert(!agent.a);
+    assert.ok(!agent.a);
   });
 });

@@ -16,8 +16,8 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(loader.config.name === 'config-test');
-    assert(loader.config.test === 1);
+    assert.ok(loader.config.name === 'config-test');
+    assert.ok(loader.config.test === 1);
     // 支持嵌套覆盖
     assert.deepEqual(loader.config.urllib, {
       keepAlive: false,
@@ -33,7 +33,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(loader.config.name === 'override default');
+    assert.ok(loader.config.name === 'override default');
   });
 
   it('should load application config overriding plugin', async () => {
@@ -41,7 +41,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(loader.config.plugin === 'override plugin');
+    assert.ok(loader.config.plugin === 'override plugin');
   });
 
   // egg config.default
@@ -53,7 +53,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(loader.config.egg === 'egg-unittest');
+    assert.ok(loader.config.egg === 'egg-unittest');
   });
 
   it('should override config by env.EGG_APP_CONFIG', async () => {
@@ -71,11 +71,11 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(loader.config.egg === 'env_egg');
-    assert(loader.config.foo.bar === 'env_bar');
-    assert(loader.config.foo.bar2 === 'b');
-    assert(loader.configMeta.egg === '<process.env.EGG_APP_CONFIG>');
-    assert(loader.configMeta.foo.bar === '<process.env.EGG_APP_CONFIG>');
+    assert.ok(loader.config.egg === 'env_egg');
+    assert.ok(loader.config.foo.bar === 'env_bar');
+    assert.ok(loader.config.foo.bar2 === 'b');
+    assert.ok(loader.configMeta.egg === '<process.env.EGG_APP_CONFIG>');
+    assert.ok(loader.configMeta.foo.bar === '<process.env.EGG_APP_CONFIG>');
   });
 
   it('should override config with invalid env.EGG_APP_CONFIG', async () => {
@@ -84,9 +84,9 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(loader.config.egg === 'egg-unittest');
-    assert(loader.config.foo.bar === 'a');
-    assert(loader.config.foo.bar2 === 'b');
+    assert.ok(loader.config.egg === 'egg-unittest');
+    assert.ok(loader.config.foo.bar === 'a');
+    assert.ok(loader.config.foo.bar2 === 'b');
   });
 
   it('should not load config of plugin that is disabled', async () => {
@@ -94,7 +94,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(!loader.config.pluginA);
+    assert.ok(!loader.config.pluginA);
   });
 
   it('should throw when plugin define middleware', async () => {
@@ -113,7 +113,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       await loader.loadConfig();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(
+      assert.ok(
         err.message.includes(
           `Can not define middleware in ${path.join(pluginDir, 'config/config.default.js')}`
         )
@@ -134,10 +134,10 @@ describe('test/loader/mixin/load_config.test.ts', () => {
     const loader = app.loader;
     await loader.loadPlugin();
     await loader.loadConfig();
-    assert(loader.config.plugin.val === 2);
-    assert(loader.config.plugin.val === 2);
-    assert(loader.config.plugin.sub !== loader.config.app.sub);
-    assert(loader.config.appInApp === false);
+    assert.ok(loader.config.plugin.val === 2);
+    assert.ok(loader.config.plugin.val === 2);
+    assert.ok(loader.config.plugin.sub !== loader.config.app.sub);
+    assert.ok(loader.config.appInApp === false);
   });
 
   it('should load config without coreMiddleware', async () => {
@@ -216,7 +216,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       const loader = app.loader;
       await loader.loadPlugin();
       await app.loader.loadConfig();
-      assert(loader.config.from === 'default');
+      assert.ok(loader.config.from === 'default');
     });
 
     it('should return without scope when env = prod', async () => {
@@ -225,7 +225,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       const loader = app.loader;
       await loader.loadPlugin();
       await app.loader.loadConfig();
-      assert(loader.config.from === 'prod');
+      assert.ok(loader.config.from === 'prod');
     });
 
     it('should return with scope when env = default', async () => {
@@ -235,7 +235,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       const loader = app.loader;
       await loader.loadPlugin();
       await app.loader.loadConfig();
-      assert(loader.config.from === 'en');
+      assert.ok(loader.config.from === 'en');
     });
 
     it('should return with scope when env = prod', async () => {
@@ -245,7 +245,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       const loader = app.loader;
       await loader.loadPlugin();
       await app.loader.loadConfig();
-      assert(loader.config.from === 'en_prod');
+      assert.ok(loader.config.from === 'en_prod');
     });
   });
 });

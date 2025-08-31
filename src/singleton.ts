@@ -22,19 +22,19 @@ export class Singleton<T = any> {
   readonly options: Record<string, any>;
 
   constructor(options: SingletonOptions) {
-    assert(
+    assert.ok(
       options.name,
       '[@eggjs/core/singleton] Singleton#constructor options.name is required'
     );
-    assert(
+    assert.ok(
       options.app,
       '[@eggjs/core/singleton] Singleton#constructor options.app is required'
     );
-    assert(
+    assert.ok(
       options.create,
       '[@eggjs/core/singleton] Singleton#constructor options.create is required'
     );
-    assert(
+    assert.ok(
       !(options.name in options.app),
       `[@eggjs/core/singleton] ${options.name} is already exists in app`
     );
@@ -50,7 +50,7 @@ export class Singleton<T = any> {
 
   initSync() {
     const options = this.options;
-    assert(
+    assert.ok(
       !(options.client && options.clients),
       `[@eggjs/core/singleton] ${this.name} can not set options.client and options.clients both`
     );
@@ -79,7 +79,7 @@ export class Singleton<T = any> {
 
   async initAsync() {
     const options = this.options;
-    assert(
+    assert.ok(
       !(options.client && options.clients),
       `[@eggjs/core/singleton] ${this.name} can not set options.client and options.clients both`
     );
@@ -132,7 +132,7 @@ export class Singleton<T = any> {
 
   createInstance(config: Record<string, any>, clientName: string) {
     // async creator only support createInstanceAsync
-    assert(
+    assert.ok(
       !isAsyncFunction(this.create),
       `[@eggjs/core/singleton] ${this.name} only support asynchronous creation, please use createInstanceAsync`
     );
@@ -158,11 +158,11 @@ export class Singleton<T = any> {
   }
 
   #extendDynamicMethods(client: any) {
-    assert(
+    assert.ok(
       !client.createInstance,
       '[@eggjs/core/singleton] singleton instance should not have createInstance method'
     );
-    assert(
+    assert.ok(
       !client.createInstanceAsync,
       '[@eggjs/core/singleton] singleton instance should not have createInstanceAsync method'
     );

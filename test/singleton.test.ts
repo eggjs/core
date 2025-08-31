@@ -42,7 +42,7 @@ describe('test/singleton.test.ts', () => {
           create,
         });
         singleton.init();
-        assert(app.dataService instanceof DataService);
+        assert.ok(app.dataService instanceof DataService);
         assert.equal(app.dataService.config.foo, 'bar');
         assert.equal(typeof app.dataService.createInstance, 'function');
       }
@@ -63,7 +63,7 @@ describe('test/singleton.test.ts', () => {
         create,
       });
       singleton.init();
-      assert(app.dataService instanceof Singleton);
+      assert.ok(app.dataService instanceof Singleton);
       assert.equal(app.dataService.get('first').config.foo, 'bar1');
       assert.equal(app.dataService.get('second').config.foo, 'bar2');
       assert.equal(typeof app.dataService.createInstance, 'function');
@@ -86,7 +86,7 @@ describe('test/singleton.test.ts', () => {
         create,
       });
       singleton.init();
-      assert(app.dataService instanceof DataService);
+      assert.ok(app.dataService instanceof DataService);
       assert.equal(app.dataService.config.foo, 'bar');
       assert.equal(app.dataService.config.foo1, 'bar1');
       assert.equal(typeof app.dataService.createInstance, 'function');
@@ -112,24 +112,24 @@ describe('test/singleton.test.ts', () => {
         create,
       });
       singleton.init();
-      assert(app.dataService instanceof Singleton);
-      assert(app.dataService.get('first').config.foo === 'bar1');
-      assert(
+      assert.ok(app.dataService instanceof Singleton);
+      assert.ok(app.dataService.get('first').config.foo === 'bar1');
+      assert.ok(
         app.dataService.getSingletonInstance('first').config.foo === 'bar1'
       );
-      assert(
+      assert.ok(
         app.dataService.get('first'),
         app.dataService.getSingletonInstance('first')
       );
-      assert(app.dataService.get('second').config.foo === 'bar');
-      assert(
+      assert.ok(app.dataService.get('second').config.foo === 'bar');
+      assert.ok(
         app.dataService.getSingletonInstance('second').config.foo === 'bar'
       );
-      assert(
+      assert.ok(
         app.dataService.get('second'),
         app.dataService.getSingletonInstance('second')
       );
-      assert(typeof app.dataService.createInstance === 'function');
+      assert.ok(typeof app.dataService.createInstance === 'function');
     });
 
     it('should createInstance without client/clients support default', async () => {
@@ -148,12 +148,12 @@ describe('test/singleton.test.ts', () => {
         create,
       });
       singleton.init();
-      assert(app.dataService === singleton);
-      assert(app.dataService instanceof Singleton);
+      assert.ok(app.dataService === singleton);
+      assert.ok(app.dataService instanceof Singleton);
       app.dataService = app.dataService.createInstance({ foo1: 'bar1' });
-      assert(app.dataService instanceof DataService);
-      assert(app.dataService.config.foo1 === 'bar1');
-      assert(app.dataService.config.foo === 'bar');
+      assert.ok(app.dataService instanceof DataService);
+      assert.ok(app.dataService.config.foo1 === 'bar1');
+      assert.ok(app.dataService.config.foo === 'bar');
     });
 
     it('should work with unextensible', async () => {
@@ -181,9 +181,9 @@ describe('test/singleton.test.ts', () => {
       const dataService = await app.dataService.createInstanceAsync({
         foo1: 'bar1',
       });
-      assert(dataService instanceof DataService);
-      assert(dataService.config.foo1 === 'bar1');
-      assert(dataService.config.foo === 'bar');
+      assert.ok(dataService instanceof DataService);
+      assert.ok(dataService.config.foo1 === 'bar1');
+      assert.ok(dataService.config.foo === 'bar');
     });
 
     it('should work with frozen', async () => {
@@ -212,9 +212,9 @@ describe('test/singleton.test.ts', () => {
       const dataService = await app.dataService.createInstanceAsync({
         foo1: 'bar1',
       });
-      assert(dataService instanceof DataService);
-      assert(dataService.config.foo1 === 'bar1');
-      assert(dataService.config.foo === 'bar');
+      assert.ok(dataService instanceof DataService);
+      assert.ok(dataService.config.foo1 === 'bar1');
+      assert.ok(dataService.config.foo === 'bar');
     });
 
     it('should work with no prototype and frozen', async () => {
@@ -250,9 +250,9 @@ describe('test/singleton.test.ts', () => {
       });
       singleton.init();
 
-      assert(!app.dataService.createInstance);
-      assert(!app.dataService.createInstanceAsync);
-      assert(warn);
+      assert.ok(!app.dataService.createInstance);
+      assert.ok(!app.dataService.createInstanceAsync);
+      assert.ok(warn);
     });
 
     it('should return client name when create', async () => {
@@ -280,7 +280,7 @@ describe('test/singleton.test.ts', () => {
       });
       singleton.init();
 
-      assert(success);
+      assert.ok(success);
     });
   });
 
@@ -297,9 +297,9 @@ describe('test/singleton.test.ts', () => {
           create: asyncCreate,
         });
         await singleton.init();
-        assert(app.dataService instanceof DataService);
-        assert(app.dataService.config.foo === 'bar');
-        assert(typeof app.dataService.createInstance === 'function');
+        assert.ok(app.dataService instanceof DataService);
+        assert.ok(app.dataService.config.foo === 'bar');
+        assert.ok(typeof app.dataService.createInstance === 'function');
       }
     });
 
@@ -318,10 +318,10 @@ describe('test/singleton.test.ts', () => {
         create: asyncCreate,
       });
       await singleton.init();
-      assert(app.dataService instanceof Singleton);
-      assert(app.dataService.get('first').config.foo === 'bar1');
-      assert(app.dataService.get('second').config.foo === 'bar2');
-      assert(typeof app.dataService.createInstance === 'function');
+      assert.ok(app.dataService instanceof Singleton);
+      assert.ok(app.dataService.get('first').config.foo === 'bar1');
+      assert.ok(app.dataService.get('second').config.foo === 'bar2');
+      assert.ok(typeof app.dataService.createInstance === 'function');
     });
 
     it('should createInstanceAsync without client/clients support default', async () => {
@@ -340,14 +340,14 @@ describe('test/singleton.test.ts', () => {
         create: asyncCreate,
       });
       await singleton.init();
-      assert(app.dataService === singleton);
-      assert(app.dataService instanceof Singleton);
+      assert.ok(app.dataService === singleton);
+      assert.ok(app.dataService instanceof Singleton);
       app.dataService = await app.dataService.createInstanceAsync({
         foo1: 'bar1',
       });
-      assert(app.dataService instanceof DataService);
-      assert(app.dataService.config.foo1 === 'bar1');
-      assert(app.dataService.config.foo === 'bar');
+      assert.ok(app.dataService instanceof DataService);
+      assert.ok(app.dataService.config.foo1 === 'bar1');
+      assert.ok(app.dataService.config.foo === 'bar');
     });
 
     it('should createInstanceAsync throw error', async () => {
@@ -367,7 +367,7 @@ describe('test/singleton.test.ts', () => {
       });
       await singleton.init();
       assert.equal(app.dataService, singleton);
-      assert(app.dataService instanceof Singleton);
+      assert.ok(app.dataService instanceof Singleton);
       await assert.rejects(async () => {
         await app.dataService.createInstance({ foo1: 'bar1' });
       }, /\[@eggjs\/core\/singleton\] dataService only support asynchronous creation, please use createInstanceAsync$/);
@@ -400,7 +400,7 @@ describe('test/singleton.test.ts', () => {
 
       await singleton.init();
 
-      assert(success);
+      assert.ok(success);
     });
   });
 });

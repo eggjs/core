@@ -23,7 +23,7 @@ describe('test/loader/mixin/load_extend_class.test.ts', () => {
   afterEach(mm.restore);
 
   it('should load app.context app.request app.response', () => {
-    assert((app as any).appApplication);
+    assert.ok((app as any).appApplication);
 
     return request(app.callback())
       .get('/')

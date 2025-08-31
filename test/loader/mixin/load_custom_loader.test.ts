@@ -20,13 +20,13 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
   it('should load to app', async () => {
     console.log((app as any).adapter);
     const res = await (app as any).adapter.docker.inspectDocker();
-    assert(res);
-    assert(res.inject === 'app');
+    assert.ok(res);
+    assert.ok(res.inject === 'app');
   });
 
   it('should support exports load to app', () => {
-    assert((app as any).util.test.sayHi('egg') === 'hi, egg');
-    assert((app as any).util.sub.fn.echo() === 'echo custom_loader');
+    assert.ok((app as any).util.test.sayHi('egg') === 'hi, egg');
+    assert.ok((app as any).util.sub.fn.echo() === 'echo custom_loader');
   });
 
   it('should load to ctx', async () => {
@@ -44,9 +44,9 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
 
   it('should support loadunit', () => {
     let name = (app as any).plugin.a.getName();
-    assert(name === 'plugina');
+    assert.ok(name === 'plugina');
     name = (app as any).plugin.b.getName();
-    assert(name === 'pluginb');
+    assert.ok(name === 'pluginb');
   });
 
   it('should loadConfig first', async () => {
@@ -55,7 +55,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(err.message === 'should loadConfig first');
+      assert.ok(err.message === 'should loadConfig first');
     } finally {
       app.close();
     }
@@ -72,7 +72,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(
+      assert.ok(
         err.message === 'directory is required for config.customLoader.custom'
       );
     } finally {
@@ -94,7 +94,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(err.message === 'inject only support app or ctx');
+      assert.ok(err.message === 'inject only support app or ctx');
     } finally {
       app.close();
     }
@@ -116,7 +116,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(err.message === 'customLoader should not override app.config');
+      assert.ok(err.message === 'customLoader should not override app.config');
     } finally {
       app.close();
     }
@@ -133,7 +133,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(err.message === 'customLoader should not override ctx.cookies');
+      assert.ok(err.message === 'customLoader should not override ctx.cookies');
     } finally {
       app.close();
     }

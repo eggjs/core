@@ -137,13 +137,13 @@ export class EggCore extends KoaApplication {
   constructor(options: EggCoreInitOptions = {}) {
     options.baseDir = options.baseDir ?? process.cwd();
     options.type = options.type ?? 'application';
-    assert(
+    assert.ok(
       typeof options.baseDir === 'string',
       'options.baseDir required, and must be a string'
     );
     // assert(fs.existsSync(options.baseDir), `Directory ${options.baseDir} not exists`);
     // assert(fs.statSync(options.baseDir).isDirectory(), `Directory ${options.baseDir} is not a directory`);
-    assert(
+    assert.ok(
       options.type === 'application' || options.type === 'agent',
       'options.type should be application or agent'
     );
@@ -219,7 +219,7 @@ export class EggCore extends KoaApplication {
      * @since 1.0.0
      */
     const Loader = this[EGG_LOADER];
-    assert(Loader, "Symbol.for('egg#loader') is required");
+    assert.ok(Loader, "Symbol.for('egg#loader') is required");
     this.loader = new Loader({
       baseDir: options.baseDir,
       app: this,
@@ -264,7 +264,7 @@ export class EggCore extends KoaApplication {
    * @since 1.0.0
    */
   use<T extends KoaContext = Context>(fn: MiddlewareFunc<T>) {
-    assert(typeof fn === 'function', 'app.use() requires a function');
+    assert.ok(typeof fn === 'function', 'app.use() requires a function');
     debug('[use] add middleware: %o', fn._name || fn.name || '-');
     this.middleware.push(fn as unknown as KoaMiddlewareFunc);
     return this;

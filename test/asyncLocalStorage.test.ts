@@ -24,20 +24,20 @@ describe('test/asyncLocalStorage.test.ts', () => {
     assert.equal(res.status, 200);
     // console.log(res.body);
     assert.equal(res.body.sessionId, 'mock-session-id-123');
-    assert(res.body.traceId);
+    assert.ok(res.body.traceId);
     assert.equal(app.currentContext, undefined);
   });
 
   it('should access als on global', async () => {
-    assert(Reflect.get(global, Symbol.for('gals#asyncLocalStorage')));
-    assert(Reflect.get(global, kGALS));
-    assert(
-      Reflect.get(global, Symbol.for('gals#asyncLocalStorage')) instanceof
+    assert.ok(Reflect.get(globalThis, Symbol.for('gals#asyncLocalStorage')));
+    assert.ok(Reflect.get(globalThis, kGALS));
+    assert.ok(
+      Reflect.get(globalThis, Symbol.for('gals#asyncLocalStorage')) instanceof
         AsyncLocalStorage
     );
     assert.equal(
       app.ctxStorage,
-      Reflect.get(global, Symbol.for('gals#asyncLocalStorage'))
+      Reflect.get(globalThis, Symbol.for('gals#asyncLocalStorage'))
     );
     assert.equal(app.ctxStorage, getAsyncLocalStorage());
   });

@@ -50,17 +50,17 @@ describe('test/egg-ts.test.ts', () => {
         await request(app.callback())
           .get('/')
           .expect(res => {
-            assert(res.text.includes('from extend context'));
-            assert(res.text.includes('from extend application'));
-            assert(res.text.includes('from extend request'));
-            assert(res.text.includes('from extend agent'));
-            assert(res.text.includes('from extend helper'));
-            assert(res.text.includes('from extend response'));
-            assert(res.text.includes('from custom app'));
-            assert(res.text.includes('from plugins'));
-            assert(res.text.includes('from config.default'));
-            assert(res.text.includes('from middleware'));
-            assert(res.text.includes('from service'));
+            assert.ok(res.text.includes('from extend context'));
+            assert.ok(res.text.includes('from extend application'));
+            assert.ok(res.text.includes('from extend request'));
+            assert.ok(res.text.includes('from extend agent'));
+            assert.ok(res.text.includes('from extend helper'));
+            assert.ok(res.text.includes('from extend response'));
+            assert.ok(res.text.includes('from custom app'));
+            assert.ok(res.text.includes('from plugins'));
+            assert.ok(res.text.includes('from config.default'));
+            assert.ok(res.text.includes('from middleware'));
+            assert.ok(res.text.includes('from service'));
           })
           .expect(200);
       });
@@ -91,17 +91,17 @@ describe('test/egg-ts.test.ts', () => {
           .get('/')
           .expect(res => {
             // console.log(res.text);
-            assert(res.text.includes('from extend context'));
-            assert(res.text.includes('from extend application'));
-            assert(res.text.includes('from extend request'));
-            assert(res.text.includes('from extend agent'));
-            assert(res.text.includes('from extend helper'));
-            assert(res.text.includes('from extend response'));
-            assert(res.text.includes('from custom agent'));
-            assert(res.text.includes('from plugins'));
-            assert(res.text.includes('from config.default'));
-            assert(res.text.includes('from middleware'));
-            assert(res.text.includes('from service'));
+            assert.ok(res.text.includes('from extend context'));
+            assert.ok(res.text.includes('from extend application'));
+            assert.ok(res.text.includes('from extend request'));
+            assert.ok(res.text.includes('from extend agent'));
+            assert.ok(res.text.includes('from extend helper'));
+            assert.ok(res.text.includes('from extend response'));
+            assert.ok(res.text.includes('from custom agent'));
+            assert.ok(res.text.includes('from plugins'));
+            assert.ok(res.text.includes('from config.default'));
+            assert.ok(res.text.includes('from middleware'));
+            assert.ok(res.text.includes('from service'));
           })
           .expect(200);
       });
@@ -113,8 +113,8 @@ describe('test/egg-ts.test.ts', () => {
     app = createApp('egg-ts-js');
 
     await app.loader.loadController();
-    assert(!app.controller.god);
-    assert(app.controller.test);
+    assert.ok(!app.controller.god);
+    assert.ok(app.controller.test);
   });
 
   it('should support load ts,js files', async () => {
@@ -122,8 +122,8 @@ describe('test/egg-ts.test.ts', () => {
     app = createApp('egg-ts-js');
 
     await app.loader.loadService();
-    assert(app.serviceClasses.lord);
-    assert(app.serviceClasses.test);
+    assert.ok(app.serviceClasses.lord);
+    assert.ok(app.serviceClasses.test);
   });
 
   it('should auto require tsconfig-paths', async () => {
@@ -131,8 +131,8 @@ describe('test/egg-ts.test.ts', () => {
     app = createApp('egg-ts-js-tsconfig-paths');
 
     await app.loader.loadService();
-    assert(app.serviceClasses.lord);
-    assert(app.serviceClasses.test);
+    assert.ok(app.serviceClasses.lord);
+    assert.ok(app.serviceClasses.test);
   });
 
   it.skip('should not load ts files while EGG_TYPESCRIPT was not exist', async () => {
@@ -141,8 +141,8 @@ describe('test/egg-ts.test.ts', () => {
     await app.loader.loadApplicationExtend();
     await app.loader.loadService();
     assert.equal((app as any).appExtend, undefined);
-    assert(app.serviceClasses.lord);
-    assert(!app.serviceClasses.test);
+    assert.ok(app.serviceClasses.lord);
+    assert.ok(!app.serviceClasses.test);
   });
 
   it.skip('should not load ts files while EGG_TYPESCRIPT was true but no extensions', async () => {
@@ -150,8 +150,8 @@ describe('test/egg-ts.test.ts', () => {
     mm(utils, 'extensions', ['.js', '.json']);
     app = createApp('egg-ts-js');
     await app.loader.loadService();
-    assert(app.serviceClasses.lord);
-    assert(!app.serviceClasses.test);
+    assert.ok(app.serviceClasses.lord);
+    assert.ok(!app.serviceClasses.test);
   });
 
   it.skip('should compile app-ts without error', async () => {

@@ -95,8 +95,8 @@ export class FileLoader {
    * @param {String|Function} options.caseStyle - set property's case when converting a filepath to property list.
    */
   constructor(options: FileLoaderOptions) {
-    assert(options.directory, 'options.directory is required');
-    assert(options.target, 'options.target is required');
+    assert.ok(options.directory, 'options.directory is required');
+    assert.ok(options.target, 'options.target is required');
     this.options = {
       caseStyle: CaseStyle.camel,
       call: true,
@@ -267,7 +267,7 @@ function getProperties(
   // if caseStyle is function, return the result of function
   if (typeof caseStyle === 'function') {
     const result = caseStyle(filepath);
-    assert(
+    assert.ok(
       Array.isArray(result),
       `caseStyle expect an array, but got ${JSON.stringify(result)}`
     );

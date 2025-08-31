@@ -23,11 +23,11 @@ describe('test/loader/mixin/load_service.test.ts', () => {
     await app.loader.loadMiddleware();
     await app.ready();
     console.log(app.serviceClasses);
-    assert(app.serviceClasses.foo);
-    assert(app.serviceClasses.foo2);
-    assert(!app.serviceClasses.bar1);
-    assert(app.serviceClasses.bar2);
-    assert(app.serviceClasses.foo4);
+    assert.ok(app.serviceClasses.foo);
+    assert.ok(app.serviceClasses.foo2);
+    assert.ok(!app.serviceClasses.bar1);
+    assert.ok(app.serviceClasses.bar2);
+    assert.ok(app.serviceClasses.foo4);
 
     await request(app.callback())
       .get('/')
@@ -57,10 +57,10 @@ describe('test/loader/mixin/load_service.test.ts', () => {
     await app.loader.loadConfig();
     await app.loader.loadApplicationExtend();
     await app.loader.loadService();
-    assert('foo' in app.serviceClasses);
-    assert('bar' in app.serviceClasses.foo);
-    assert('bar1' in app.serviceClasses.foo);
-    assert('aa' in app.serviceClasses.foo);
+    assert.ok('foo' in app.serviceClasses);
+    assert.ok('bar' in app.serviceClasses.foo);
+    assert.ok('bar1' in app.serviceClasses.foo);
+    assert.ok('aa' in app.serviceClasses.foo);
   });
 
   it('should each request has unique ctx', async () => {
@@ -160,7 +160,7 @@ describe('test/loader/mixin/load_service.test.ts', () => {
 
     it('should load', () => {
       console.log(app.serviceClasses);
-      assert(app.serviceClasses.user);
+      assert.ok(app.serviceClasses.user);
     });
   });
 });

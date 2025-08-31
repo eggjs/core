@@ -63,7 +63,7 @@ describe('test/loader/load_file.test.ts', () => {
     const result = await app.loader.loadFile(
       getFilepath('load_file/es-module-default.js')
     );
-    assert(result.fn);
+    assert.ok(result.fn);
   });
 
   it('should load compiled es module file which default = null', async () => {

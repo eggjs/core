@@ -14,13 +14,13 @@ describe('test/utils/timing.test.ts', () => {
     assert.equal(json.length, 3);
 
     assert.equal(json[1].name, 'a');
-    assert(json[1].start);
-    assert(json[1].end);
+    assert.ok(json[1].start);
+    assert.ok(json[1].end);
     assert.equal(json[1].end - json[1].start, json[1].duration);
     assert.equal(json[1].pid, process.pid);
     assert.equal(json[2].name, 'b');
-    assert(json[2].start);
-    assert(json[2].end);
+    assert.ok(json[2].start);
+    assert.ok(json[2].end);
     assert.equal(json[2].end - json[2].start, json[2].duration);
     assert.equal(json[2].pid, process.pid);
 
@@ -34,7 +34,7 @@ describe('test/utils/timing.test.ts', () => {
 
     const json = timing.toJSON();
     assert.equal(json[1].name, 'a');
-    assert(json[1].start);
+    assert.ok(json[1].start);
     assert.equal(json[1].end, undefined);
     assert.equal(json[1].duration, undefined);
   });
@@ -115,8 +115,8 @@ describe('test/utils/timing.test.ts', () => {
     const processStart = timing
       .toJSON()
       .find(item => item.name === 'Process Start');
-    assert(processStart);
-    assert(processStart.start);
-    assert(processStart.end);
+    assert.ok(processStart);
+    assert.ok(processStart.start);
+    assert.ok(processStart.end);
   });
 });

@@ -15,7 +15,7 @@ export class ClassLoader {
   _ctx: Context;
 
   constructor(options: ClassLoaderOptions) {
-    assert(options.ctx, 'options.ctx is required');
+    assert.ok(options.ctx, 'options.ctx is required');
     const properties = options.properties;
     this._ctx = options.ctx;
 
@@ -62,8 +62,8 @@ export class ContextLoader extends FileLoader {
    * @param {String} options.fieldClass - determine the field name of inject object.
    */
   constructor(options: ContextLoaderOptions) {
-    assert(options.property, 'options.property is required');
-    assert(options.inject, 'options.inject is required');
+    assert.ok(options.property, 'options.property is required');
+    assert.ok(options.inject, 'options.inject is required');
     const target = {};
     if (options.fieldClass) {
       options.inject[options.fieldClass] = target;

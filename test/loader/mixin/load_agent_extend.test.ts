@@ -12,21 +12,21 @@ describe('test/loader/mixin/load_agent_extend.test.ts', () => {
   after(() => agent.close());
 
   it('should load extend from chair, plugin and agent', () => {
-    assert(agent.poweredBy);
-    assert(agent.a);
-    assert(agent.b);
-    assert(agent.foo);
-    assert(agent.bar);
+    assert.ok(agent.poweredBy);
+    assert.ok(agent.a);
+    assert.ok(agent.b);
+    assert.ok(agent.foo);
+    assert.ok(agent.bar);
   });
 
   it('should override chair by plugin', () => {
-    assert(agent.a === 'plugin a');
-    assert(agent.b === 'plugin b');
-    assert(agent.poweredBy === 'plugin a');
+    assert.ok(agent.a === 'plugin a');
+    assert.ok(agent.b === 'plugin b');
+    assert.ok(agent.poweredBy === 'plugin a');
   });
 
   it('should override plugin by agent', () => {
-    assert(agent.foo === 'agent bar');
-    assert(agent.bar === 'foo');
+    assert.ok(agent.foo === 'agent bar');
+    assert.ok(agent.bar === 'foo');
   });
 });

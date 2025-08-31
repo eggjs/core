@@ -93,12 +93,12 @@ export class EggLoader {
    */
   constructor(options: EggLoaderOptions) {
     this.options = options;
-    assert(
+    assert.ok(
       fs.existsSync(this.options.baseDir),
       `${this.options.baseDir} not exists`
     );
-    assert(this.options.app, 'options.app is required');
-    assert(this.options.logger, 'options.logger is required');
+    assert.ok(this.options.app, 'options.app is required');
+    assert.ok(this.options.logger, 'options.logger is required');
 
     this.timing = this.app.timing || new Timing();
 
@@ -360,11 +360,11 @@ export class EggLoader {
         // }
         continue;
       }
-      assert(
+      assert.ok(
         typeof eggPath === 'string',
         "Symbol.for('egg#eggPath') should be string"
       );
-      assert(fs.existsSync(eggPath), `${eggPath} not exists`);
+      assert.ok(fs.existsSync(eggPath), `${eggPath} not exists`);
       const realpath = fs.realpathSync(eggPath);
       if (!eggPaths.includes(realpath)) {
         eggPaths.unshift(realpath);
@@ -795,7 +795,7 @@ export class EggLoader {
     }
 
     if (plugin.package) {
-      assert(
+      assert.ok(
         isValidatePackageName(plugin.package),
         `plugin ${plugin.name} invalid, use 'path' instead of package: "${plugin.package}"`
       );
@@ -1021,13 +1021,13 @@ export class EggLoader {
     );
     if (!config) return;
     if (isPlugin || isApp) {
-      assert(
+      assert.ok(
         !config.coreMiddleware,
         'Can not define coreMiddleware in app or plugin'
       );
     }
     if (!isApp) {
-      assert(!config.middleware, 'Can not define middleware in ' + filepath);
+      assert.ok(!config.middleware, 'Can not define middleware in ' + filepath);
     }
     // store config meta, check where is the property of config come from.
     this.#setConfigMeta(config, filepath);
@@ -1436,7 +1436,7 @@ export class EggLoader {
       middlewaresMap.set(name, true);
       const options = this.config[name] || {};
       let mw: MiddlewareFunc | null = createMiddleware(options, app);
-      assert(
+      assert.ok(
         typeof mw === 'function',
         `Middleware ${name} must be a function, but actual is ${inspect(mw)}`
       );
@@ -1568,14 +1568,14 @@ export class EggLoader {
 
   /** start CustomLoader loader */
   async loadCustomLoader() {
-    assert(this.config, 'should loadConfig first');
+    assert.ok(this.config, 'should loadConfig first');
     const customLoader = this.config.customLoader || {};
 
     for (const property of Object.keys(customLoader)) {
       const loaderConfig = {
         ...customLoader[property],
       };
-      assert(
+      assert.ok(
         loaderConfig.directory,
         `directory is required for config.customLoader.${property}`
       );
@@ -1597,7 +1597,7 @@ export class EggLoader {
 
       switch (inject) {
         case 'ctx': {
-          assert(
+          assert.ok(
             !(property in this.app.context),
             `customLoader should not override ctx.${property}`
           );
@@ -1611,7 +1611,7 @@ export class EggLoader {
           break;
         }
         case 'app': {
-          assert(
+          assert.ok(
             !(property in this.app),
             `customLoader should not override app.${property}`
           );

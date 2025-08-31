@@ -19,19 +19,19 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
   after(() => app.close());
 
   it('should load application, plugin, and default middlewares', () => {
-    assert('static' in app.middlewares);
-    assert('status' in app.middlewares);
-    assert('custom' in app.middlewares);
-    assert('b' in app.middlewares);
-    assert(!('a' in app.middlewares));
+    assert.ok('static' in app.middlewares);
+    assert.ok('status' in app.middlewares);
+    assert.ok('custom' in app.middlewares);
+    assert.ok('b' in app.middlewares);
+    assert.ok(!('a' in app.middlewares));
   });
 
   it('should also support app.middleware', () => {
-    assert('static' in app.middleware);
-    assert('status' in app.middleware);
-    assert('custom' in app.middleware);
-    assert('b' in app.middleware);
-    assert(!('a' in app.middleware));
+    assert.ok('static' in app.middleware);
+    assert.ok('status' in app.middleware);
+    assert.ok('custom' in app.middleware);
+    assert.ok('b' in app.middleware);
+    assert.ok(!('a' in app.middleware));
 
     assert.equal(app.middleware.static, app.middlewares.static);
     const names = [];
@@ -222,7 +222,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
     after(() => app.close());
 
     it('should load', () => {
-      assert(app.middlewares.user);
+      assert.ok(app.middlewares.user);
     });
   });
 });

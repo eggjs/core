@@ -23,18 +23,18 @@ describe('test/loader/mixin/load_extend.test.ts', () => {
   afterEach(mm.restore);
 
   it('should load app.context app.request app.response', () => {
-    assert(app.context.appContext, 'app.context.appContext');
-    assert(app.context.pluginbContext, 'app.context.pluginbContext');
-    assert(!app.context.pluginaContext, '!app.context.pluginaContext');
-    assert(app.request.appRequest, 'app.request.appRequest');
-    assert(app.request.pluginbRequest, 'app.request.pluginbRequest');
-    assert(!app.request.pluginaRequest, '!app.request.pluginaRequest');
-    assert(app.response.appResponse, 'app.response.appResponse');
-    assert(app.response.pluginbResponse, 'app.response.pluginbResponse');
-    assert(!app.response.pluginaResponse, '!app.response.pluginaResponse');
-    assert((app as any).appApplication, 'appApplication');
-    assert((app as any).pluginbApplication, 'pluginbApplication');
-    assert(!(app as any).pluginaApplication, 'pluginaApplication');
+    assert.ok(app.context.appContext, 'app.context.appContext');
+    assert.ok(app.context.pluginbContext, 'app.context.pluginbContext');
+    assert.ok(!app.context.pluginaContext, '!app.context.pluginaContext');
+    assert.ok(app.request.appRequest, 'app.request.appRequest');
+    assert.ok(app.request.pluginbRequest, 'app.request.pluginbRequest');
+    assert.ok(!app.request.pluginaRequest, '!app.request.pluginaRequest');
+    assert.ok(app.response.appResponse, 'app.response.appResponse');
+    assert.ok(app.response.pluginbResponse, 'app.response.pluginbResponse');
+    assert.ok(!app.response.pluginaResponse, '!app.response.pluginaResponse');
+    assert.ok((app as any).appApplication, 'appApplication');
+    assert.ok((app as any).pluginbApplication, 'pluginbApplication');
+    assert.ok(!(app as any).pluginaApplication, 'pluginaApplication');
 
     return request(app.callback())
       .get('/')
@@ -105,17 +105,17 @@ describe('test/loader/mixin/load_extend.test.ts', () => {
     const app = createApp('extend-env');
     await app.loader.loadPlugin();
     await app.loader.loadApplicationExtend();
-    assert((app as any).custom === true);
+    assert.ok((app as any).custom === true);
     // application.custom.js override application.js
-    assert((app as any).a === 'a1');
+    assert.ok((app as any).a === 'a1');
     // application.custom.js in plugin also can override application.js in app
-    assert((app as any).b === 'b1');
+    assert.ok((app as any).b === 'b1');
   });
 
   it('should not load extend that returned function', async () => {
     const proto: any = {};
     await app.loader.loadExtend('call', proto);
-    assert(proto.call === undefined);
+    assert.ok(proto.call === undefined);
   });
 
   describe('load unittest extend', () => {
@@ -126,8 +126,8 @@ describe('test/loader/mixin/load_extend.test.ts', () => {
       app = createApp('load-plugin-unittest');
       await app.loader.loadPlugin();
       await app.loader.loadApplicationExtend();
-      assert((app as any).unittest === true);
-      assert((app as any).local !== true);
+      assert.ok((app as any).unittest === true);
+      assert.ok((app as any).local !== true);
     });
 
     it('should load unittext.js when mm.env(default)', async () => {
@@ -136,8 +136,8 @@ describe('test/loader/mixin/load_extend.test.ts', () => {
       app = createApp('load-plugin-unittest');
       await app.loader.loadPlugin();
       await app.loader.loadApplicationExtend();
-      assert((app as any).unittest === true);
-      assert((app as any).local === true);
+      assert.ok((app as any).unittest === true);
+      assert.ok((app as any).local === true);
     });
   });
 });

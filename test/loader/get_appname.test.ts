@@ -16,7 +16,7 @@ describe('test/loader/get_appname.test.ts', () => {
     try {
       createApp('app-noname');
     } catch (err: any) {
-      assert(err.message.includes(`name is required from ${pkg}`));
+      assert.ok(err.message.includes(`name is required from ${pkg}`));
       done();
     }
   });
