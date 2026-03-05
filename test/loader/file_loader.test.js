@@ -358,7 +358,6 @@ describe('test/loader/file_loader.test.js', () => {
       // foo_00.js should camelize to Foo00, not Foo_00
       assert(target.Foo00);
       assert(!target.Foo_00);
-      assert(!target['Foo_00']);
     });
   });
 
