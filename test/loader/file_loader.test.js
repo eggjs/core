@@ -265,6 +265,7 @@ describe('test/loader/file_loader.test.js', () => {
       assert(target.FooBar2);
       assert(target.FooBar3);
       assert(target.FooBar4);
+      assert(target.Foo00);
     });
 
     it('should load when caseStyle = camel', () => {
@@ -279,6 +280,7 @@ describe('test/loader/file_loader.test.js', () => {
       assert(target.fooBar2);
       assert(target.FooBar3);
       assert(target.fooBar4);
+      assert(target.foo00);
     });
 
     it('should load when caseStyle = lower', () => {
@@ -293,6 +295,7 @@ describe('test/loader/file_loader.test.js', () => {
       assert(target.fooBar2);
       assert(target.fooBar3);
       assert(target.fooBar4);
+      assert(target.foo00);
     });
 
     it('should load when caseStyle is function', () => {
@@ -312,6 +315,7 @@ describe('test/loader/file_loader.test.js', () => {
       assert(target.fooBar2);
       assert(target.FooBar3);
       assert(target['foo-bar4']);
+      assert(target.foo00);
     });
 
     it('should throw when caseStyle do not return array', () => {
@@ -340,6 +344,21 @@ describe('test/loader/file_loader.test.js', () => {
       assert(target.fooBar2);
       assert(target.fooBar3);
       assert(target.fooBar4);
+      assert(target.foo00);
+    });
+
+    it('should handle separator before digits correctly', () => {
+      const target = {};
+      new FileLoader({
+        directory: path.join(dirBase, 'camelize'),
+        target,
+        caseStyle: 'upper',
+      }).load();
+
+      // foo_00.js should camelize to Foo00, not Foo_00
+      assert(target.Foo00);
+      assert(!target.Foo_00);
+      assert(!target['Foo_00']);
     });
   });
 
